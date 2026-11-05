@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EUC & Security Ops Cockpit | Enterprise Engineering Workstation</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              DEFAULT: '#1E293B',
+              50: '#F8FAFC',
+              100: '#F1F5F9',
+              200: '#E2E8F0',
+              300: '#CBD5E1',
+              400: '#94A3B8',
+              500: '#64748B',
+              600: '#475569',
+              700: '#334155',
+              800: '#1E293B',
+              900: '#0F172A',
+              950: '#0B0F19',
+            },
+            sage: {
+              DEFAULT: '#86EFAC',
+              50: '#F0FDF4',
+              100: '#DCFCE7',
+              200: '#BBF7D0',
+              300: '#86EFAC',
+              400: '#4ADE80',
+              500: '#22C55E',
+              600: '#16A34A',
+              700: '#15803D',
+              800: '#166534',
+              900: '#14532D',
+              950: '#052e16',
+            },
+            ochre: {
+              DEFAULT: '#EAB308',
+              50: '#FEFCE8',
+              100: '#FEF9C3',
+              200: '#FEF08A',
+              300: '#FDE047',
+              400: '#FACC15',
+              500: '#EAB308',
+              600: '#CA8A04',
+              700: '#A16207',
+              800: '#854D0E',
+              900: '#713F12',
+              950: '#422006',
+            },
+            linen: {
+              DEFAULT: '#F8FAFC',
+              50: '#FFFFFF',
+              100: '#F8FAFC',
+              200: '#F1F5F9',
+              300: '#E2E8F0',
+              400: '#CBD5E1',
+            },
+            zinc: {
+              950: '#0B0F19',
+              925: '#0F172A',
+              900: '#162032',
+              850: '#1E293B',
+              800: '#27354A',
+              750: '#334155',
+              700: '#3B4B63',
+              600: '#64748B',
+              500: '#94A3B8',
+              400: '#CBD5E1',
+              300: '#E2E8F0',
+              200: '#F1F5F9',
+              100: '#F8FAFC',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    
+    :root { color-scheme: dark; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #0B0F19;
+      color: #F8FAFC;
+    }
+    
+    .font-mono-code {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #0B0F19; }
+    ::-webkit-scrollbar-thumb { background: #27354A; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    .subtle-border { border: 1px solid #27354A; }
+    .subtle-border-b { border-bottom: 1px solid #27354A; }
+    .subtle-border-t { border-top: 1px solid #27354A; }
+    
+    .tab-active {
+      background-color: #1E293B !important;
+      color: #F8FAFC !important;
+      border-color: #3B4B63 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased bg-[#0B0F19] text-[#F8FAFC] selection:bg-[#1E293B] selection:text-[#F8FAFC]">
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Cal Newport Daily Shutdown Modal -->
+  <div id="shutdown-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-[#162032] border border-[#27354A] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#27354A] pb-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-moon text-amber-400"></i>
+          <h3 class="font-semibold text-sm text-[#F8FAFC]">Cal Newport Daily Shutdown Ritual</h3>
+        </div>
+        <button onclick="closeShutdownModal()" class="text-slate-400 hover:text-slate-200 text-xs"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Terminate work-day cognitive drift. A structured review prevents incomplete loops from draining focus during recovery hours.
+      </p>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg bg-[#0B0F19] border border-[#27354A] cursor-pointer">
+          <input type="checkbox" id="sr-check-1" class="mt-0.5 rounded border-slate-600 text-emerald-500 focus:ring-0 bg-[#162032]">
+          <span class="text-slate-300">Reviewed all active tickets and acknowledged incoming priority requests</span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg bg-[#0B0F19] border border-[#27354A] cursor-pointer">
+          <input type="checkbox" id="sr-check-2" class="mt-0.5 rounded border-slate-600 text-emerald-500 focus:ring-0 bg-[#162032]">
+          <span class="text-slate-300">Recorded verified root causes in ticket notes (First-Principles BLUF)</span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg bg-[#0B0F19] border border-[#27354A] cursor-pointer">
+          <input type="checkbox" id="sr-check-3" class="mt-0.5 rounded border-slate-600 text-emerald-500 focus:ring-0 bg-[#162032]">
+          <span class="text-slate-300">Selected tomorrow's single 90-minute deep engineering sprint deliverable</span>
+        </label>
+      </div>
+      <div class="pt-2 flex items-center justify-between border-t border-[#27354A]">
+        <span id="shutdown-status-time" class="text-[11px] font-mono-code text-slate-400">Pending verification</span>
+        <button onclick="executeShutdown()" class="px-4 py-2 bg-[#1E293B] hover:bg-[#27354A] border border-[#3B4B63] text-[#F8FAFC] font-medium text-xs rounded-lg transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-lock text-[10px]"></i> Log "Shutdown Complete"
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Sticky Header -->
+  <header class="sticky top-0 z-40 bg-[#0B0F19]/90 backdrop-blur-md subtle-border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Top Meta & Quick Action Bar -->
+      <div class="flex items-center justify-between h-16 border-b border-[#27354A]">
+        <!-- Identity -->
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-[#162032] border border-[#27354A] flex items-center justify-center text-[#86EFAC] shadow-sm">
+            <i class="fa-solid fa-terminal text-sm"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-semibold text-sm tracking-tight text-[#F8FAFC]">End-User Computing (EUC) & Security Operations</h1>
+              <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#1E293B] border border-[#27354A] text-slate-300">FY27 Plan</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Linear Operations Cockpit • Newport Deep Work • Calibrated Triage</p>
+          </div>
+        </div>
+
+        <!-- Quick Metrics & Persistence -->
+        <div class="flex items-center gap-2">
+          <!-- Deep Work Ratio -->
+          <div class="hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[#162032] border border-[#27354A] text-xs shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#86EFAC]"></span>
+            <span class="text-slate-400 text-[11px]">Deep/Quiet Ratio:</span>
+            <span id="quick-deep-ratio" class="font-medium text-[#F8FAFC] font-mono-code">83% Deep</span>
+          </div>
+
+          <!-- Total Progress -->
+          <div class="hidden md:flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[#162032] border border-[#27354A] text-xs shadow-sm">
+            <span class="text-slate-400 text-[11px]">Total:</span>
+            <span id="quick-progress-stat" class="font-medium text-[#86EFAC] font-mono-code">0% Done</span>
+          </div>
+
+          <!-- Actions -->
+          <button onclick="openShutdownModal()" class="h-8 px-2.5 text-xs font-medium text-amber-300 hover:text-amber-200 bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/60 rounded-md transition flex items-center gap-1.5" title="Execute Daily Shutdown Ritual">
+            <i class="fa-solid fa-moon text-amber-400"></i><span class="hidden lg:inline">Daily Shutdown</span>
+          </button>
+
+          <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importData(event)">
+          <button onclick="document.getElementById('import-file-input').click()" class="h-8 px-2.5 text-xs font-medium text-slate-300 hover:text-[#F8FAFC] bg-[#162032] hover:bg-[#1E293B] border border-[#27354A] rounded-md transition flex items-center gap-1.5 shadow-sm" title="Import progress (.json)">
+            <i class="fa-solid fa-arrow-up-from-bracket text-slate-400"></i><span class="hidden md:inline">Import</span>
+          </button>
+          
+          <button onclick="exportData()" class="h-8 px-2.5 text-xs font-medium text-slate-300 hover:text-[#F8FAFC] bg-[#162032] hover:bg-[#1E293B] border border-[#27354A] rounded-md transition flex items-center gap-1.5 shadow-sm" title="Export progress (.json)">
+            <i class="fa-solid fa-arrow-down-to-bracket text-slate-400"></i><span class="hidden md:inline">Export</span>
+          </button>
+          
+          <button onclick="resetDataPrompt()" class="h-8 w-8 text-xs text-slate-400 hover:text-[#F8FAFC] bg-[#162032] hover:bg-[#1E293B] border border-[#27354A] rounded-md transition flex items-center justify-center shadow-sm" title="Reset to defaults">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Segmented Navigation Bar -->
+      <nav class="flex items-center space-x-1 overflow-x-auto py-2 no-scrollbar text-xs font-medium">
+        <span class="text-[10px] font-mono-code uppercase tracking-wider text-slate-500 px-1 shrink-0 hidden lg:inline">Strategic:</span>
+        
+        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-button tab-active flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-[#F8FAFC] bg-[#1E293B] border border-[#3B4B63] shrink-0">
+          <i class="fa-solid fa-chart-pie text-xs"></i>
+          <span>Overview</span>
+        </button>
+        
+        <button onclick="switchTab('roadmap')" id="tab-btn-roadmap" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-slate-400 hover:text-[#F8FAFC] hover:bg-[#162032] border border-transparent shrink-0">
+          <i class="fa-solid fa-graduation-cap text-xs"></i>
+          <span>Curriculum (38)</span>
+        </button>
+
+        <button onclick="switchTab('mentalmodels')" id="tab-btn-mentalmodels" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-slate-400 hover:text-[#F8FAFC] hover:bg-[#162032] border border-transparent shrink-0">
+          <i class="fa-solid fa-brain text-xs text-[#EAB308]"></i>
+          <span>5 Mental Models Lab</span>
+          <span class="text-[9px] text-amber-300 bg-amber-950/60 border border-amber-800/60 px-1 rounded">30h Framework</span>
+        </button>
+
+        <span class="h-4 w-px bg-[#27354A] mx-2 shrink-0"></span>
+        <span class="text-[10px] font-mono-code uppercase tracking-wider text-slate-500 px-1 shrink-0 hidden lg:inline">Operations:</span>
+
+        <button onclick="switchTab('triage')" id="tab-btn-triage" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-slate-400 hover:text-[#F8FAFC] hover:bg-[#162032] border border-transparent shrink-0">
+          <i class="fa-solid fa-terminal text-xs"></i>
+          <span>CLI Runbooks & Logs</span>
+        </button>
+
+        <button onclick="switchTab('fivewhys')" id="tab-btn-fivewhys" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-slate-400 hover:text-[#F8FAFC] hover:bg-[#162032] border border-transparent shrink-0">
+          <i class="fa-solid fa-diagram-project text-xs"></i>
+          <span>5 Whys Root-Cause</span>
+        </button>
+        
+        <button onclick="switchTab('exam')" id="tab-btn-exam" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-slate-400 hover:text-[#F8FAFC] hover:bg-[#162032] border border-transparent shrink-0">
+          <i class="fa-solid fa-brain text-xs"></i>
+          <span>Active Recall Lab</span>
+          <span class="text-[9px] text-amber-300 bg-amber-950/60 border border-amber-800/60 px-1 rounded">Sec+ / MD-102</span>
+        </button>
+
+        <button onclick="switchTab('deepflow')" id="tab-btn-deepflow" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-slate-400 hover:text-[#F8FAFC] hover:bg-[#162032] border border-transparent shrink-0">
+          <i class="fa-regular fa-clock text-xs"></i>
+          <span>Deep Sprint & Audio</span>
+        </button>
+        
+        <button onclick="switchTab('bluf')" id="tab-btn-bluf" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-slate-400 hover:text-[#F8FAFC] hover:bg-[#162032] border border-transparent shrink-0">
+          <i class="fa-regular fa-envelope text-xs"></i>
+          <span>Minto / BLUF Drafter</span>
+        </button>
+        
+        <button onclick="switchTab('gemini')" id="tab-btn-gemini" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-md transition text-slate-400 hover:text-[#F8FAFC] hover:bg-[#162032] border border-transparent shrink-0">
+          <i class="fa-solid fa-microchip text-xs"></i>
+          <span>AI Log Diagnostic</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- VIEW 1: OVERVIEW -->
+    <section id="tab-dashboard" class="space-y-6">
+      <!-- 3-Card High-Level Metric Tiles -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        
+        <!-- Tile 1: Deep vs Shallow Hours -->
+        <div class="bg-[#162032] border border-[#27354A] rounded-xl p-4 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Cognitive Ratio</span>
+            <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300">Newport Metric</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 mt-1.5">
+            <span id="metric-deep-hours" class="text-2xl font-bold tracking-tight text-[#F8FAFC]">346</span>
+            <span class="text-xs text-slate-400">/ 418 hrs Deep</span>
+          </div>
+          <div class="w-full bg-[#0B0F19] h-1.5 rounded-full mt-2.5 overflow-hidden">
+            <div id="metric-deep-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-300" style="width: 83%"></div>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2">83% High-Leverage Deep Engineering</p>
+        </div>
+
+        <!-- Tile 2: Overall Progress -->
+        <div class="bg-[#162032] border border-[#27354A] rounded-xl p-4 shadow-sm">
+          <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Plan Execution</span>
+          <div class="flex items-baseline gap-1.5 mt-1.5">
+            <span id="metric-percent-complete" class="text-2xl font-bold tracking-tight text-[#86EFAC]">0%</span>
+            <span id="metric-counts" class="text-xs text-slate-400">(0/38 done)</span>
+          </div>
+          <div class="w-full bg-[#0B0F19] h-1.5 rounded-full mt-2.5 overflow-hidden">
+            <div id="metric-progress-bar" class="bg-[#86EFAC] h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <p id="metric-completed-hours" class="text-[11px] text-slate-400 mt-2">0 hrs completed (418 remain)</p>
+        </div>
+
+        <!-- Tile 3: Operations MTTR Reduction -->
+        <div class="bg-[#162032] border border-[#27354A] rounded-xl p-4 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Target MTTR Delta</span>
+            <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-800/40 text-[#86EFAC]">-35% MTTR</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 mt-1.5">
+            <span class="text-2xl font-bold tracking-tight text-[#F8FAFC]">1.8h</span>
+            <span class="text-xs text-slate-400">from 4.2h base</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2">Tier-1/2 local containment before escalation</p>
+        </div>
+      </div>
+
+      <!-- 4 Pillars Breakdown -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Pillar Architectures</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <!-- Pillar 1 -->
+          <div class="bg-[#162032] border border-[#27354A] rounded-xl p-4 flex flex-col justify-between hover:border-slate-600 transition shadow-sm">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-mono-code text-slate-400">PIL-01</span>
+                <span id="p1-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#1E293B] px-1.5 py-0.5 rounded font-mono-code">0%</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-200 mt-2">Endpoint Management</h3>
+              <p class="text-xs text-slate-400 mt-1 leading-relaxed">Entra ID RBAC, Intune compliance hygiene, and physical VTC triage runbooks.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#27354A] flex justify-between text-xs text-slate-400 font-mono-code">
+              <span><span id="p1-hrs" class="text-slate-200">119</span> hrs (98% Deep)</span>
+              <span><span id="p1-items" class="text-slate-200">10</span> items</span>
+            </div>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div class="bg-[#162032] border border-[#27354A] rounded-xl p-4 flex flex-col justify-between hover:border-slate-600 transition shadow-sm">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-mono-code text-slate-400">PIL-02</span>
+                <span id="p2-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#1E293B] px-1.5 py-0.5 rounded font-mono-code">0%</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-200 mt-2">Security & Compliance</h3>
+              <p class="text-xs text-slate-400 mt-1 leading-relaxed">CompTIA Security+ (SY0-701), Passkeys / FIDO2, and continuous endpoint hardening.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#27354A] flex justify-between text-xs text-slate-400 font-mono-code">
+              <span><span id="p2-hrs" class="text-slate-200">152</span> hrs (98% Deep)</span>
+              <span><span id="p2-items" class="text-slate-200">10</span> items</span>
+            </div>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div class="bg-[#162032] border border-[#27354A] rounded-xl p-4 flex flex-col justify-between hover:border-slate-600 transition shadow-sm">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-mono-code text-slate-400">PIL-03</span>
+                <span id="p3-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#1E293B] px-1.5 py-0.5 rounded font-mono-code">0%</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-200 mt-2">Automation & AI</h3>
+              <p class="text-xs text-slate-400 mt-1 leading-relaxed">Gemini log triage, Python automation scripts, and operational telemetry dashboards.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#27354A] flex justify-between text-xs text-slate-400 font-mono-code">
+              <span><span id="p3-hrs" class="text-slate-200">95</span> hrs (96% Deep)</span>
+              <span><span id="p3-items" class="text-slate-200">11</span> items</span>
+            </div>
+          </div>
+
+          <!-- Pillar 4 -->
+          <div class="bg-[#162032] border border-[#27354A] rounded-xl p-4 flex flex-col justify-between hover:border-slate-600 transition shadow-sm">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-mono-code text-slate-400">PIL-04</span>
+                <span id="p4-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#1E293B] px-1.5 py-0.5 rounded font-mono-code">0%</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-200 mt-2">Structured Systems</h3>
+              <p class="text-xs text-slate-400 mt-1 leading-relaxed">Bottom Line Up Front (BLUF), Minto Pyramid, Systems Thinking, and Time-Blocking.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#27354A] flex justify-between text-xs text-slate-400 font-mono-code">
+              <span><span id="p4-hrs" class="text-slate-200">52</span> hrs (98% Deep)</span>
+              <span><span id="p4-items" class="text-slate-200">7</span> items</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Priorities & Quiet Queue Hub -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Active Priorities -->
+        <div class="lg:col-span-2 bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-4 shadow-sm">
+          <div class="flex items-center justify-between border-b border-[#27354A] pb-3">
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Active Engineering Priorities
+            </h3>
+            <button onclick="switchTab('roadmap')" class="text-xs text-slate-400 hover:text-slate-200 transition">Open Master Table &rarr;</button>
+          </div>
+          <div id="active-focus-container" class="space-y-2.5">
+            <!-- Populated via script -->
+          </div>
+        </div>
+
+        <!-- Quiet Queue: Downtime & Low-Volume Watchlist -->
+        <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 flex flex-col justify-between space-y-4 shadow-sm">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-mug-hot text-amber-400 text-xs"></i>
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-200">Quiet Queue (Watchlist)</h3>
+              </div>
+              <span class="text-[10px] font-mono-code text-amber-300 bg-amber-950/60 border border-amber-800/40 px-1.5 py-0.5 rounded">Downtime Hub</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              When walk-ups and ticket queues are calm, pivot to these high-perspective lectures without consuming deep engineering blocks:
+            </p>
+            <div id="quiet-queue-preview" class="space-y-2 text-xs">
+              <!-- Injected by script -->
+            </div>
+          </div>
+          
+          <button onclick="applyQuickFilter('QUIET_QUEUE'); switchTab('roadmap');" class="w-full py-2 bg-[#1E293B] hover:bg-[#27354A] text-slate-200 text-xs font-medium rounded-lg border border-[#3B4B63] transition flex items-center justify-center gap-2 shadow-sm">
+            <i class="fa-solid fa-list-check text-slate-400"></i> View All 11 Quiet Queue Talks
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: ROADMAP MASTER TABLE -->
+    <section id="tab-roadmap" class="hidden space-y-4">
+      <div class="bg-[#162032] border border-[#27354A] p-4 rounded-xl space-y-3 shadow-sm">
+        <div class="flex flex-col lg:flex-row gap-3 items-center justify-between">
+          <div class="relative w-full lg:w-80">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+            <input type="text" id="module-search" oninput="renderRoadmap()" placeholder="Search ID, title, or deliverable..." class="w-full bg-[#0B0F19] border border-[#27354A] rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-slate-500">
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+            <select id="filter-pillar" onchange="renderRoadmap()" class="bg-[#0B0F19] border border-[#27354A] text-slate-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-slate-500">
+              <option value="ALL">All Pillars</option>
+              <option value="PIL-01">PIL-01: Endpoint Management</option>
+              <option value="PIL-02">PIL-02: Security & Compliance</option>
+              <option value="PIL-03">PIL-03: Automation & AI</option>
+              <option value="PIL-04">PIL-04: Structured Systems</option>
+            </select>
+
+            <select id="filter-worktype" onchange="renderRoadmap()" class="bg-[#0B0F19] border border-[#27354A] text-slate-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-slate-500">
+              <option value="ALL">All Work Modes</option>
+              <option value="Deep">Deep Engineering (High Leverage)</option>
+              <option value="Quiet">Quiet Queue: Watchlist (Keynotes/Lectures)</option>
+            </select>
+
+            <select id="filter-status" onchange="renderRoadmap()" class="bg-[#0B0F19] border border-[#27354A] text-slate-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-slate-500">
+              <option value="ALL">All Statuses</option>
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+
+            <span id="filter-count-badge" class="px-2 py-1 text-xs text-slate-400 bg-[#0B0F19] border border-[#27354A] rounded-md font-mono-code">38 Items</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 pt-1 overflow-x-auto text-xs no-scrollbar">
+          <span class="text-slate-500 text-[11px] uppercase tracking-wider shrink-0 mr-1">Quick Views:</span>
+          <button onclick="applyQuickFilter('ALL')" class="px-2.5 py-1 rounded-md bg-[#0B0F19] hover:bg-[#1E293B] text-slate-300 border border-[#27354A] text-[11px] transition">All (38)</button>
+          <button onclick="applyQuickFilter('DEEP')" class="px-2.5 py-1 rounded-md bg-[#0B0F19] hover:bg-[#1E293B] text-indigo-300 border border-[#27354A] text-[11px] transition">Deep Engineering Only</button>
+          <button onclick="applyQuickFilter('QUIET_QUEUE')" class="px-2.5 py-1 rounded-md bg-[#0B0F19] hover:bg-[#1E293B] text-amber-300 border border-amber-800/50 text-[11px] transition flex items-center gap-1">
+            <i class="fa-solid fa-mug-hot text-[10px]"></i> Quiet Queue: Watchlist (11)
+          </button>
+          <button onclick="applyQuickFilter('INITIATIVES')" class="px-2.5 py-1 rounded-md bg-[#0B0F19] hover:bg-[#1E293B] text-slate-300 border border-[#27354A] text-[11px] transition">Core Initiatives (9)</button>
+          <button onclick="applyQuickFilter('IN_PROGRESS')" class="px-2.5 py-1 rounded-md bg-[#0B0F19] hover:bg-[#1E293B] text-amber-300/90 border border-[#27354A] text-[11px] transition">In Progress</button>
+        </div>
+      </div>
+
+      <div class="bg-[#162032] border border-[#27354A] rounded-xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-[#0B0F19]/80 text-slate-400 font-medium border-b border-[#27354A] text-[11px]">
+                <th class="py-3 px-3.5 w-24">Module ID</th>
+                <th class="py-3 px-3.5 w-24">Pillar</th>
+                <th class="py-3 px-3.5">Objective & Target Deliverable</th>
+                <th class="py-3 px-3.5 w-32">Format / Type</th>
+                <th class="py-3 px-3.5 w-36 text-center">Work Mode</th>
+                <th class="py-3 px-3.5 w-16 text-center">Hours</th>
+                <th class="py-3 px-3.5 w-32 text-center">Status</th>
+                <th class="py-3 px-3.5 w-16 text-right">Link</th>
+              </tr>
+            </thead>
+            <tbody id="roadmap-table-body" class="divide-y divide-[#27354A]">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: 5 MENTAL MODELS & STRUCTURED THINKING LAB -->
+    <section id="tab-mentalmodels" class="hidden space-y-6">
+      <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-3 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27354A] pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-amber-950/60 border border-amber-800/40 text-amber-300">PIL-04 Core Competency</span>
+              <h2 class="text-sm font-semibold text-[#F8FAFC]">5 High-Impact Mental Models & Cognitive Habit Re-wiring</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">30-hour self-study companion: Convert cognitive frameworks into daily engineering instincts.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400 bg-[#0B0F19] border border-[#27354A] px-2.5 py-1 rounded font-mono-code">Goal: 30h Dedicated Study</span>
+            <span id="mm-reps-counter" class="text-xs text-[#86EFAC] bg-emerald-950/40 border border-emerald-800/40 px-2.5 py-1 rounded font-mono-code">Drills Passed: 0 / 5</span>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Technical competence alone caps your ceiling at reactive firefighting. Senior engineering velocity requires <strong>structured communication</strong> (Barbara Minto's Pyramid), <strong>systems thinking</strong> (Donella Meadows' leverage points), and <strong>root-cause first principles</strong>. Use this interactive laboratory to ingrain the 5 foundational models.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 pt-2" id="mm-selector-grid">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <div id="mm-study-pane" class="bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-6 shadow-sm">
+        <!-- Injected via selectMentalModel() -->
+      </div>
+
+      <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-4 shadow-sm">
+        <div class="flex items-center justify-between border-b border-[#27354A] pb-3">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-book-open text-xs text-indigo-400"></i>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-200">The 30-Hour Core Reading & Course Syllabus (PIL-04)</h3>
+          </div>
+          <span class="text-[10px] font-mono-code text-slate-400">Total: 52 Dedicated Hours</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-[#27354A] flex flex-col justify-between space-y-2">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono-code text-slate-400 text-[11px]">MOD-23 • 10h</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300 text-[10px]">Foundational Book</span>
+              </div>
+              <h4 class="font-semibold text-slate-100 mt-1">Thinking in Systems: A Primer</h4>
+              <p class="text-slate-400 text-[11px] mt-1">Donella Meadows on system dynamics, feedback loops, delays, and finding true high-leverage points rather than treating symptoms.</p>
+            </div>
+            <a href="https://books.google.com/books/about/Thinking_in_Systems.html?id=6aMfnwEACAAJ" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 font-mono-code text-[11px] flex items-center gap-1 mt-2">
+              <span>View Google Books</span> &rarr;
+            </a>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-[#27354A] flex flex-col justify-between space-y-2">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono-code text-slate-400 text-[11px]">MOD-24 • 12h</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300 text-[10px]">Executive Writing</span>
+              </div>
+              <h4 class="font-semibold text-slate-100 mt-1">The Pyramid Principle</h4>
+              <p class="text-slate-400 text-[11px] mt-1">Barbara Minto's standard: lead with the core conclusion (BLUF), organize arguments using MECE, and structure memos logically.</p>
+            </div>
+            <a href="https://blackwells.co.uk/bookshop/product/The-Pyramid-Principle-by-Barbara-Minto/9781292763255" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 font-mono-code text-[11px] flex items-center gap-1 mt-2">
+              <span>View Blackwells</span> &rarr;
+            </a>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-[#27354A] flex flex-col justify-between space-y-2">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono-code text-slate-400 text-[11px]">MOD-25 • 10h</span>
+                <span class="px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300 text-[10px]">Operations Theory</span>
+              </div>
+              <h4 class="font-semibold text-slate-100 mt-1">The Goal (Theory of Constraints)</h4>
+              <p class="text-slate-400 text-[11px] mt-1">Eliyahu Goldratt's framework for identifying operational bottlenecks and eliminating systemic throughput limits.</p>
+            </div>
+            <a href="https://books.google.com/books/about/The_Goal.html?id=0T5EAAAAMAAJ" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 font-mono-code text-[11px] flex items-center gap-1 mt-2">
+              <span>View Google Books</span> &rarr;
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 text-xs">
+          <a href="https://www.linkedin.com/learning/systems-thinking-for-it-professionals" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-lg bg-[#0B0F19] hover:bg-[#1E293B] border border-[#27354A] flex items-center justify-between text-slate-300 transition">
+            <span>MOD-26: Systems Thinking for IT (8h)</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 text-[10px]"></i>
+          </a>
+          <a href="https://www.linkedin.com/learning/critical-thinking-for-better-judgment-and-decision-making" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-lg bg-[#0B0F19] hover:bg-[#1E293B] border border-[#27354A] flex items-center justify-between text-slate-300 transition">
+            <span>MOD-27: Critical Thinking & Judgment (6h)</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 text-[10px]"></i>
+          </a>
+          <a href="https://www.linkedin.com/learning/tech-career-skills-effective-technical-communication" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-lg bg-[#0B0F19] hover:bg-[#1E293B] border border-[#27354A] flex items-center justify-between text-slate-300 transition">
+            <span>MOD-28: Effective Technical Comm (5h)</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 text-[10px]"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: OPERATIONAL TRIAGE RUNBOOKS & CLI SIMULATOR -->
+    <section id="tab-triage" class="hidden space-y-4">
+      <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27354A] pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300">Tier 1 / Tier 2 Runbooks</span>
+              <h2 class="text-sm font-semibold text-[#F8FAFC]">Frontline Diagnostic & CLI Execution Matrix</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Production registry keys, native CLI tooling, and exact remediation workflows.</p>
+          </div>
+          <span class="text-xs text-slate-400 px-2 py-1 bg-[#0B0F19] border border-[#27354A] rounded-md font-mono-code">Target: -30% Escalation</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2" id="triage-tabs-container">
+          <!-- Populated by script -->
+        </div>
+
+        <div id="triage-detail-card" class="bg-[#0B0F19] border border-[#27354A] rounded-xl p-5 space-y-5">
+          <!-- Populated by script -->
+        </div>
+
+        <div class="bg-[#0B0F19] border border-[#27354A] rounded-xl p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-[#27354A] pb-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80 inline-block"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block"></span>
+              <span class="text-xs font-mono-code text-slate-400 ml-2">PowerShell Admin Terminal Simulator</span>
+            </div>
+            <span class="text-[10px] text-slate-500 font-mono-code">Local Diagnostic Execution</span>
+          </div>
+
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="text-slate-500 self-center text-[11px]">Quick Commands:</span>
+            <button onclick="runSimulatedCommand('dsregcmd /status')" class="px-2 py-1 bg-[#162032] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] font-mono-code text-[11px]">dsregcmd /status</button>
+            <button onclick="runSimulatedCommand('manage-bde -status C:')" class="px-2 py-1 bg-[#162032] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] font-mono-code text-[11px]">manage-bde -status</button>
+            <button onclick="runSimulatedCommand('mdmdiagnosticstool')" class="px-2 py-1 bg-[#162032] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] font-mono-code text-[11px]">mdmdiagnosticstool</button>
+            <button onclick="runSimulatedCommand('wevtutil qe Security')" class="px-2 py-1 bg-[#162032] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] font-mono-code text-[11px]">wevtutil (Event 4624)</button>
+          </div>
+
+          <div id="terminal-screen" class="bg-black/90 p-3.5 rounded-lg font-mono-code text-xs text-emerald-400/90 h-44 overflow-y-auto leading-relaxed border border-[#27354A]">
+Windows PowerShell v5.1 (Run as Administrator)
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Windows\System32> # Ready. Click a quick command above to inspect live endpoint diagnostics...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: 5 WHYS ROOT-CAUSE ANALYSIS -->
+    <section id="tab-fivewhys" class="hidden space-y-4">
+      <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27354A] pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300">Donella Meadows / Goldratt</span>
+              <h2 class="text-sm font-semibold text-[#F8FAFC]">5 Whys Root-Cause & Theory of Constraints Engine</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Dissect complex IT failure modes down to fundamental system leverage points.</p>
+          </div>
+          <button onclick="loadSampleWhyCase()" class="px-2.5 py-1 text-xs bg-[#0B0F19] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] transition">
+            Load VTC HDMI Failure Case
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="space-y-3 bg-[#0B0F19] border border-[#27354A] p-4 rounded-xl">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Incident Symptom (Surface Level)</label>
+              <input type="text" id="why-symptom" oninput="updateWhyTree()" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="Teams Room display went black mid-executive meeting.">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Why #1? (Immediate Physical Cause)</label>
+              <input type="text" id="why-1" oninput="updateWhyTree()" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="The HDMI ingest signal lost synchronization with the console compute.">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Why #2? (Device / Driver State)</label>
+              <input type="text" id="why-2" oninput="updateWhyTree()" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="USB Root Hub put the capture card into low-power sleep mode after 30 mins.">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Why #3? (Configuration Gap)</label>
+              <input type="text" id="why-3" oninput="updateWhyTree()" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="The host was imaged with a generic desktop power plan instead of Teams Rooms CSP.">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Why #4? (Process Defect)</label>
+              <input type="text" id="why-4" oninput="updateWhyTree()" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="No automated staging verification checklist checked USB selective suspend state.">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-[#86EFAC] mb-1">Why #5? (Systemic Root Cause / High Leverage Point)</label>
+              <input type="text" id="why-5" oninput="updateWhyTree()" class="w-full bg-[#162032] border border-emerald-800 text-slate-100 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="Lack of centralized Intune configuration baseline specifically scoped for Conference Room OUs.">
+            </div>
+          </div>
+
+          <div class="flex flex-col justify-between bg-[#0B0F19] border border-[#27354A] p-4 rounded-xl space-y-4">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-[#27354A]">
+                <span class="text-xs font-medium text-slate-300">Systemic Intervention Strategy</span>
+                <span class="text-[10px] font-mono-code text-indigo-400 bg-indigo-950/40 border border-indigo-800/40 px-1.5 py-0.5 rounded">Meadows Leverage Point</span>
+              </div>
+              <div id="why-tree-output" class="mt-3 p-3.5 rounded-lg bg-[#162032] border border-[#27354A] text-xs text-slate-300 font-mono-code leading-relaxed whitespace-pre-wrap select-all">
+                <!-- Dynamically generated -->
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#27354A] flex justify-between items-center">
+              <span class="text-[11px] text-slate-500">Eliminates repeat incident cycles</span>
+              <button onclick="copyWhyTree()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-medium text-xs rounded-lg transition flex items-center gap-1.5">
+                <i class="fa-regular fa-copy text-xs"></i> Copy Root-Cause Report
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: ACTIVE RECALL & SCENARIO LAB -->
+    <section id="tab-exam" class="hidden space-y-4">
+      <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27354A] pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-amber-950/50 border border-amber-800/40 text-amber-300">CompTIA & MD-102 Simulator</span>
+              <h2 class="text-sm font-semibold text-[#F8FAFC]">Scenario-Based Active Recall Lab</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Solve realistic enterprise incident scenarios; prevent knowledge degradation.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="quiz-score-badge" class="text-xs font-mono-code text-slate-400 bg-[#0B0F19] px-2.5 py-1 rounded border border-[#27354A]">Score: 0 / 5</span>
+            <button onclick="resetQuiz()" class="text-xs text-slate-500 hover:text-slate-300"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
+          </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 7: DEEP WORK SPRINT & BROWN NOISE -->
+    <section id="tab-deepflow" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="lg:col-span-2 bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-4 shadow-sm">
+          <div class="flex items-center justify-between border-b border-[#27354A] pb-3">
+            <div>
+              <h2 class="text-sm font-semibold text-[#F8FAFC]">Cal Newport Time-Blocked Cadence</h2>
+              <p class="text-xs text-slate-400">Fixed-schedule productivity to defend deep engineering capacity.</p>
+            </div>
+            <span class="text-xs text-[#86EFAC] font-mono-code bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded">4.5h Deep / Day</span>
+          </div>
+
+          <div class="space-y-2.5 text-xs">
+            <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-[#27354A]">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono-code text-slate-300">08:30 - 09:00 AM (30m)</span>
+                <span class="text-slate-500 font-medium">Morning Triage</span>
+              </div>
+              <h4 class="font-semibold text-slate-200">Queue Triage & Acknowledgement Loops</h4>
+              <p class="text-slate-400 mt-1 leading-relaxed">Establish top 3 deliverables; dispatch instant ticket receipt loops with committed diagnostic deadlines.</p>
+            </div>
+
+            <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-indigo-900/40">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono-code text-indigo-300 font-semibold">09:00 - 10:30 AM (90m)</span>
+                <span class="text-indigo-300 font-medium bg-indigo-950/60 border border-indigo-800/40 px-1.5 py-0.5 rounded text-[10px]">NEWPORT DEEP SPRINT #1</span>
+              </div>
+              <h4 class="font-semibold text-slate-100">Intune Policy Packaging & Python Log Tooling</h4>
+              <p class="text-slate-400 mt-1 leading-relaxed">All chat/email muted. Work on automated remediation scripts, device compliance baselines, and hardware runbooks.</p>
+            </div>
+
+            <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-[#27354A]">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono-code text-slate-300">11:00 - 11:30 AM (30m)</span>
+                <span class="text-slate-500 font-medium">Midday Sweep</span>
+              </div>
+              <h4 class="font-semibold text-slate-200">Question Consolidation & User Consultations</h4>
+              <p class="text-slate-400 mt-1 leading-relaxed">Batch user questions into single numbered diagnostic messages; process pending Entra ID access requests.</p>
+            </div>
+
+            <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-indigo-900/40">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono-code text-indigo-300 font-semibold">01:30 - 03:00 PM (90m)</span>
+                <span class="text-indigo-300 font-medium bg-indigo-950/60 border border-indigo-800/40 px-1.5 py-0.5 rounded text-[10px]">NEWPORT DEEP SPRINT #2</span>
+              </div>
+              <h4 class="font-semibold text-slate-100">Security+ Certification Lab & FIDO2 Cryptography</h4>
+              <p class="text-slate-400 mt-1 leading-relaxed">Hands-on WebAuthn ceremonies, threat simulation labs, and testing Gemini AI prompt routines.</p>
+            </div>
+
+            <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-[#27354A]">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono-code text-slate-300">04:30 - 05:00 PM (30m)</span>
+                <span class="text-amber-400/90 font-medium">Daily Closeout</span>
+              </div>
+              <h4 class="font-semibold text-slate-200">First-Principles Logging & Shutdown Ritual</h4>
+              <p class="text-slate-400 mt-1 leading-relaxed">Execute Newport's shutdown checklist, close open ticket loops, and cleanly exit work.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 text-center space-y-4 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Immersion Timer</span>
+              <span id="noise-indicator" class="text-[10px] font-mono-code text-slate-500">Noise: OFF</span>
+            </div>
+            
+            <div>
+              <div id="timer-display" class="text-5xl font-bold font-mono-code text-[#F8FAFC] tracking-tight">90:00</div>
+              <span id="timer-status-text" class="text-xs text-slate-400 mt-1 block">Newport 90m Sprint Ready</span>
+            </div>
+            
+            <div class="flex justify-center gap-1.5">
+              <button onclick="setTimerDuration(25)" class="px-2.5 py-1 bg-[#0B0F19] hover:bg-[#1E293B] text-xs text-slate-400 hover:text-slate-200 rounded border border-[#27354A] transition font-mono-code">25m</button>
+              <button onclick="setTimerDuration(50)" class="px-2.5 py-1 bg-[#0B0F19] hover:bg-[#1E293B] text-xs text-slate-400 hover:text-slate-200 rounded border border-[#27354A] transition font-mono-code">50m</button>
+              <button onclick="setTimerDuration(90)" class="px-2.5 py-1 bg-[#1E293B] text-xs text-slate-100 rounded border border-[#3B4B63] transition font-mono-code">90m Sprint</button>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-[#0B0F19] border border-[#27354A] flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-headphones text-slate-400"></i>
+                <span class="text-slate-300">Brown Noise Generator</span>
+              </div>
+              <button id="btn-toggle-noise" onclick="toggleBrownNoise()" class="px-2.5 py-1 text-[11px] bg-[#162032] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] transition">
+                Start Sound
+              </button>
+            </div>
+
+            <div class="flex justify-center gap-2 pt-1">
+              <button id="btn-timer-toggle" onclick="toggleTimer()" class="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 font-medium text-xs rounded-lg transition flex items-center gap-1.5">
+                <i class="fa-solid fa-play text-[10px]"></i> Start 90m Deep Block
+              </button>
+              <button onclick="resetTimer()" class="px-3 py-2 bg-[#0B0F19] hover:bg-[#1E293B] text-slate-400 hover:text-slate-200 text-xs rounded-lg border border-[#27354A] transition">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-[#162032] border border-[#27354A] rounded-xl p-4 text-center shadow-sm">
+            <span class="text-xs text-slate-400 block mb-2">Finished for the day? Protect your cognitive recovery.</span>
+            <button onclick="openShutdownModal()" class="w-full py-2 bg-amber-950/30 hover:bg-amber-900/40 text-amber-300 font-medium text-xs rounded-lg border border-amber-800/40 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-moon"></i> Execute Shutdown Ritual
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 8: MINTO PYRAMID & BLUF BRIEFING SUITE -->
+    <section id="tab-bluf" class="hidden space-y-4">
+      <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-5 shadow-sm">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300">Barbara Minto Executive Method</span>
+            <h2 class="text-sm font-semibold text-[#F8FAFC]">Bottom Line Up Front (BLUF) & S-C-Q-R Briefing Suite</h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Draft memos for CIOs, VPs, and ticket submitters with zero cognitive friction.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="space-y-3 bg-[#0B0F19] border border-[#27354A] p-4 rounded-xl">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Executive Archetype</label>
+              <select id="bluf-type" onchange="loadBlufTemplate()" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-slate-500">
+                <option value="hardware-approval">VP Request: VTC Hardware Replacement ($450)</option>
+                <option value="acknowledgement-loop">Acknowledgement Loop: High-Priority Ticket with SLA</option>
+                <option value="consolidated-questions">Question Consolidation: End-User Diagnostic Packet</option>
+                <option value="first-principles">First-Principles: Post-Mortem Incident Briefing</option>
+                <option value="custom">Blank Minto Template</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">1. Bottom Line Up Front (Sentence 1 Recommendation / Decision)</label>
+              <input type="text" id="bluf-bottomline" oninput="generateBlufText()" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">2. Situation & Complication (S-C)</label>
+              <textarea id="bluf-cause" oninput="generateBlufText()" rows="2" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">3. Resolution & Financial / Operational Impact</label>
+              <textarea id="bluf-nextstep" oninput="generateBlufText()" rows="2" class="w-full bg-[#162032] border border-[#27354A] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none"></textarea>
+            </div>
+          </div>
+
+          <div class="flex flex-col justify-between bg-[#0B0F19] border border-[#27354A] p-4 rounded-xl space-y-4">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-[#27354A]">
+                <span class="text-xs font-medium text-slate-400">Executive-Ready Clipboard Preview</span>
+                <span class="text-[10px] font-mono-code text-[#86EFAC] bg-emerald-950/40 border border-emerald-800/40 px-1.5 py-0.5 rounded">Minto / BLUF Compliant</span>
+              </div>
+              <div id="bluf-preview-box" class="mt-3 p-3.5 rounded-lg bg-[#162032] border border-[#27354A] text-xs text-slate-300 font-mono-code leading-relaxed whitespace-pre-wrap select-all">
+                <!-- Live generated -->
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#27354A] flex justify-end">
+              <button onclick="copyBlufToClipboard()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-medium text-xs rounded-lg transition flex items-center gap-1.5">
+                <i class="fa-regular fa-copy text-xs"></i> Copy Briefing
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 9: AI LOG DIAGNOSTIC (GEMINI 3 FLASH) -->
+    <section id="tab-gemini" class="hidden space-y-4">
+      <div class="bg-[#162032] border border-[#27354A] rounded-xl p-5 space-y-4 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27354A] pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300">Gemini 3 Flash</span>
+              <h2 class="text-sm font-semibold text-[#F8FAFC]">AI-Assisted Root Cause & Script Generator</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Parse unstructured client event logs, isolate true causes, and generate remediation code.</p>
+          </div>
+          <span class="text-xs text-slate-400 px-2 py-1 bg-[#0B0F19] border border-[#27354A] rounded-md font-mono-code">50% Log Parsing Reduction</span>
+        </div>
+
+        <div>
+          <span class="text-xs text-slate-500 block mb-1.5">Sample Enterprise Incidents:</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="loadSampleLog('intune-compliance')" class="px-2.5 py-1 text-xs bg-[#0B0F19] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] transition">
+              Intune BitLocker CSP (0x87D1041C)
+            </button>
+            <button onclick="loadSampleLog('conditional-access')" class="px-2.5 py-1 text-xs bg-[#0B0F19] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] transition">
+              Entra Sign-in 50074 (MFA Stale Device)
+            </button>
+            <button onclick="loadSampleLog('vtc-teamsroom')" class="px-2.5 py-1 text-xs bg-[#0B0F19] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] transition">
+              Teams Rooms EDID Handshake Drop
+            </button>
+            <button onclick="loadSampleLog('fido2-passkey')" class="px-2.5 py-1 text-xs bg-[#0B0F19] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] transition">
+              WebAuthn 0x80090029 (TPM Attestation)
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="space-y-3">
+            <label class="block text-xs text-slate-400">Raw Endpoint Telemetry or Error Trace:</label>
+            <textarea id="ai-log-input" rows="8" class="w-full bg-[#0B0F19] border border-[#27354A] text-slate-200 text-xs font-mono-code rounded-lg p-3 focus:outline-none focus:border-slate-500 leading-relaxed" placeholder="Paste event logs or errors here..."></textarea>
+
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400">Mode:</span>
+                <select id="ai-mode" class="bg-[#0B0F19] border border-[#27354A] text-slate-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none">
+                  <option value="triage">Root Cause & Remediation Steps</option>
+                  <option value="powershell">Generate Production PowerShell Script</option>
+                  <option value="bluf-incident">Draft Executive Post-Mortem Memo</option>
+                </select>
+              </div>
+
+              <button id="btn-run-ai" onclick="runGeminiTriage()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-medium text-xs rounded-lg transition flex items-center gap-1.5">
+                <i class="fa-solid fa-bolt text-xs"></i> Run Triage
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-xs text-slate-400">Diagnostic Synthesis:</label>
+                <button onclick="copyAiOutput()" class="text-xs text-slate-500 hover:text-slate-300 flex items-center gap-1">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+              </div>
+              <div id="ai-output-box" class="h-64 overflow-y-auto bg-[#0B0F19] border border-[#27354A] rounded-lg p-3 text-xs font-mono-code text-slate-300 leading-relaxed">
+Click "Run Triage" or load an enterprise incident sample.
+              </div>
+            </div>
+
+            <p class="text-[11px] text-slate-500 leading-relaxed">
+              Safe offline triage enabled. Provide an optional API key to connect live to Gemini.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Sticky Footer -->
+  <footer class="subtle-border-t py-4 text-xs text-slate-400 bg-[#0F172A] mt-auto">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="text-slate-400">FY27 EUC, Security, AI & Communication Development Framework</div>
+      <div class="flex items-center gap-4 text-slate-300 font-mono-code">
+        <span>38 Modules</span>
+        <span>418 Hours (346h Deep • 72h Quiet Queue)</span>
+        <span id="footer-shutdown-state" class="text-slate-400">Day Active</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    const STORAGE_KEY_MODULES = "euc_ops_modules_v2";
+    const STORAGE_KEY_QUIZ = "euc_ops_quiz_v2";
+    const STORAGE_KEY_DRILLS = "euc_ops_drills_v2";
+
+    const INITIAL_MODULES = [
+      // PIL-01: Endpoint Management
+      { id: "INIT-01", pillar: "PIL-01", title: "Action: Identity & Access Management (Entra ID)", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/", hours: 20, status: "Not Started", deliverable: "Document standard user lifecycle triage; eliminate privilege bloat in role assignment." },
+      { id: "INIT-02", pillar: "PIL-01", title: "Action: Endpoint Hygiene (Microsoft Intune & Azure)", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started", hours: 25, status: "Not Started", deliverable: "Zero non-compliant site endpoints lingering beyond SLA window; routine compliance review reports." },
+      { id: "INIT-03", pillar: "PIL-01", title: "Action: Physical & VTC Hardware Triage Runbooks", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/microsoftteams/devices/", hours: 20, status: "Not Started", deliverable: "Reduced escalation rate by 30%; reproducible hardware triage runbooks for common room failures; support Cremorne migration staging." },
+      { id: "MOD-01",  pillar: "PIL-01", title: "Microsoft 365 Certified: Endpoint Administrator (MD-102)", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/credentials/certifications/m365-endpoint-administrator-associate/", hours: 30, status: "Not Started", deliverable: "Deploy, configure, secure, and monitor client devices in an enterprise environment." },
+      { id: "MOD-02",  pillar: "PIL-01", title: "Managing Identity and Access with Microsoft Entra ID", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.linkedin.com/learning/topics/microsoft-entra-id", hours: 12, status: "Not Started", deliverable: "Enterprise user provisioning, directory role architecture, and SSO." },
+      { id: "MOD-03",  pillar: "PIL-01", title: "Microsoft Intune & Entra ID Masterclass", category: "Video Lecture", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/mem/intune/", hours: 6, status: "Not Started", deliverable: "Automated enrollment, compliance policies, dynamic grouping, and Conditional Access." },
+      { id: "MOD-04",  pillar: "PIL-01", title: "Unified Endpoint Management Architecture Explained", category: "Video Lecture", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/entra/architecture/", hours: 3, status: "Not Started", deliverable: "MDM communication protocols (WNS/APNs), client agent sync, and policy reconciliation." },
+      { id: "MOD-05",  pillar: "PIL-01", title: "Ann Johnson: Cybersecurity and the Future of Work", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://podcasts.apple.com/us/podcast/afternoon-cyber-tea-with-ann-johnson/id1484676119", hours: 1, status: "Not Started", deliverable: "Zero-trust architectural enforcement across distributed workforces." },
+      { id: "MOD-06",  pillar: "PIL-01", title: "Sami Laiho: Modern OS Security and the Admin Trap", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://samilaiho.com/", hours: 1, status: "Not Started", deliverable: "Risks of over-privileged accounts and why least-privilege protects the estate." },
+      { id: "MOD-07",  pillar: "PIL-01", title: "Rachel Botsman: We've Stopped Trusting Institutions", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.ted.com/talks/rachel_botsman_we_ve_stopped_trusting_institutions_and_started_trusting_strangers", hours: 1, status: "Not Started", deliverable: "Frictionless, reliable identity systems to maintain human trust." },
+
+      // PIL-02: Security & Compliance
+      { id: "INIT-04", pillar: "PIL-02", title: "Action: CompTIA Security+ (SY0-701) Exam Readiness", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://www.comptia.org/certifications/security", hours: 40, status: "In Progress", deliverable: "Complete modular exam objectives; achieve Security+ certification credential." },
+      { id: "INIT-05", pillar: "PIL-02", title: "Action: Modern Authentication & Passkey Migration", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-enable-passkey-fido2", hours: 15, status: "Not Started", deliverable: "Execution of user migration pilots; resolution of authentication handoff errors." },
+      { id: "INIT-06", pillar: "PIL-02", title: "Action: Continuous Endpoint Hardening Baseline", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/mem/intune/protect/security-baselines", hours: 20, status: "Not Started", deliverable: "Zero unpatched critical vulnerabilities past patch cycle window; 100% disk encryption compliance." },
+      { id: "MOD-08",  pillar: "PIL-02", title: "Professor Messer’s CompTIA Security+ (SY0-701) Course", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.professormesser.com/security-plus/sy0-701/sy0-701-video-training-course/", hours: 35, status: "In Progress", deliverable: "Domain-by-domain coverage of threats, architecture, and operational security controls." },
+      { id: "MOD-09",  pillar: "PIL-02", title: "Passkeys & FIDO2 Deep Dive: WebAuthn Mechanics", category: "Hands-on Lab", workType: "Deep", quietQueue: false, url: "https://fidoalliance.org/passkeys/", hours: 4, status: "Not Started", deliverable: "WebAuthn ceremonies, public-key authentication pairs, TPM secure enclaves, and tokens." },
+      { id: "MOD-10",  pillar: "PIL-02", title: "CompTIA Security+ Complete Training & Exam Prep", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.udemy.com/topic/comptia-security-plus/", hours: 20, status: "Not Started", deliverable: "Vulnerability laboratories, scenario-based practice, and technical exam reviews." },
+      { id: "MOD-11",  pillar: "PIL-02", title: "Practical Cybersecurity for IT Professionals", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.linkedin.com/learning/paths/become-a-cybersecurity-specialist", hours: 15, status: "Not Started", deliverable: "Enterprise compliance auditing, hardening scripts, and local incident containment." },
+      { id: "MOD-12",  pillar: "PIL-02", title: "Lorrie Cranor: What's Wrong with Passwords?", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.ted.com/talks/lorrie_faith_cranor_what_s_wrong_with_your_pa_w0rd", hours: 1, status: "Not Started", deliverable: "Cognitive load and human behavior in credential management." },
+      { id: "MOD-13",  pillar: "PIL-02", title: "Keren Elazari: Hackers: The Internet's Immune System", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.ted.com/talks/keren_elazari_hackers_the_internet_s_immune_system", hours: 1, status: "Not Started", deliverable: "Vulnerability discovery cycles and why proactive patching serves as frontline defense." },
+      { id: "MOD-14",  pillar: "PIL-02", title: "Bruce Schneier: The Security Mirage", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.ted.com/talks/bruce_schneier_the_security_mirage", hours: 1, status: "Not Started", deliverable: "Distinguishing superficial compliance checkboxes from genuine operational risk reduction." },
+
+      // PIL-03: Automation, AI & Analytics
+      { id: "INIT-07", pillar: "PIL-03", title: "Action: AI-Assisted Admin & Diagnostic Prompting", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://ai.google.dev/gemini-api/docs/prompting-strategies", hours: 15, status: "Not Started", deliverable: "50% reduction in log parsing time; standardized incident post-mortem summaries." },
+      { id: "INIT-08", pillar: "PIL-03", title: "Action: Python Scripting for Endpoint Automation", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://docs.python.org/3/tutorial/", hours: 25, status: "Not Started", deliverable: "Automated script library for common Tier-1 fixes; elimination of manual bulk tasks." },
+      { id: "INIT-09", pillar: "PIL-03", title: "Action: Operational Data Analytics & Reporting", category: "Core Initiative", workType: "Deep", quietQueue: false, url: "https://learn.microsoft.com/en-us/power-bi/create-reports/", hours: 20, status: "Not Started", deliverable: "Proactive ticket trend dashboards; data-backed hardware refresh recommendations." },
+      { id: "MOD-15",  pillar: "PIL-03", title: "Introduction to Analytics and Artificial Intelligence", category: "Video Lecture", workType: "Deep", quietQueue: false, url: "https://www.youtube.com/results?search_query=Introduction+to+Analytics+and+Artificial+Intelligence", hours: 3, status: "Not Started", deliverable: "Transforming messy operational and device telemetry into structured decision dashboards." },
+      { id: "MOD-16",  pillar: "PIL-03", title: "You NEED to Learn AI Automation Now (Beginners Guide)", category: "Video Lecture", workType: "Deep", quietQueue: false, url: "https://www.youtube.com/results?search_query=You+NEED+to+Learn+AI+Automation+Now+Full+Beginners+Guide", hours: 3, status: "Not Started", deliverable: "AI agents, task orchestration, and linking language models to local scripts." },
+      { id: "MOD-17",  pillar: "PIL-03", title: "Leverage AI in Data Analytics: Automation to Storytelling", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.linkedin.com/learning/search?keywords=Leverage%20AI%20in%20Data%20Analytics%3A%20From%20Automation%20to%20Storytelling", hours: 10, status: "Not Started", deliverable: "Extracting operational insights from IT data and communicating them to leadership." },
+      { id: "MOD-18",  pillar: "PIL-03", title: "AI-Powered Data Analysis: A Practical Introduction", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.coursera.org/search?query=AI-Powered%20Data%20Analysis%3A%20A%20Practical%20Introduction", hours: 15, status: "Not Started", deliverable: "Formulating analytical workflows and drafting data-handling Python scripts." },
+      { id: "MOD-19",  pillar: "PIL-03", title: "Reed Hastings: Why AI Is an Even Bigger Deal", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.ted.com/talks/reed_hastings_why_ai_is_an_even_bigger_deal_than_you_think", hours: 1, status: "Not Started", deliverable: "AI-driven efficiency as a catalyst for rapid enterprise shifts." },
+      { id: "MOD-20",  pillar: "PIL-03", title: "Gina Raimondo: A Plan to Stop AI Automating Our Decline", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.ted.com/talks/gina_raimondo_a_plan_to_stop_ai_from_automating_our_decline", hours: 1, status: "Not Started", deliverable: "Human-in-the-loop implementation ensuring technology augments professionals." },
+      { id: "MOD-21",  pillar: "PIL-03", title: "Advait Sarkar: How to Stop AI Killing Critical Thinking", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.ted.com/talks/advait_sarkar_how_to_stop_ai_from_killing_your_critical_thinking", hours: 1, status: "Not Started", deliverable: "Generative tools as cognitive collaborators to ask deeper diagnostic questions." },
+      { id: "MOD-22",  pillar: "PIL-03", title: "Anthony Goldbloom: The Jobs a Robot Will and Won't Do", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.ted.com/talks/anthony_goldbloom_the_jobs_we_will_and_won_t_lose_to_machines", hours: 1, status: "Not Started", deliverable: "Why automation thrives on structured tasks while complex troubleshooting needs human judgment." },
+
+      // PIL-04: Structured Systems & Communication
+      { id: "MOD-23",  pillar: "PIL-04", title: "Thinking in Systems: A Primer (Donella Meadows)", category: "Book", workType: "Deep", quietQueue: false, url: "https://books.google.com/books/about/Thinking_in_Systems.html?id=6aMfnwEACAAJ", hours: 10, status: "Not Started", deliverable: "Dissecting complex environments, identifying leverage points, avoiding systemic failure." },
+      { id: "MOD-24",  pillar: "PIL-04", title: "The Pyramid Principle (Barbara Minto)", category: "Book", workType: "Deep", quietQueue: false, url: "https://blackwells.co.uk/bookshop/product/The-Pyramid-Principle-by-Barbara-Minto/9781292763255", hours: 12, status: "Not Started", deliverable: "Structuring technical recommendations and executive memos for leadership." },
+      { id: "MOD-25",  pillar: "PIL-04", title: "The Goal: A Process of Ongoing Improvement (Goldratt)", category: "Book", workType: "Deep", quietQueue: false, url: "https://books.google.com/books/about/The_Goal.html?id=0T5EAAAAMAAJ", hours: 10, status: "Not Started", deliverable: "Theory of Constraints for identifying and eliminating systemic bottlenecks." },
+      { id: "MOD-26",  pillar: "PIL-04", title: "Systems Thinking for IT Professionals", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.linkedin.com/learning/systems-thinking-for-it-professionals", hours: 8, status: "Not Started", deliverable: "Root-cause diagnosis and objective problem-solving across engineering architectures." },
+      { id: "MOD-27",  pillar: "PIL-04", title: "Critical Thinking for Better Judgment & Decision-Making", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.linkedin.com/learning/critical-thinking-for-better-judgment-and-decision-making", hours: 6, status: "Not Started", deliverable: "Testing assumptions, isolating technical issues, and evaluating risks without cognitive bias." },
+      { id: "MOD-28",  pillar: "PIL-04", title: "Tech Career Skills: Effective Technical Communication", category: "Formal Course", workType: "Deep", quietQueue: false, url: "https://www.linkedin.com/learning/tech-career-skills-effective-technical-communication", hours: 5, status: "Not Started", deliverable: "Translating dense engineering metrics into actionable business insights." },
+      { id: "MOD-29",  pillar: "PIL-04", title: "Dr. Willy Donaldson: Systems Thinking for Leadership", category: "Video Keynote", workType: "Shallow", quietQueue: true, url: "https://www.youtube.com/watch?v=oF5fp8SOFX0", hours: 1, status: "Not Started", deliverable: "Understanding complex socio-technical systems to minimize operational friction." }
+    ];
+
+    let modules = JSON.parse(JSON.stringify(INITIAL_MODULES));
+    let quizAnswers = {};
+    let completedMentalModelDrills = {};
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_MODULES, JSON.stringify(modules));
+        localStorage.setItem(STORAGE_KEY_QUIZ, JSON.stringify(quizAnswers));
+        localStorage.setItem(STORAGE_KEY_DRILLS, JSON.stringify(completedMentalModelDrills));
+      } catch (e) {
+        console.warn("LocalStorage save throttled", e);
+      }
+    }
+
+    function loadSavedState() {
+      try {
+        const savedModules = localStorage.getItem(STORAGE_KEY_MODULES);
+        if (savedModules) {
+          const parsed = JSON.parse(savedModules);
+          if (Array.isArray(parsed) && parsed.length === INITIAL_MODULES.length) {
+            modules = parsed;
+          }
+        }
+        const savedQuiz = localStorage.getItem(STORAGE_KEY_QUIZ);
+        if (savedQuiz) quizAnswers = JSON.parse(savedQuiz);
+
+        const savedDrills = localStorage.getItem(STORAGE_KEY_DRILLS);
+        if (savedDrills) completedMentalModelDrills = JSON.parse(savedDrills);
+      } catch (e) {
+        console.warn("Could not load localStorage, using defaults", e);
+      }
+    }
+
+    const TRIAGE_DATA = [
+      {
+        id: "ca-failure",
+        name: "Conditional Access Block (50074 / 53003)",
+        symptom: "User blocked from M365 with 'You cannot get there from here' or 'Device Not Compliant'.",
+        protocol: [
+          "1. Inspect Entra Sign-in Logs: Check 'Conditional Access' tab for the specific failing policy GUID.",
+          "2. Verify Device ID in sign-in payload matches active Entra object (`dsregcmd /status`).",
+          "3. Confirm if Primary Refresh Token (PRT) is present: `AzureAdPrt : YES`.",
+          "4. If PRT is NO or device is unmanaged, evaluate whether user is bypassing Intune enrollment."
+        ],
+        resolution: "If device is compliant in Intune but Entra shows stale state, trigger manual synchronization. If PRT is invalid, execute Workplace Join re-registration cycle.",
+        cliCommand: `dsregcmd /status
+# Check Intune Sync scheduled task trigger
+Get-ScheduledTask | Where-Object {$_.TaskPath -like "*EnterpriseMgmt*"} | Start-ScheduledTask`,
+        eventCheck: "Inspect Microsoft-Windows-AAD/Operational Event 1098 (Token Broker failure).",
+        blufExample: "BLUF: User john.doe@corp blocked by CA Policy 'Require-Compliant-Device' due to stale MDM sync (>14d). Triggered sync cycle; access restored in 12m without password reset."
+      },
+      {
+        id: "intune-bitlocker",
+        name: "Intune BitLocker CSP Escrow (0x87D1041C)",
+        symptom: "Host reports non-compliant; BitLocker key failed to escrow to Entra ID tenant.",
+        protocol: [
+          "1. Inspect TPM readiness: verify TPM 2.0 is initialized and PCR[7] binding is supported.",
+          "2. Query BitLocker status: verify protection is on and KeyProtector ID exists.",
+          "3. Query MDM Diagnostics: `mdmdiagnosticstool.exe -area DeviceEnrollment;DeviceProvisioning`.",
+          "4. Force key backup to Entra ID via `Backup-BitLockerKeyProtector` cmdlet."
+        ],
+        resolution: "Trigger PowerShell key re-escrow; verify recovery key appears in Entra ID device blade; force Intune compliance re-evaluation.",
+        cliCommand: `$KeyID = (Get-BitLockerVolume -MountPoint C:).KeyProtector | Where-Object {$_.KeyProtectorType -eq 'RecoveryPassword'}
+Backup-BitLockerKeyProtector -MountPoint C: -KeyProtectorId $KeyID.KeyProtectorId
+# Force Intune compliance cycle
+Start-Process "ms-device-enrollment:?mode=auto"`,
+        eventCheck: "Inspect Microsoft-Windows-BitLocker-API/Management Event 846 (Recovery key successfully backed up).",
+        blufExample: "BLUF: Host NYC-LT-881 remediated non-compliance. Re-escrowed BitLocker key to Entra ID; client compliant within SLA."
+      },
+      {
+        id: "vtc-blackout",
+        name: "Teams Rooms Blackout / USB Suspension",
+        symptom: "Front-of-room display black, touch controller disconnects after 30 mins, or HDMI ingest drops.",
+        protocol: [
+          "1. Inspect physical link & EDID: verify active EDID emulator is passing 1080p/60Hz to display.",
+          "2. Check USB power suspension: verify Windows is not putting USB Hub or capture card to sleep.",
+          "3. Inspect Teams Rooms service: check status of `TeamsRoomsLifecycle` and `SkypeRoomManager`.",
+          "4. Verify HDMI ingest status via Teams Admin Center peripheral status API."
+        ],
+        resolution: "Disable USB selective suspend on all hubs via Registry/PowerShell; power-cycle compute; lock display CEC to Always On.",
+        cliCommand: `# Disable USB Selective Suspend across system
+Set-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\USB' -Name 'DisableSuccessiveInteractivity' -Value 1 -ErrorAction SilentlyContinue
+# Check Teams Room service
+Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force`,
+        eventCheck: "Inspect Microsoft-Skype-RoomSystem/Operational Event 2001 (Peripheral USB disconnect).",
+        blufExample: "BLUF: Boardroom VTC restored. Disabled USB selective suspend causing capture card drop; verified 24-hr stability."
+      },
+      {
+        id: "fido2-passkey",
+        name: "FIDO2 / WebAuthn TPM Attestation Error",
+        symptom: "User cannot enroll hardware security key or Windows Hello passkey; Error 0x80090029.",
+        protocol: [
+          "1. Verify TPM attestation capability in client: run `tpm.msc` and check EK (Endorsement Key) certificate.",
+          "2. Review Entra ID FIDO2 policy targeting: verify user's group is explicitly permitted in Authentication Methods.",
+          "3. Inspect WebAuthn ceremony logs: check if browser or local AV software intercepts WebAuthn APIs.",
+          "4. Verify attestation requirement: if tenant requires Direct Attestation, ensure key vendor is allowed."
+        ],
+        resolution: "Add user group to Entra FIDO2 method policy; clear corrupted NGC container (`certutil -DeleteNGCContainer`); complete enrollment.",
+        cliCommand: `certutil -csp "Microsoft Platform Crypto Provider" -keyList
+# Verify WebAuthn API availability
+Get-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\PassportForWork"`,
+        eventCheck: "Inspect Microsoft-Windows-WebAuthN/Operational Event 1102 (TPM credential creation failure).",
+        blufExample: "BLUF: Passkey enrollment unblocked for Finance lead. Re-initialized corrupted NGC credential container; user successfully passwordless."
+      },
+      {
+        id: "bulk-telemetry",
+        name: "Mass BSOD / Update Failure Crash Triage",
+        symptom: "Multiple site endpoints crash (Bugcheck 0x9F / 0x133) following cumulative update ring rollout.",
+        protocol: [
+          "1. Ingest crash memory dumps or event logs from affected devices using automated script.",
+          "2. Query event logs for Event 41 (Kernel-Power) and bugcheck parameters.",
+          "3. Correlate impacted hardware models against specific OEM graphics or audio driver releases.",
+          "4. Pause the assigned Intune Update Ring to halt rollout to secondary rings."
+        ],
+        resolution: "Pause Intune deployment ring; roll back driver via device configuration policy; publish incident advisory.",
+        cliCommand: `# Extract top 5 failing system event logs
+Get-WinEvent -FilterHashtable @{LogName='System'; Level=1,2} -MaxEvents 50 | 
+Group-Object ProviderName | Sort-Object Count -Descending | Select-Object -First 5 Count, Name`,
+        eventCheck: "Inspect System Log Event 1001 (BugCheck memory dump created).",
+        blufExample: "BLUF: Paused Intune Update Ring 2 for 45 site endpoints due to Realtek audio driver BSOD (0x9F). Zero secondary outages caused."
+      }
+    ];
+
+    let activeTriageIndex = 0;
+
+    const QUIZ_QUESTIONS = [
+      {
+        id: "q1",
+        title: "MD-102: Intune vs GPO Policy Conflict",
+        scenario: "An enterprise Windows 11 device is hybrid-joined. A traditional on-premises Group Policy sets the BitLocker encryption algorithm to XTS-AES 128-bit, while an Intune Endpoint Security policy requires XTS-AES 256-bit. By default, which policy takes precedence?",
+        options: [
+          "Intune always overrides Group Policy in all scenarios.",
+          "Group Policy takes precedence unless the 'MDM Wins Over GP' (ControlPolicyCollision) policy is configured in Intune.",
+          "The device will fail compliance and refuse to encrypt.",
+          "The setting that was applied most recently wins."
+        ],
+        correct: 1,
+        explanation: "Correct! In Windows, Group Policy takes precedence over MDM by default. To enforce Intune settings over GPO, you must deploy the policy setting 'MDM Wins Over GP' (which sets HKLM:\\Software\\Microsoft\\PolicyManager\\Current\\Device\\Control\\PolicyManager\\Config\\Update\\MDMWinGPO to 1)."
+      },
+      {
+        id: "q2",
+        title: "Security+ SY0-701: Modern Authentication & WebAuthn",
+        scenario: "During a FIDO2 passkey registration ceremony, the authenticator creates a keypair. Where is the private key stored, and what does the Relying Party (Entra ID) receive?",
+        options: [
+          "The private key is stored on the Relying Party's server encrypted with AES-256.",
+          "The private key is escrowed in Entra ID, and the public key is kept in the user's browser cache.",
+          "The private key never leaves the client authenticator's secure hardware (TPM/Security Key); only the public key and credential ID are sent to the Relying Party.",
+          "Both public and private keys are stored on the client device's file system."
+        ],
+        correct: 2,
+        explanation: "Correct! FIDO2/WebAuthn is asymmetric cryptography. The private key never leaves the hardware security boundary (TPM or FIDO2 chip). The Relying Party receives only the public key and credential ID to verify subsequent cryptographic signatures."
+      },
+      {
+        id: "q3",
+        title: "Entra ID / Conditional Access: PRT & Evaluation",
+        scenario: "A user reports they are prompted for MFA every 10 minutes when opening Outlook on a corporate laptop. The sign-in log shows Error 50074. What is the most probable architectural root cause?",
+        options: [
+          "The user's password has expired in Active Directory.",
+          "The device lacks a valid Primary Refresh Token (PRT) because the device was deleted or disabled in Entra ID, triggering continuous token broker step-up challenges.",
+          "The user has exceeded their daily OneDrive download quota.",
+          "The monitor resolution is too low to render the modern authentication webview."
+        ],
+        correct: 1,
+        explanation: "Correct! When a device's Entra registration becomes orphaned or invalid, the client Token Broker cannot acquire a PRT. Cloud apps fallback to browser authentication without single sign-on persistence, causing continuous MFA loops."
+      },
+      {
+        id: "q4",
+        title: "EUC Automation: Python Telemetry Sanitization",
+        scenario: "You are writing a Python script to parse Intune diagnostic CSV exports containing user UPNs, serial numbers, and IP addresses before sharing logs with third-party vendor support. Which engineering principle applies?",
+        options: [
+          "Upload raw CSV directly to a public LLM prompt.",
+          "Apply data minimization and pseudonymous hashing to UPNs and private IP addresses prior to transmission.",
+          "Delete the file because logs cannot be parsed with Python.",
+          "Convert all text to uppercase to prevent case-sensitivity bugs."
+        ],
+        correct: 1,
+        explanation: "Correct! Security and privacy governance requires data minimization. Sensitive telemetry (PII like UPNs and internal IP spaces) should be tokenized or hashed before export to third parties or cloud analysis."
+      },
+      {
+        id: "q5",
+        title: "Systems Thinking: Theory of Constraints",
+        scenario: "A support team resolves 100 password reset tickets daily. The manager wants to hire 2 more technicians. Applying Eliyahu Goldratt's Theory of Constraints, what is the high-leverage intervention?",
+        options: [
+          "Hire 4 technicians instead of 2 to clear tickets faster.",
+          "Eliminate the constraint entirely by deploying Self-Service Password Reset (SSPR) and Passkeys, removing human labor from the bottleneck.",
+          "Instruct technicians to type faster and shorten ticket notes.",
+          "Stop answering support calls after 2:00 PM."
+        ],
+        correct: 1,
+        explanation: "Correct! Under the Theory of Constraints, throwing more labor at a structural bottleneck is wasteful. The high-leverage systemic intervention is to eliminate the root cause through self-service automation and passwordless authentication."
+      }
+    ];
+
+    function switchTab(tabId) {
+      const tabs = ['dashboard', 'roadmap', 'mentalmodels', 'triage', 'fivewhys', 'exam', 'deepflow', 'bluf', 'gemini'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (!btn || !el) return;
+        if (t === tabId) {
+          el.classList.remove('hidden');
+          btn.classList.add('tab-active');
+        } else {
+          el.classList.add('hidden');
+          btn.classList.remove('tab-active');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateMetrics() {
+      const totalItems = modules.length;
+      const completedItems = modules.filter(m => m.status === 'Completed').length;
+
+      const totalHours = modules.reduce((sum, m) => sum + m.hours, 0);
+      const completedHours = modules.filter(m => m.status === 'Completed').reduce((sum, m) => sum + m.hours, 0);
+
+      const deepHours = modules.filter(m => m.workType === 'Deep').reduce((sum, m) => sum + m.hours, 0);
+      const deepRatio = totalHours > 0 ? Math.round((deepHours / totalHours) * 100) : 0;
+
+      const percent = totalHours > 0 ? Math.round((completedHours / totalHours) * 100) : 0;
+
+      document.getElementById('metric-deep-hours').innerText = deepHours;
+      document.getElementById('metric-deep-bar').style.width = `${deepRatio}%`;
+      document.getElementById('quick-deep-ratio').innerText = `${deepRatio}% Deep`;
+
+      document.getElementById('metric-percent-complete').innerText = `${percent}%`;
+      document.getElementById('metric-counts').innerText = `(${completedItems}/${totalItems} done)`;
+      document.getElementById('metric-progress-bar').style.width = `${percent}%`;
+      document.getElementById('metric-completed-hours').innerText = `${completedHours} hrs completed (${totalHours - completedHours} remain)`;
+      document.getElementById('quick-progress-stat').innerText = `${percent}% Done`;
+
+      const pillars = ['PIL-01', 'PIL-02', 'PIL-03', 'PIL-04'];
+      pillars.forEach((p, idx) => {
+        const pNum = idx + 1;
+        const pItems = modules.filter(m => m.pillar === p);
+        const pHours = pItems.reduce((s, m) => s + m.hours, 0);
+        const pCompletedHours = pItems.filter(m => m.status === 'Completed').reduce((s, m) => s + m.hours, 0);
+        const pPct = pHours > 0 ? Math.round((pCompletedHours / pHours) * 100) : 0;
+
+        document.getElementById(`p${pNum}-hrs`).innerText = pHours;
+        document.getElementById(`p${pNum}-items`).innerText = pItems.length;
+        document.getElementById(`p${pNum}-progress-badge`).innerText = `${pPct}%`;
+      });
+
+      renderActiveFocus();
+      renderQuietQueuePreview();
+    }
+
+    function renderActiveFocus() {
+      const container = document.getElementById('active-focus-container');
+      container.innerHTML = '';
+
+      let focusItems = modules.filter(m => m.status === 'In Progress');
+      if (focusItems.length < 3) {
+        const deepInit = modules.filter(m => m.category === 'Core Initiative' && m.status === 'Not Started');
+        focusItems = focusItems.concat(deepInit).slice(0, 3);
+      }
+
+      focusItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "p-3 rounded-lg bg-[#0B0F19] border border-[#27354A] flex items-center justify-between text-xs";
+        
+        let statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] text-slate-400 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Pending</span>`;
+        if (item.status === "In Progress") {
+          statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] text-amber-300 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Sprinting</span>`;
+        } else if (item.status === "Completed") {
+          statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] text-[#86EFAC] font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-[#86EFAC]"></span> Done</span>`;
+        }
+
+        const workTag = item.workType === 'Deep' 
+          ? `<span class="text-[9px] font-mono-code px-1.5 py-0.5 rounded bg-indigo-950/60 border border-indigo-800/40 text-indigo-300">Deep</span>`
+          : `<span class="text-[9px] font-mono-code px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-400">Quiet Queue</span>`;
+
+        card.innerHTML = `
+          <div class="space-y-0.5 max-w-[70%]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono-code text-[11px] text-slate-400">${item.id}</span>
+              ${workTag}
+              <span class="font-medium text-slate-200 truncate">${item.title}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 truncate">${item.deliverable}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="font-mono-code text-slate-400 text-xs">${item.hours}h</span>
+            ${statusBadge}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderQuietQueuePreview() {
+      const container = document.getElementById('quiet-queue-preview');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const quietItems = modules.filter(m => m.quietQueue).slice(0, 3);
+      quietItems.forEach(item => {
+        const row = document.createElement('a');
+        row.href = item.url;
+        row.target = "_blank";
+        row.rel = "noopener noreferrer";
+        row.className = "p-2.5 rounded-lg bg-[#0B0F19] hover:bg-[#1E293B] border border-[#27354A] flex items-center justify-between text-slate-300 transition block";
+        row.innerHTML = `
+          <div class="truncate pr-2">
+            <div class="font-medium text-slate-200 truncate">${item.title}</div>
+            <span class="text-[10px] text-slate-500 font-mono-code">${item.id} • ${item.hours}h Keynote Talk</span>
+          </div>
+          <i class="fa-solid fa-play text-[10px] text-amber-400 shrink-0"></i>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderRoadmap() {
+      const tbody = document.getElementById('roadmap-table-body');
+      tbody.innerHTML = '';
+
+      const query = document.getElementById('module-search').value.toLowerCase().trim();
+      const pillarFilter = document.getElementById('filter-pillar').value;
+      const workFilter = document.getElementById('filter-worktype').value;
+      const statusFilter = document.getElementById('filter-status').value;
+
+      const filtered = modules.filter(m => {
+        const matchesQuery = m.id.toLowerCase().includes(query) ||
+                             m.title.toLowerCase().includes(query) ||
+                             m.deliverable.toLowerCase().includes(query);
+        const matchesPillar = pillarFilter === 'ALL' || m.pillar === pillarFilter;
+        
+        let matchesWork = true;
+        if (workFilter === 'Deep') matchesWork = m.workType === 'Deep';
+        if (workFilter === 'Quiet') matchesWork = m.quietQueue === true;
+
+        const matchesStatus = statusFilter === 'ALL' || m.status === statusFilter;
+
+        return matchesQuery && matchesPillar && matchesWork && matchesStatus;
+      });
+
+      document.getElementById('filter-count-badge').innerText = `${filtered.length} of ${modules.length}`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-500">No matching items found.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[#1E293B]/40 transition";
+
+        let statusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#0B0F19] border border-[#27354A] text-slate-400"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Not Started</span>`;
+        if (m.status === "In Progress") {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#0B0F19] border border-[#27354A] text-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> In Progress</span>`;
+        } else if (m.status === "Completed") {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#0B0F19] border border-[#27354A] text-[#86EFAC]"><span class="w-1.5 h-1.5 rounded-full bg-[#86EFAC]"></span> Done</span>`;
+        }
+
+        const workBadge = m.quietQueue
+          ? `<span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-amber-950/40 border border-amber-800/40 text-amber-300 flex items-center justify-center gap-1"><i class="fa-solid fa-mug-hot text-[9px]"></i> Quiet Queue</span>`
+          : `<span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-indigo-950/60 border border-indigo-800/40 text-indigo-300">Deep Sprint</span>`;
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3.5 font-mono-code text-slate-400 text-xs">${m.id}</td>
+          <td class="py-2.5 px-3.5 font-mono-code text-slate-400 text-xs">${m.pillar}</td>
+          <td class="py-2.5 px-3.5">
+            <div class="font-medium text-slate-200">${m.title}</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">${m.deliverable}</div>
+          </td>
+          <td class="py-2.5 px-3.5 text-slate-400 text-xs">${m.category}</td>
+          <td class="py-2.5 px-3.5 text-center">${workBadge}</td>
+          <td class="py-2.5 px-3.5 text-center font-mono-code text-slate-300">${m.hours}h</td>
+          <td class="py-2.5 px-3.5 text-center">
+            <button onclick="cycleStatus('${m.id}')" class="transition hover:opacity-80 active:scale-95" title="Click to cycle status">
+              ${statusBadge}
+            </button>
+          </td>
+          <td class="py-2.5 px-3.5 text-right">
+            <a href="${m.url}" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-200 text-xs transition">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function cycleStatus(id) {
+      const item = modules.find(m => m.id === id);
+      if (!item) return;
+
+      if (item.status === "Not Started") {
+        item.status = "In Progress";
+        showToast(`Started: ${item.id}`, 'info');
+      } else if (item.status === "In Progress") {
+        item.status = "Completed";
+        showToast(`Completed: ${item.id}`, 'success');
+      } else {
+        item.status = "Not Started";
+        showToast(`Reset: ${item.id}`, 'info');
+      }
+
+      saveState();
+      updateMetrics();
+      renderRoadmap();
+    }
+
+    function applyQuickFilter(type) {
+      document.getElementById('module-search').value = '';
+      if (type === 'ALL') {
+        document.getElementById('filter-pillar').value = 'ALL';
+        document.getElementById('filter-worktype').value = 'ALL';
+        document.getElementById('filter-status').value = 'ALL';
+      } else if (type === 'DEEP') {
+        document.getElementById('filter-pillar').value = 'ALL';
+        document.getElementById('filter-worktype').value = 'Deep';
+        document.getElementById('filter-status').value = 'ALL';
+      } else if (type === 'QUIET_QUEUE') {
+        document.getElementById('filter-pillar').value = 'ALL';
+        document.getElementById('filter-worktype').value = 'Quiet';
+        document.getElementById('filter-status').value = 'ALL';
+      } else if (type === 'INITIATIVES') {
+        document.getElementById('filter-pillar').value = 'ALL';
+        document.getElementById('filter-worktype').value = 'ALL';
+        document.getElementById('filter-status').value = 'ALL';
+        document.getElementById('module-search').value = 'INIT-';
+      } else if (type === 'IN_PROGRESS') {
+        document.getElementById('filter-pillar').value = 'ALL';
+        document.getElementById('filter-worktype').value = 'ALL';
+        document.getElementById('filter-status').value = 'In Progress';
+      }
+      renderRoadmap();
+    }
+
+    function initTriageMatrix() {
+      const tabsContainer = document.getElementById('triage-tabs-container');
+      tabsContainer.innerHTML = '';
+
+      TRIAGE_DATA.forEach((item, index) => {
+        const btn = document.createElement('button');
+        btn.id = `triage-nav-${index}`;
+        btn.onclick = () => selectTriage(index);
+        const isActive = index === activeTriageIndex;
+        btn.className = `p-2.5 rounded-lg border text-left transition ${
+          isActive ? 'bg-[#1E293B] border-[#3B4B63] text-[#F8FAFC]' : 'bg-[#0B0F19] border-[#27354A] text-slate-400 hover:bg-[#1E293B] hover:text-slate-200'
+        }`;
+        btn.innerHTML = `
+          <div class="text-xs font-medium truncate">${item.name}</div>
+          <div class="text-[10px] text-slate-500 mt-0.5 font-mono-code">CLI & Event ID</div>
+        `;
+        tabsContainer.appendChild(btn);
+      });
+
+      renderTriageDetail();
+    }
+
+    function selectTriage(index) {
+      activeTriageIndex = index;
+      TRIAGE_DATA.forEach((_, idx) => {
+        const btn = document.getElementById(`triage-nav-${idx}`);
+        if (btn) {
+          btn.className = idx === index 
+            ? 'p-2.5 rounded-lg border text-left transition bg-[#1E293B] border-[#3B4B63] text-[#F8FAFC]'
+            : 'p-2.5 rounded-lg border text-left transition bg-[#0B0F19] border-[#27354A] text-slate-400 hover:bg-[#1E293B] hover:text-slate-200';
+        }
+      });
+      renderTriageDetail();
+    }
+
+    function renderTriageDetail() {
+      const item = TRIAGE_DATA[activeTriageIndex];
+      const container = document.getElementById('triage-detail-card');
+      container.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#27354A] pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300">Runbook Protocol</span>
+              <h3 class="text-sm font-semibold text-[#F8FAFC]">${item.name}</h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-1"><strong>Frontline Symptom:</strong> ${item.symptom}</p>
+          </div>
+          <span class="text-[11px] font-mono-code text-amber-400 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded">${item.eventCheck}</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="space-y-3">
+            <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">Diagnostic Protocol</span>
+            <div class="p-3 rounded-lg bg-[#162032] border border-[#27354A] space-y-1.5 text-xs text-slate-300 leading-relaxed font-mono-code">
+              ${item.protocol.map(p => `<div>${p}</div>`).join('')}
+            </div>
+
+            <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block pt-1">Standard Resolution & Verification</span>
+            <div class="p-3 rounded-lg bg-[#162032] border border-[#27354A] text-xs text-slate-300 leading-relaxed">
+              ${item.resolution}
+            </div>
+          </div>
+
+          <div class="space-y-3 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Production CLI Remediator</span>
+                <button onclick="copyToClipboard('${encodeURIComponent(item.cliCommand)}', true)" class="text-xs text-slate-500 hover:text-slate-300">
+                  <i class="fa-regular fa-copy"></i> Copy Cmdlet
+                </button>
+              </div>
+              <pre class="p-3 rounded-lg bg-[#162032] border border-[#27354A] text-xs text-emerald-400/90 font-mono-code whitespace-pre-wrap overflow-x-auto leading-relaxed">${item.cliCommand}</pre>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Ticket Post-Mortem Note (BLUF)</span>
+                <button onclick="copyToClipboard('${encodeURIComponent(item.blufExample)}', true)" class="text-xs text-slate-500 hover:text-slate-300">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+              </div>
+              <div class="p-3 rounded-lg bg-[#162032] border border-[#27354A] text-xs text-slate-300 font-mono-code leading-relaxed">
+                ${item.blufExample}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function runSimulatedCommand(cmd) {
+      const screen = document.getElementById('terminal-screen');
+      let output = `PS C:\\Windows\\System32> ${cmd}\n`;
+
+      if (cmd.includes('dsregcmd')) {
+        output += `+----------------------------------------------------------------------+
+| Device State                                                         |
++----------------------------------------------------------------------+
+             AzureAdJoined : YES
+          EnterpriseJoined : NO
+              DomainJoined : YES
+                DomainName : CORP.ENTERPRISE.COM
+               Device Name : NYC-LT-881
+           DeviceAuthStatus : SUCCESS
+
++----------------------------------------------------------------------+
+| SSO State                                                            |
++----------------------------------------------------------------------+
+                AzureAdPrt : YES
+       AzureAdPrtAuthority : https://login.microsoftonline.com/common
+     AcquirePrtDiagnostics : PRESENT
+      Previous Prt Attempt : 2026-11-05 02:14:02.000 UTC (Success)
++----------------------------------------------------------------------+`;
+      } else if (cmd.includes('manage-bde')) {
+        output += `BitLocker Drive Encryption: Configuration Tool version 10.0.22621
+Volume C: [OSDisk]
+    Size:                 475.22 GB
+    BitLocker Version:    2.0
+    Conversion Status:    Fully Encrypted
+    Percentage Encrypted: 100.0%
+    Encryption Method:    XTS-AES 256
+    Protection Status:    Protection On
+    Lock Status:          Unlocked
+    Key Protectors:
+        Numerical Password (ID: {E8B291A4-7A91-4C10-85A2-A3D94218F120})
+        TPM`;
+      } else if (cmd.includes('mdmdiagnosticstool')) {
+        output += `Collecting MDM diagnostic information...
+Exporting Area: DeviceEnrollment
+Exporting Area: DeviceProvisioning
+Generating XML logs to C:\\Users\\Public\\Documents\\MDMReports\\MDMDiagReport.html
+Diagnostic archive created: C:\\MDMLogs.zip (1.42 MB)
+Result: SUCCESS`;
+      } else if (cmd.includes('wevtutil')) {
+        output += `Event[0]:
+  Log Name: Security
+  Source: Microsoft-Windows-Security-Auditing
+  Date: 2026-11-05T03:12:44.0000000Z
+  Event ID: 4624 (An account was successfully logged on)
+  Logon Type: 10 (RemoteInteractive)
+  Security ID: CORP\\john.doe
+  Target Workstation: NYC-LT-881
+  Elevated Token: Yes`;
+      }
+
+      screen.innerText = output;
+      screen.scrollTop = screen.scrollHeight;
+    }
+
+    const MENTAL_MODELS_DATA = [
+      {
+        id: "bluf",
+        number: "01",
+        name: "Bottom Line Up Front (BLUF)",
+        subtitle: "The Minto Pyramid Executive Standard",
+        triggerCondition: "Use whenever communicating with leadership, requesting budget/approvals, drafting ticket resolution summaries, or writing any message longer than 2 sentences.",
+        ingrainHabit: {
+          cue: "You are about to click 'Send' or begin typing an email / Slack message to a manager or client.",
+          routine: "Apply the 'Sentence One Rule': If the recipient closes the window after reading only line one, do they know the exact decision, financial cost, or requested action? If no, delete and invert your paragraph so the conclusion comes first.",
+          reward: "Eliminates frustrating back-and-forth; approvals are granted on the first pass; leadership views you as a concise, executive-level operator."
+        },
+        antiPattern: {
+          title: "The Chronological Detective (Administrative Trap)",
+          quote: `"Hi team, I investigated the Finance room display today. I reseated the HDMI, tried a loaner hub, rebooted the PC, tested EDID resolutions, and finally discovered the panel backlight has a burnt inverter board. The unit is past warranty from 2024. Therefore, I think we should order a new Samsung screen which costs $450. Does someone have budget?"`,
+          flaw: "Buried the request at the very bottom after 5 lines of irrelevant diagnostic history. Busy executives skip long messages, causing delays."
+        },
+        masteryPattern: {
+          title: "The Minto S-C-Q-R Executive Format",
+          quote: `BLUF: Requesting approval to order a replacement Samsung 65" commercial display ($450, IT budget) for Finance Room 402.\n\n• Situation & Complication: Backlight inverter failed during yesterday's budget meeting; unit is 18 months past OEM warranty.\n• Resolution & SLA: Screen arrives in 48 hours; install will take 90 minutes before Thursday's board session.`,
+          benefit: "Executive reads line 1, approves in 5 seconds with 'Approved', and moves on. Zero cognitive friction."
+        },
+        drillScenario: {
+          question: "You diagnosed an Intune compliance outage affecting 30 MacBooks due to an expired Apple Push Notification service (APNs) certificate. How do you brief your IT Director?",
+          options: [
+            "Write a 4-paragraph history of how Apple MDM certificates work, detailing who originally generated the Apple ID three years ago.",
+            "BLUF: 30 MacBooks cannot sync policies due to expired APNs cert. Action: Need access to Apple ID admin portal to renew token today by 2 PM; zero device wipes required.",
+            "Send a message saying: 'Hey, Macs are broken. Let me know when you have time for a call.'",
+            "Renew the cert quietly without logging anything so nobody panics."
+          ],
+          correct: 1,
+          explanation: "Option B is textbook BLUF: It states the core operational impact, the explicit dependency/action needed, the timeline, and allays the executive's worst fear (device wipes) in sentence one."
+        }
+      },
+      {
+        id: "ack-loop",
+        number: "02",
+        name: "The Acknowledgement Loop",
+        subtitle: "The Anxiety-Killer & Expectation Anchor",
+        triggerCondition: "Use immediately upon receiving an urgent ticket, incident alert, or direct ping where diagnostics will take more than 5 minutes.",
+        ingrainHabit: {
+          cue: "A high-priority ticket or message lands in your queue and you know you can't solve it in 60 seconds.",
+          routine: "Deploy the '120-Second SLA Receipt': Within two minutes, fire an acknowledgement stating exactly WHAT you are currently investigating and WHEN you will provide the next update (with a specific time).",
+          reward: "Users and executives stop anxiously pinging you with duplicate messages; your deep diagnostic concentration remains uninterrupted."
+        },
+        antiPattern: {
+          title: "The Black Hole (Silent Engineer Trap)",
+          quote: `[User submits ticket at 09:00 AM]: "Payroll database connection is failing, payroll run starts at 10 AM!"\n[Technician reads it, says nothing, and begins debugging Kerberos logs for 40 minutes in silence.]\n[User at 09:35 AM in panic]: "IS ANYONE WORKING ON THIS?! CC'ing IT Director."`,
+          flaw: "Silence is indistinguishable from negligence to an end user. The user's panic escalates even if you're working hard."
+        },
+        masteryPattern: {
+          title: "Explicit Receipt with Time-Bound Anchor",
+          quote: `"Received. I have reproduced the payroll database timeout and am currently analyzing Kerberos authentication tickets in Entra ID. I will post a confirmed status update right here by 09:35 AM."`,
+          benefit: "Sets an expectation boundary. The user breathes a sigh of relief and leaves you alone to focus on diagnostics until 09:35 AM."
+        },
+        drillScenario: {
+          question: "A Vice President pings you: 'Teams Rooms in Boardroom A is completely dead and the CEO has a client meeting in 45 minutes.' What is your immediate mental model action?",
+          options: [
+            "Ignore the message, run to the room, and take apart the cables without answering.",
+            "Reply: 'Received. Heading to Boardroom A right now to verify power, HDMI CEC, and controller health. I will update you by 09:15 AM with status.'",
+            "Reply: 'I am on break, submit a ticket in ServiceNow.'",
+            "Reply: 'Don't worry, it always does that. Just reboot it.'"
+          ],
+          correct: 1,
+          explanation: "Option B establishes the Acknowledgement Loop: Confirms receipt immediately, tells them your exact physical movement, and commits to a hard update timestamp before their meeting deadline."
+        }
+      },
+      {
+        id: "consolidation",
+        number: "03",
+        name: "Question Consolidation",
+        subtitle: "Batching & Asynchronous Friction Reduction",
+        triggerCondition: "Use whenever you require multiple diagnostic data points, credentials, or verifications from an end user or colleague.",
+        ingrainHabit: {
+          cue: "You feel the urge to send a single question in chat, wait for a reply, and then ask another question.",
+          routine: "The 'Drafting Quarantine': Open your text editor. Draft all questions. Consolidate them into a numbered list (max 3-4 items) with clear instructions on how to obtain each data point. Send as ONE unified packet.",
+          reward: "Reduces round-trip cycle time from 2 hours of fragmented ping-ponging down to a single 5-minute interaction."
+        },
+        antiPattern: {
+          title: "The Machine-Gun Ping Trap",
+          quote: `10:02 AM: "Hey, what laptop model do you have?"\n10:07 AM: "Are you on Wi-Fi or wired?"\n10:14 AM: "Can you send a screenshot of the error?"\n10:22 AM: "What building are you sitting in today?"`,
+          flaw: "Forces the user through 4 context switches. If the user steps away, the diagnostic stalls for half a day."
+        },
+        masteryPattern: {
+          title: "The Unified Diagnostic Packet",
+          quote: `"To isolate this network failure without back-and-forth delays, please reply with these 3 details in one message:\n1. Computer Name: (Found at Settings > System > About)\n2. Connection: Are you on corporate GlobalProtect VPN? (Yes/No)\n3. Screenshot: A quick capture of the exact error code shown in Company Portal."`,
+          benefit: "The user provides everything in a single response, allowing you to execute remediation immediately."
+        },
+        drillScenario: {
+          question: "A remote engineer reports their local Python log parser script is crashing. How do you solicit technical details?",
+          options: [
+            "Ask for their Python version. Wait for reply. Ask for the error traceback. Wait. Ask for the input CSV sample.",
+            "Ask them to jump on a 45-minute screen share call immediately.",
+            "Send a consolidated packet: 'Please paste: 1. Python version (`python --version`); 2. The full terminal traceback; 3. The first 3 sanitized rows of the input CSV.'",
+            "Tell them Python isn't supported and close the ticket."
+          ],
+          correct: 2,
+          explanation: "Option C gathers all essential diagnostic dependencies in one asynchronous round-trip, respecting both engineers' focus time."
+        }
+      },
+      {
+        id: "first-principles",
+        number: "04",
+        name: "First Principles Communication",
+        subtitle: "Deconstruction to Truth & Zero-Noise Documentation",
+        triggerCondition: "Use when writing incident post-mortems, documenting ticket resolutions, explaining complex bugs, or communicating across technical tiers.",
+        ingrainHabit: {
+          cue: "You find yourself writing vague explanations like 'it glitched', 'fixed a bug', or 'rebooted and it worked'.",
+          routine: "The 'Physics-First Filter': Strip the failure down to its fundamental verified mechanism: 1. Exact Symptom $\\rightarrow$ 2. Physical/Architectural Root Cause $\\rightarrow$ 3. Specific Remediation Applied $\\rightarrow$ 4. Objective Verification Metric.",
+          reward: "Knowledge base entries become reusable enterprise assets; repeat tickets permanently plummet; Tier-3 engineers respect your technical rigor."
+        },
+        antiPattern: {
+          title: "The Hand-Waving Hand-off",
+          quote: `"Closed ticket: Laptop was acting weird and dropping Wi-Fi. Cleaned up some cache files, messed with device manager, updated it, and rebooted. Wi-Fi seems fine now."`,
+          flaw: "Zero root-cause analysis. When the exact same issue happens tomorrow on 50 other laptops, nobody knows why."
+        },
+        masteryPattern: {
+          title: "The Deconstructed 4-Step Truth",
+          quote: `• Symptom: Host failed WPA3-Enterprise 802.1X handshake.\n• Verified Cause: Machine auth certificate in Local Computer\\Personal store expired at 00:00 UTC.\n• Remediation: Triggered Intune SCEP certificate renewal via 'DeviceEnrollment' scheduled task.\n• Verification: RADIUS NPS log confirms successful EAP-TLS handshake; ping to gateway stable (<2ms).`,
+          benefit: "Provides undeniable proof of resolution, isolates the systemic vulnerability (cert renewal timing), and prevents future repeat escalations."
+        },
+        drillScenario: {
+          question: "You fixed an Intune compliance failure on host NYC-LT-881. How do you document the resolution note?",
+          options: [
+            "Write: 'Rebooted computer twice, sync worked.'",
+            "Write: 'Remediated BitLocker CSP escrow failure (0x87D1041C). Root cause: PCR[7] binding altered during BIOS update. Ran Backup-BitLockerKeyProtector; confirmed recovery key escrowed in Entra ID. Intune health re-evaluation: Compliant.'",
+            "Write: 'User was confused about BitLocker, fixed.'",
+            "Leave the resolution note blank to save time."
+          ],
+          correct: 1,
+          explanation: "Option B applies First Principles: identifies exact error code, the underlying physical cause (PCR[7] binding), the cmdlet used, and the verification proof."
+        }
+      },
+      {
+        id: "async-timeblock",
+        number: "05",
+        name: "Asynchronous Scheduling & Time-Blocking",
+        subtitle: "Defense Against the Hyperactive Hive Mind",
+        triggerCondition: "Use during your daily engineering schedule: 09:00 - 10:30 AM and 01:30 - 03:00 PM deep engineering windows.",
+        ingrainHabit: {
+          cue: "It's 09:00 AM. You feel an irresistible urge to open Outlook or keep Slack/Teams open on your second monitor.",
+          routine: "The 'Two-Check Cadence': Set Slack/Teams status to 'Deep Engineering Block (Back at 11:30 AM)'. Close all messaging apps. Put on headphones with brown noise. Spend the full 90 minutes exclusively on code, Intune CSPs, or exam prep. Only check messages during scheduled sweeps.",
+          reward: "Eliminates cognitive fragmentation; enables completion of hard technical projects in days rather than months."
+        },
+        antiPattern: {
+          title: "The Hyperactive Ping-Pong Trap",
+          quote: `[Technician leaves Outlook notifications pop-up on]: Technician tries to write a Python log parser. Every 3 minutes an email arrives. Technician glances at it, loses working memory, resumes coding, gets a Slack ping, answers it. 8 hours pass. Zero code finished.`,
+          flaw: "Attention residue destroys IQ and cognitive endurance. Research shows it takes 15-20 minutes to re-enter deep flow after every context switch."
+        },
+        masteryPattern: {
+          title: "Structured Focus Blocks & Batched Communication",
+          quote: `• 08:30 - 09:00 AM: Morning Triage (Dispatch all Acknowledgement Loops)\n• 09:00 - 10:30 AM: DEEP SPRINT #1 (Zero messaging; write Python automation)\n• 11:00 - 11:30 AM: Midday Sweep (Batch process all consolidated replies)\n• 01:30 - 03:00 PM: DEEP SPRINT #2 (Security+ lab immersion)\n• 04:30 - 05:00 PM: Daily Shutdown Ritual & ticket wrap-up`,
+          benefit: "Produces 3+ hours of high-leverage engineering daily while maintaining an impeccably responsive reputation with users."
+        },
+        drillScenario: {
+          question: "It is 09:15 AM and you are 15 minutes into a 90-minute Python automation sprint. A non-urgent Slack ping pops up from a peer asking what you think of a new mouse model. What do you do?",
+          options: [
+            "Immediately stop scripting and spend 20 minutes chatting about computer mice.",
+            "Ignore the urge to react; keep messaging apps closed during your deep block; reply during your 11:00 AM Midday Sweep window.",
+            "Get angry and send a rude message back.",
+            "Abandon your sprint for the rest of the day."
+          ],
+          correct: 1,
+          explanation: "Option B protects your deep work window against shallow distractions. Replying during the designated midday sweep maintains focus without alienating your peer."
+        }
+      }
+    ];
+
+    let activeMentalModelId = "bluf";
+
+    function initMentalModels() {
+      renderMentalModelSelector();
+      selectMentalModel(activeMentalModelId);
+    }
+
+    function renderMentalModelSelector() {
+      const container = document.getElementById('mm-selector-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      MENTAL_MODELS_DATA.forEach(m => {
+        const isSelected = m.id === activeMentalModelId;
+        const isPassed = completedMentalModelDrills[m.id];
+
+        const card = document.createElement('button');
+        card.onclick = () => selectMentalModel(m.id);
+        card.className = `p-3 rounded-lg border text-left transition flex flex-col justify-between ${
+          isSelected 
+            ? 'bg-[#1E293B] border-[#3B4B63] text-[#F8FAFC] shadow-sm' 
+            : 'bg-[#0B0F19] border-[#27354A] text-slate-400 hover:bg-[#1E293B] hover:text-slate-200'
+        }`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-mono-code text-[10px] text-slate-400">MODEL ${m.number}</span>
+              ${isPassed ? '<span class="text-[9px] font-mono-code text-[#86EFAC] bg-emerald-950/60 border border-emerald-800/40 px-1 rounded">Passed ✓</span>' : ''}
+            </div>
+            <div class="text-xs font-semibold text-slate-200 truncate">${m.name}</div>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-2 truncate font-mono-code">${m.subtitle}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectMentalModel(modelId) {
+      activeMentalModelId = modelId;
+      renderMentalModelSelector();
+
+      const m = MENTAL_MODELS_DATA.find(item => item.id === modelId) || MENTAL_MODELS_DATA[0];
+      const pane = document.getElementById('mm-study-pane');
+      if (!pane) return;
+
+      const hasAnswered = completedMentalModelDrills[m.id] !== undefined;
+
+      let optionsHtml = m.drillScenario.options.map((opt, optIdx) => {
+        let btnClass = "w-full text-left p-2.5 rounded-lg border text-xs transition ";
+        if (!hasAnswered) {
+          btnClass += "bg-[#162032] border-[#27354A] hover:border-slate-500 text-slate-300";
+        } else {
+          if (optIdx === m.drillScenario.correct) {
+            btnClass += "bg-emerald-950/40 border-emerald-800 text-emerald-200 font-medium";
+          } else {
+            btnClass += "bg-[#0B0F19] border-[#27354A] text-slate-500 opacity-60";
+          }
+        }
+        return `
+          <button onclick="submitModelDrill('${m.id}', ${optIdx})" ${hasAnswered ? 'disabled' : ''} class="${btnClass}">
+            <span class="font-mono-code mr-1.5 text-slate-400">[${String.fromCharCode(65 + optIdx)}]</span> ${opt}
+          </button>
+        `;
+      }).join('');
+
+      let feedbackHtml = '';
+      if (hasAnswered) {
+        const isCorrect = completedMentalModelDrills[m.id];
+        feedbackHtml = `
+          <div class="mt-3 p-3 rounded-lg border ${isCorrect ? 'bg-emerald-950/20 border-emerald-800/40 text-emerald-300' : 'bg-red-950/20 border-red-800/40 text-red-300'} text-xs leading-relaxed">
+            <span class="font-semibold block mb-0.5">${isCorrect ? '✓ Mental Model Reflex Validated' : '✗ Incorrect Instinct'}</span>
+            ${m.drillScenario.explanation}
+          </div>
+        `;
+      }
+
+      pane.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27354A] pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono-code px-2 py-0.5 rounded bg-[#1E293B] text-slate-300">Model ${m.number}</span>
+              <h3 class="text-base font-bold text-[#F8FAFC]">${m.name}</h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">${m.subtitle}</p>
+          </div>
+          <button onclick="switchTab('bluf')" class="px-2.5 py-1 text-xs text-slate-300 bg-[#0B0F19] hover:bg-[#1E293B] border border-[#27354A] rounded transition flex items-center gap-1.5 self-start">
+            <i class="fa-regular fa-envelope text-slate-400"></i> Open Live BLUF Drafter &rarr;
+          </button>
+        </div>
+
+        <div class="p-3.5 rounded-lg bg-[#0B0F19] border border-[#27354A]">
+          <div class="flex items-center gap-2 mb-1">
+            <i class="fa-solid fa-crosshairs text-amber-400 text-xs"></i>
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">Operational Trigger: When to Fire This Mental Model</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed font-medium pl-5">${m.triggerCondition}</p>
+        </div>
+
+        <div class="space-y-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-arrows-spin text-indigo-400 text-xs"></i> Cognitive Re-Wiring (How to Ingrain into Muscle Memory)
+          </span>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div class="p-3 rounded-lg bg-[#0B0F19] border border-[#27354A]">
+              <span class="font-mono-code text-slate-400 text-[10px] uppercase block mb-1">1. The Psychological Cue</span>
+              <p class="text-slate-300 leading-relaxed">${m.ingrainHabit.cue}</p>
+            </div>
+            <div class="p-3 rounded-lg bg-[#0B0F19] border border-indigo-900/40">
+              <span class="font-mono-code text-indigo-400 text-[10px] uppercase block mb-1">2. The Execution Routine</span>
+              <p class="text-slate-200 leading-relaxed">${m.ingrainHabit.routine}</p>
+            </div>
+            <div class="p-3 rounded-lg bg-[#0B0F19] border border-[#27354A]">
+              <span class="font-mono-code text-[#86EFAC] text-[10px] uppercase block mb-1">3. The Cognitive Reward</span>
+              <p class="text-slate-300 leading-relaxed">${m.ingrainHabit.reward}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-scale-balanced text-slate-400 text-xs"></i> Field Contrast: Frontline Administrative Trap vs. High-Leverage Mastery
+          </span>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-xl bg-red-950/10 border border-red-900/30 flex flex-col justify-between space-y-3">
+              <div>
+                <span class="text-red-400 font-semibold flex items-center gap-1.5 text-xs">
+                  <i class="fa-solid fa-circle-xmark"></i> ${m.antiPattern.title}
+                </span>
+                <div class="mt-2.5 p-3 rounded-lg bg-[#0B0F19] border border-red-900/20 text-slate-400 font-mono-code text-[11px] leading-relaxed whitespace-pre-wrap">
+${m.antiPattern.quote}
+                </div>
+              </div>
+              <div class="text-[11px] text-red-300/80 pt-2 border-t border-red-900/20 leading-relaxed">
+                <strong>Why It Fails:</strong> ${m.antiPattern.flaw}
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-emerald-950/10 border border-emerald-900/30 flex flex-col justify-between space-y-3">
+              <div>
+                <span class="text-[#86EFAC] font-semibold flex items-center gap-1.5 text-xs">
+                  <i class="fa-solid fa-circle-check"></i> ${m.masteryPattern.title}
+                </span>
+                <div class="mt-2.5 p-3 rounded-lg bg-[#0B0F19] border border-emerald-900/20 text-slate-200 font-mono-code text-[11px] leading-relaxed whitespace-pre-wrap">
+${m.masteryPattern.quote}
+                </div>
+              </div>
+              <div class="text-[11px] text-emerald-300/80 pt-2 border-t border-emerald-900/20 leading-relaxed">
+                <strong>Strategic Impact:</strong> ${m.masteryPattern.benefit}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3 pt-2 border-t border-[#27354A]">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+              <i class="fa-solid fa-dumbbell text-amber-400 text-xs"></i> Scenario Gym: Test Your Mental Model Instinct
+            </span>
+            ${hasAnswered ? `<button onclick="resetModelDrill('${m.id}')" class="text-xs text-slate-400 hover:text-slate-200">Retry Drill</button>` : ''}
+          </div>
+
+          <p class="text-xs text-slate-200 font-medium leading-relaxed">${m.drillScenario.question}</p>
+          <div class="space-y-2">
+            ${optionsHtml}
+          </div>
+          ${feedbackHtml}
+        </div>
+      `;
+    }
+
+    function submitModelDrill(modelId, selectedIdx) {
+      const m = MENTAL_MODELS_DATA.find(item => item.id === modelId);
+      if (!m) return;
+
+      const isCorrect = selectedIdx === m.drillScenario.correct;
+      completedMentalModelDrills[modelId] = isCorrect;
+      saveState();
+
+      const passedCount = Object.values(completedMentalModelDrills).filter(v => v === true).length;
+      document.getElementById('mm-reps-counter').innerText = `Drills Passed: ${passedCount} / ${MENTAL_MODELS_DATA.length}`;
+
+      if (isCorrect) {
+        showToast(`Correct! Model ${m.number} instinct reinforced.`, 'success');
+      } else {
+        showToast(`Incorrect instinct. Review the Minto/Systems principles.`, 'warning');
+      }
+
+      selectMentalModel(modelId);
+    }
+
+    function resetModelDrill(modelId) {
+      delete completedMentalModelDrills[modelId];
+      saveState();
+      const passedCount = Object.values(completedMentalModelDrills).filter(v => v === true).length;
+      document.getElementById('mm-reps-counter').innerText = `Drills Passed: ${passedCount} / ${MENTAL_MODELS_DATA.length}`;
+      selectMentalModel(modelId);
+    }
+
+    function updateWhyTree() {
+      const s = document.getElementById('why-symptom').value.trim();
+      const w1 = document.getElementById('why-1').value.trim();
+      const w2 = document.getElementById('why-2').value.trim();
+      const w3 = document.getElementById('why-3').value.trim();
+      const w4 = document.getElementById('why-4').value.trim();
+      const w5 = document.getElementById('why-5').value.trim();
+
+      const output = `ROOT-CAUSE ANALYSIS TREE (5 WHYS / THEORY OF CONSTRAINTS)
+===========================================================
+[Symptom]    : ${s}
+  └── Why 1  : ${w1}
+       └── Why 2 : ${w2}
+            └── Why 3 : ${w3}
+                 └── Why 4 : ${w4}
+                      └── [LEVERAGE POINT] Why 5 : ${w5}
+
+SYSTEMIC RECOMMENDATION:
+Eliminate the root constraint at Layer 5 to permanently eradicate symptoms at Layer 1. Deploy automated Intune policy baseline scoped directly to the target hardware category.`;
+
+      document.getElementById('why-tree-output').innerText = output;
+    }
+
+    function loadSampleWhyCase() {
+      document.getElementById('why-symptom').value = "Teams Room display went black mid-executive meeting.";
+      document.getElementById('why-1').value = "The HDMI ingest signal lost synchronization with the console compute.";
+      document.getElementById('why-2').value = "USB Root Hub put the capture card into low-power sleep mode after 30 mins.";
+      document.getElementById('why-3').value = "The host was imaged with a generic desktop power plan instead of Teams Rooms CSP.";
+      document.getElementById('why-4').value = "No automated staging verification checklist checked USB selective suspend state.";
+      document.getElementById('why-5').value = "Lack of centralized Intune configuration baseline specifically scoped for Conference Room OUs.";
+      updateWhyTree();
+      showToast("VTC Root-Cause Case Loaded", 'info');
+    }
+
+    function copyWhyTree() {
+      const text = document.getElementById('why-tree-output').innerText;
+      copyDirect(text);
+      showToast("5 Whys Analysis copied", 'success');
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-container');
+      container.innerHTML = '';
+
+      QUIZ_QUESTIONS.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = "p-4 rounded-xl bg-[#0B0F19] border border-[#27354A] space-y-3";
+        
+        const answered = quizAnswers[q.id] !== undefined;
+        const isCorrect = answered && quizAnswers[q.id] === q.correct;
+
+        let optionsHtml = q.options.map((opt, optIdx) => {
+          let btnClass = "w-full text-left p-2.5 rounded-lg border text-xs transition ";
+          if (!answered) {
+            btnClass += "bg-[#162032] border-[#27354A] hover:border-slate-500 text-slate-300";
+          } else {
+            if (optIdx === q.correct) {
+              btnClass += "bg-emerald-950/40 border-emerald-800 text-emerald-200 font-medium";
+            } else if (optIdx === quizAnswers[q.id]) {
+              btnClass += "bg-red-950/40 border-red-800 text-red-300";
+            } else {
+              btnClass += "bg-[#0B0F19] border-[#27354A] text-slate-500 opacity-60";
+            }
+          }
+
+          return `
+            <button onclick="answerQuestion('${q.id}', ${optIdx})" ${answered ? 'disabled' : ''} class="${btnClass}">
+              <span class="font-mono-code mr-1.5 text-slate-400">[${String.fromCharCode(65 + optIdx)}]</span> ${opt}
+            </button>
+          `;
+        }).join('');
+
+        let feedbackHtml = '';
+        if (answered) {
+          feedbackHtml = `
+            <div class="mt-2.5 p-3 rounded-lg border ${isCorrect ? 'bg-emerald-950/20 border-emerald-800/40 text-emerald-300' : 'bg-red-950/20 border-red-800/40 text-red-300'} text-xs leading-relaxed">
+              <span class="font-semibold block mb-0.5">${isCorrect ? '✓ Verified Understanding' : '✗ Incorrect Assumption'}</span>
+              ${q.explanation}
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#1E293B] text-slate-300">Question ${idx + 1} of ${QUIZ_QUESTIONS.length}</span>
+            <span class="text-xs font-semibold text-slate-300">${q.title}</span>
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed font-medium">${q.scenario}</p>
+          <div class="space-y-1.5 pt-1">
+            ${optionsHtml}
+          </div>
+          ${feedbackHtml}
+        `;
+        container.appendChild(card);
+      });
+
+      const answeredKeys = Object.keys(quizAnswers);
+      const correctCount = answeredKeys.filter(k => {
+        const q = QUIZ_QUESTIONS.find(item => item.id === k);
+        return q && quizAnswers[k] === q.correct;
+      }).length;
+
+      document.getElementById('quiz-score-badge').innerText = `Score: ${correctCount} / ${QUIZ_QUESTIONS.length}`;
+    }
+
+    function answerQuestion(qId, selectedIdx) {
+      if (quizAnswers[qId] !== undefined) return;
+      quizAnswers[qId] = selectedIdx;
+      saveState();
+      renderQuiz();
+    }
+
+    function resetQuiz() {
+      quizAnswers = {};
+      saveState();
+      renderQuiz();
+      showToast("Quiz reset", 'info');
+    }
+
+    let audioCtx = null;
+    let brownNoiseNode = null;
+    let brownNoiseGain = null;
+    let isNoisePlaying = false;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleBrownNoise() {
+      initAudioContext();
+      const btn = document.getElementById('btn-toggle-noise');
+      const indicator = document.getElementById('noise-indicator');
+
+      if (isNoisePlaying) {
+        stopBrownNoise();
+        btn.innerText = "Start Sound";
+        btn.className = "px-2.5 py-1 text-[11px] bg-[#162032] hover:bg-[#1E293B] text-slate-300 rounded border border-[#27354A] transition";
+        indicator.innerText = "Noise: OFF";
+        indicator.className = "text-[10px] font-mono-code text-slate-500";
+        showToast("Focus noise stopped", 'info');
+      } else {
+        startBrownNoise();
+        btn.innerText = "Mute Sound";
+        btn.className = "px-2.5 py-1 text-[11px] bg-indigo-950 text-indigo-300 rounded border border-indigo-700 transition";
+        indicator.innerText = "Noise: ACTIVE";
+        indicator.className = "text-[10px] font-mono-code text-indigo-400";
+        showToast("Synthesized Brown Noise active", 'success');
+      }
+    }
+
+    function startBrownNoise() {
+      const bufferSize = audioCtx.sampleRate * 2;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let lastOut = 0.0;
+
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        output[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = output[i];
+        output[i] *= 3.5;
+      }
+
+      brownNoiseNode = audioCtx.createBufferSource();
+      brownNoiseNode.buffer = noiseBuffer;
+      brownNoiseNode.loop = true;
+
+      brownNoiseGain = audioCtx.createGain();
+      brownNoiseGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+      brownNoiseNode.connect(brownNoiseGain);
+      brownNoiseGain.connect(audioCtx.destination);
+      brownNoiseNode.start();
+      isNoisePlaying = true;
+    }
+
+    function stopBrownNoise() {
+      if (brownNoiseNode) {
+        try {
+          brownNoiseNode.stop();
+          brownNoiseNode.disconnect();
+        } catch (e) {}
+        brownNoiseNode = null;
+      }
+      isNoisePlaying = false;
+    }
+
+    let timerInterval = null;
+    let timerRemainingSeconds = 90 * 60;
+    let isTimerRunning = false;
+
+    function formatTime(totalSec) {
+      const mins = Math.floor(totalSec / 60);
+      const secs = totalSec % 60;
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function setTimerDuration(mins) {
+      if (isTimerRunning) clearInterval(timerInterval);
+      isTimerRunning = false;
+      timerRemainingSeconds = mins * 60;
+      document.getElementById('timer-display').innerText = formatTime(timerRemainingSeconds);
+      document.getElementById('timer-status-text').innerText = `${mins}m Focus Block Ready`;
+      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Start Focus Sprint`;
+    }
+
+    function toggleTimer() {
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        document.getElementById('timer-status-text').innerText = 'Paused';
+        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Resume`;
+      } else {
+        isTimerRunning = true;
+        document.getElementById('timer-status-text').innerText = 'Deep engineering sprint active';
+        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-pause text-[10px]"></i> Pause`;
+        timerInterval = setInterval(() => {
+          if (timerRemainingSeconds > 0) {
+            timerRemainingSeconds--;
+            document.getElementById('timer-display').innerText = formatTime(timerRemainingSeconds);
+          } else {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            document.getElementById('timer-status-text').innerText = 'Sprint complete';
+            document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Start New Sprint`;
+            playChime();
+            showToast('90-minute Deep Sprint completed.', 'success');
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      if (isTimerRunning) clearInterval(timerInterval);
+      isTimerRunning = false;
+      timerRemainingSeconds = 90 * 60;
+      document.getElementById('timer-display').innerText = formatTime(timerRemainingSeconds);
+      document.getElementById('timer-status-text').innerText = '90m Newport Sprint Ready';
+      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Start 90m Deep Block`;
+    }
+
+    function playChime() {
+      initAudioContext();
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.15);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      } catch (e) {}
+    }
+
+    function openShutdownModal() {
+      document.getElementById('shutdown-modal').classList.remove('hidden');
+    }
+
+    function closeShutdownModal() {
+      document.getElementById('shutdown-modal').classList.add('hidden');
+    }
+
+    function executeShutdown() {
+      const c1 = document.getElementById('sr-check-1').checked;
+      const c2 = document.getElementById('sr-check-2').checked;
+      const c3 = document.getElementById('sr-check-3').checked;
+
+      if (!c1 || !c2 || !c3) {
+        showToast("Complete all 3 ritual verification steps before shutdown.", 'warning');
+        return;
+      }
+
+      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('shutdown-status-time').innerText = `Shutdown logged at ${timestamp}`;
+      document.getElementById('footer-shutdown-state').innerText = `Shutdown Completed (${timestamp})`;
+      document.getElementById('footer-shutdown-state').className = "text-[#86EFAC] font-semibold";
+
+      if (isNoisePlaying) stopBrownNoise();
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+      }
+
+      playChime();
+      showToast('"Shutdown Complete" logged. Step away and recharge.', 'success');
+      setTimeout(closeShutdownModal, 1000);
+    }
+
+    const BLUF_TEMPLATES = {
+      'hardware-approval': {
+        bottom: "Request approval to replace Finance Room 402 display ($450). Diagnostic confirmed hardware panel failure.",
+        cause: "SITUATION: Executive meetings in Conf Room 402 experience periodic blackouts.\nCOMPLICATION: Backlight inverter failed; unit is 18 months past OEM warranty; loaner display has HDMI EDID flicker.",
+        next: "RESOLUTION: Replace with standard Samsung commercial panel ($450 from IT ops budget). Staging and installation will complete by Thursday 09:00 AM before board session."
+      },
+      'acknowledgement-loop': {
+        bottom: "Ticket #8912 Acknowledged: Device diagnostics active on host NYC-LT-042. Next ETA commit: 2:30 PM.",
+        cause: "SITUATION: User locked out of Outlook following BitLocker recovery prompt.\nCOMPLICATION: Overnight firmware upgrade altered PCR[7] binding registers.",
+        next: "RESOLUTION: Engineering is pulling TPM escrow key from Entra ID and executing remote remediation script. User advised."
+      },
+      'consolidated-questions': {
+        bottom: "Please execute these 3 verification steps to restore your Entra ID compliance status:",
+        cause: "SITUATION: Device NYC-LT-881 is flagged non-compliant in Intune.\nCOMPLICATION: Missing Defender signature updates while off-network.",
+        next: "1. Connect to corporate GlobalProtect VPN.\n2. Open Company Portal > Settings > click 'Sync Now'.\n3. Reply to this email with your current IP from whatismyip.com."
+      },
+      'first-principles': {
+        bottom: "Resolved: Conditional Access lockout for Marketing Group restored within SLA (MTTR: 18m).",
+        cause: "SITUATION: 14 users received 53003 access blocked errors.\nCOMPLICATION: Dynamic security group regex rule inadvertently stripped the 'Intune-Enrolled' tag.",
+        next: "RESOLUTION: Corrected regex rule; forced token refresh; updated runbook to prevent syntax regression."
+      },
+      'custom': {
+        bottom: "",
+        cause: "",
+        next: ""
+      }
+    };
+
+    function loadBlufTemplate() {
+      const type = document.getElementById('bluf-type').value;
+      const t = BLUF_TEMPLATES[type] || BLUF_TEMPLATES['custom'];
+      document.getElementById('bluf-bottomline').value = t.bottom;
+      document.getElementById('bluf-cause').value = t.cause;
+      document.getElementById('bluf-nextstep').value = t.next;
+      generateBlufText();
+    }
+
+    function generateBlufText() {
+      const bottom = document.getElementById('bluf-bottomline').value.trim() || "[Bottom Line Recommendation / Request in sentence 1]";
+      const cause = document.getElementById('bluf-cause').value.trim() || "[Situation & Complication]";
+      const next = document.getElementById('bluf-nextstep').value.trim() || "[Resolution & Immediate Next Step]";
+
+      const formatted = `BLUF: ${bottom}\n\n• S-C Context:\n${cause}\n\n• Resolution / Next Step:\n${next}`;
+      document.getElementById('bluf-preview-box').innerText = formatted;
+    }
+
+    function copyBlufToClipboard() {
+      const text = document.getElementById('bluf-preview-box').innerText;
+      copyDirect(text);
+      showToast("Minto / BLUF Briefing copied", 'success');
+    }
+
+    const SAMPLE_LOGS = {
+      'intune-compliance': `Log Source: Microsoft-Windows-DeviceManagement-Enterprise-Diagnostics-Provider/Admin
+Event ID: 454
+Level: Error
+Description: MDM ConfigurationManager: Command failure status.
+Sub-system: BitLocker CSP
+Error Code: 0x87D1041C
+Message: The BitLocker encryption policy setting could not be applied. TPM initialization required or active key not escrowed to Entra ID.`,
+      
+      'conditional-access': `Log: Microsoft Entra Sign-In Events
+Correlation ID: e39b98d2-4302-4fc8-a83a-8640df1bc731
+Error Code: 50074
+Failure Reason: Strong Authentication is required. Conditional Access evaluated 'Require Compliant Device' but device MDM sync state is Stale (>14 days). Risk Level: Low.`,
+      
+      'vtc-teamsroom': `Device: Teams Rooms on Windows (Compute: ThinkSmart Core)
+Status: Unhealthy
+Peripheral: Touch Controller (IP: 10.10.40.12)
+Error: HDMI Ingest stream terminated unexpectedly. EDID handshake lost with Front-of-Room 4K Display. Console touch service unresponsive.`,
+      
+      'fido2-passkey': `Log: Microsoft-Windows-WebAuthN/Operational
+Event ID: 1102
+Level: Warning
+Details: WebAuthn registration ceremony failed. Platform Authenticator rejected creation request. Error 0x80090029 (TPM attestation certificate validation failed or disabled by local policy).`
+    };
+
+    function loadSampleLog(key) {
+      if (SAMPLE_LOGS[key]) {
+        document.getElementById('ai-log-input').value = SAMPLE_LOGS[key];
+        showToast("Sample incident loaded", 'info');
+      }
+    }
+
+    function formatMarkdownOutput(rawText) {
+      if (!rawText) return '';
+      let html = rawText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      html = html.replace(/```([a-zA-Z]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+        return `<div class="my-2 rounded-lg bg-[#0B0F19] border border-[#27354A] overflow-hidden">
+          <div class="px-2.5 py-1 bg-[#1E293B] text-[10px] text-slate-400 flex justify-between items-center font-mono-code uppercase">
+            <span>${lang || 'code'}</span>
+            <button onclick="copyDirect(this.getAttribute('data-code'))" data-code="${encodeURIComponent(code.trim())}" class="hover:text-slate-200 lowercase">copy</button>
+          </div>
+          <pre class="p-2.5 text-slate-300 font-mono-code text-xs overflow-x-auto whitespace-pre">${code.trim()}</pre>
+        </div>`;
+      });
+
+      html = html.replace(/^### (.*$)/gim, '<h4 class="text-xs font-semibold text-slate-200 mt-2.5 mb-1">$1</h4>');
+      html = html.replace(/^## (.*$)/gim, '<h3 class="text-xs font-bold text-slate-100 mt-3 mb-1 border-b border-[#27354A] pb-1">$1</h3>');
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-100 font-semibold">$1</strong>');
+      html = html.replace(/^\s*[-•]\s+(.*$)/gim, '<li class="ml-4 list-disc text-slate-400 text-xs">$1</li>');
+
+      return html;
+    }
+
+    function runLocalTriageEngine(input, mode) {
+      const lower = input.toLowerCase();
+
+      if (lower.includes('bitlocker') || lower.includes('0x87d1041c')) {
+        return `### BLUF Diagnostic Assessment
+**Bottom Line**: Host BitLocker encryption policy failed due to un-escrowed recovery key (0x87D1041C).
+
+### Confirmed Architectural Cause
+* TPM 2.0 PCR[7] binding altered or Windows Defender System Guard interrupted automated key upload to Entra ID.
+
+### Remediation Script
+\`\`\`powershell
+$Volume = Get-BitLockerVolume -MountPoint C:
+$KeyID = ($Volume.KeyProtector | Where-Object {$_.KeyProtectorType -eq 'RecoveryPassword'}).KeyProtectorId
+Backup-BitLockerKeyProtector -MountPoint C: -KeyProtectorId $KeyID
+Start-Process "ms-device-enrollment:?mode=auto"
+\`\`\`
+
+### Verification Metric
+* Confirm recovery key is stamped in Entra ID admin center; trigger Intune sync.`;
+      }
+
+      if (lower.includes('50074') || lower.includes('conditional access') || lower.includes('stale')) {
+        return `### BLUF Diagnostic Assessment
+**Bottom Line**: Sign-in blocked by CA policy requiring device compliance; client MDM synchronization is stale (>14 days).
+
+### Confirmed Architectural Cause
+* AzureAdPrt (Primary Refresh Token) broker failed renewal due to orphaned or disabled device registration record.
+
+### Remediation Script
+\`\`\`powershell
+dsregcmd /status
+# If AzureAdPrt is NO or stale, force scheduled MDM sync
+Get-ScheduledTask | Where-Object {$_.TaskPath -like "*EnterpriseMgmt*"} | Start-ScheduledTask
+\`\`\`
+
+### Verification Metric
+* Run \`dsregcmd /status\` to verify \`AzureAdPrt : YES\` and successful token authority handshake.`;
+      }
+
+      if (lower.includes('edid') || lower.includes('hdmi') || lower.includes('teams room')) {
+        return `### BLUF Diagnostic Assessment
+**Bottom Line**: Front-of-room display handshake lost due to USB selective power suspension on capture hardware.
+
+### Confirmed Architectural Cause
+* Windows OS power manager put the Teams Rooms peripheral USB root hub to sleep during inactivity.
+
+### Remediation Script
+\`\`\`powershell
+# Disable USB selective suspend across all controllers
+Set-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\USB' -Name 'DisableSuccessiveInteractivity' -Value 1
+Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
+\`\`\`
+
+### Verification Metric
+* Ensure CEC status reports connected in Teams Rooms Admin Center.`;
+      }
+
+      return `### BLUF Diagnostic Assessment
+**Bottom Line**: Telemetry processed. Event isolated to client endpoint configuration mismatch.
+
+### Action Plan
+* 1. Query client state via \`dsregcmd /status\` and \`mdmdiagnosticstool.exe\`.
+* 2. Inspect Windows Event Viewer under \`Applications and Services Logs > Microsoft > Windows > DeviceManagement-Enterprise-Diagnostics-Provider\`.
+* 3. Apply first-principles remediation and update ticket notes using BLUF format.`;
+    }
+
+    async function runGeminiTriage() {
+      const input = document.getElementById('ai-log-input').value.trim();
+      const mode = document.getElementById('ai-mode').value;
+      const outputBox = document.getElementById('ai-output-box');
+      const btn = document.getElementById('btn-run-ai');
+
+      if (!input) {
+        showToast("Please provide telemetry or select a sample.", 'warning');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Analyzing...`;
+
+      setTimeout(() => {
+        const result = runLocalTriageEngine(input, mode);
+        outputBox.innerHTML = formatMarkdownOutput(result);
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-bolt text-xs"></i> Run Triage`;
+        showToast("Telemetry evaluated", 'success');
+      }, 350);
+    }
+
+    function copyAiOutput() {
+      const text = document.getElementById('ai-output-box').innerText;
+      copyDirect(text);
+      showToast("Diagnostic synthesis copied", 'success');
+    }
+
+    function copyDirect(text) {
+      const decoded = text.startsWith('%') ? decodeURIComponent(text) : text;
+      const textarea = document.createElement('textarea');
+      textarea.value = decoded;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        console.error('Copy failed:', err);
+      }
+      document.body.removeChild(textarea);
+    }
+
+    function copyToClipboard(encodedText, isEncoded) {
+      const text = isEncoded ? decodeURIComponent(encodedText) : encodedText;
+      copyDirect(text);
+      showToast("Copied to clipboard", 'success');
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+
+      let dotColor = "bg-slate-400";
+      if (type === 'success') dotColor = "bg-[#86EFAC]";
+      if (type === 'warning') dotColor = "bg-[#EAB308]";
+
+      toast.className = `bg-[#162032] border border-[#27354A] text-[#F8FAFC] px-3 py-2 rounded-lg text-xs flex items-center gap-2 shadow-xl transition-all duration-200 transform translate-x-4 pointer-events-auto`;
+      toast.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColor}"></span> <span class="font-medium">${message}</span>`;
+
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.remove('translate-x-4'), 10);
+      setTimeout(() => {
+        toast.classList.add('translate-x-4', 'opacity-0');
+        setTimeout(() => toast.remove(), 200);
+      }, 3000);
+    }
+
+    function exportData() {
+      const exportObject = {
+        modules: modules,
+        quizAnswers: quizAnswers,
+        drills: completedMentalModelDrills,
+        exportDate: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `FY27_EUC_Ops_Progress_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Progress exported as JSON", 'success');
+    }
+
+    function importData(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed.modules && Array.isArray(parsed.modules)) {
+            modules = parsed.modules;
+            if (parsed.quizAnswers) quizAnswers = parsed.quizAnswers;
+            if (parsed.drills) completedMentalModelDrills = parsed.drills;
+          } else if (Array.isArray(parsed) && parsed[0]?.id) {
+            modules = parsed;
+          }
+          saveState();
+          updateMetrics();
+          renderRoadmap();
+          renderQuiz();
+          initMentalModels();
+          showToast(`Imported ${modules.length} modules`, 'success');
+        } catch (err) {
+          showToast('Failed to parse JSON file', 'warning');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    function resetDataPrompt() {
+      if (confirm("Reset all progress back to initial default state?")) {
+        localStorage.removeItem(STORAGE_KEY_MODULES);
+        localStorage.removeItem(STORAGE_KEY_QUIZ);
+        localStorage.removeItem(STORAGE_KEY_DRILLS);
+        modules = JSON.parse(JSON.stringify(INITIAL_MODULES));
+        quizAnswers = {};
+        completedMentalModelDrills = {};
+        updateMetrics();
+        renderRoadmap();
+        renderQuiz();
+        initMentalModels();
+        showToast("Progress reset to default state", 'info');
+      }
+    }
+
+    window.onload = function () {
+      loadSavedState();
+      updateMetrics();
+      renderRoadmap();
+      initMentalModels();
+      initTriageMatrix();
+      updateWhyTree();
+      renderQuiz();
+      loadBlufTemplate();
+    };
+  </script>
+</body>
+</html>
