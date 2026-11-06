@@ -111,100 +111,100 @@
 
   <!-- Primary Sticky Header -->
   <header class="sticky top-0 z-40 bg-[#070A0F]/95 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
       
       <!-- Top Bar -->
       <div class="flex items-center justify-between h-14 border-b border-white/5">
-        <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-2.5 lg:gap-4">
           <div class="w-8 h-8 rounded-lg bg-[#111722] border border-white/10 flex items-center justify-center text-emerald-400">
             <i class="fa-solid fa-terminal text-xs"></i>
           </div>
           <div>
             <div class="flex items-center gap-1.5">
-              <h1 class="font-semibold text-xs sm:text-sm text-white">EUC & Security Ops Cockpit</h1>
+              <h1 class="font-semibold text-xs sm:text-sm lg:text-base text-white">EUC & Security Ops Cockpit</h1>
               <span class="text-[9px] font-mono-code px-1.5 py-0.5 rounded bg-[#111722] border border-white/10 text-slate-300">FY27 Plan</span>
             </div>
             <p class="text-[10px] text-slate-400 hidden sm:block">Linear Workstation • Cal Newport Deep Work • Calibrated Triage</p>
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 lg:gap-3">
           <!-- Deep Ratio -->
-          <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0C1018] border border-white/5 text-xs">
+          <div class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C1018] border border-white/5 text-xs">
             <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
             <span class="text-slate-400 text-[11px]">Deep Ratio:</span>
             <span id="quick-deep-ratio" class="font-medium text-white font-mono-code text-[11px]">83%</span>
           </div>
 
           <!-- Total Progress -->
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0C1018] border border-white/5 text-xs">
+          <div class="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-[#0C1018] border border-white/5 text-xs">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             <span class="text-slate-400 text-[11px] hidden md:inline">Progress:</span>
             <span id="quick-progress-stat" class="font-medium text-emerald-400 font-mono-code text-[11px]">0.0%</span>
           </div>
 
           <!-- Action Buttons -->
-          <button onclick="openShutdownModal()" class="h-7 px-2 text-xs font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-md transition flex items-center gap-1" title="Daily Shutdown Ritual">
+          <button onclick="openShutdownModal()" class="h-7 lg:h-8 px-2 lg:px-3 text-xs font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-md transition flex items-center gap-1.5" title="Daily Shutdown Ritual">
             <i class="fa-solid fa-moon text-amber-400 text-[11px]"></i><span class="hidden lg:inline text-[11px]">Shutdown</span>
           </button>
           <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importData(event)">
-          <button onclick="document.getElementById('import-file-input').click()" class="h-7 px-2 text-xs text-slate-300 hover:text-white bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center gap-1" title="Import Progress (.json)">
+          <button onclick="document.getElementById('import-file-input').click()" class="h-7 lg:h-8 px-2 lg:px-3 text-xs text-slate-300 hover:text-white bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center gap-1.5" title="Import Progress (.json)">
             <i class="fa-solid fa-arrow-up-from-bracket text-[11px]"></i><span class="hidden md:inline text-[11px]">Import</span>
           </button>
-          <button onclick="exportData()" class="h-7 px-2 text-xs text-slate-300 hover:text-white bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center gap-1" title="Export Progress (.json)">
+          <button onclick="exportData()" class="h-7 lg:h-8 px-2 lg:px-3 text-xs text-slate-300 hover:text-white bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center gap-1.5" title="Export Progress (.json)">
             <i class="fa-solid fa-arrow-down-to-bracket text-[11px]"></i><span class="hidden md:inline text-[11px]">Export</span>
           </button>
-          <button onclick="openResetModal()" class="h-7 w-7 text-xs text-slate-400 hover:text-rose-400 bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center justify-center" title="Reset to defaults">
+          <button onclick="openResetModal()" class="h-7 lg:h-8 w-7 lg:w-8 text-xs text-slate-400 hover:text-rose-400 bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center justify-center" title="Reset to defaults">
             <i class="fa-solid fa-arrow-rotate-left text-[11px]"></i>
           </button>
         </div>
       </div>
 
       <!-- Segmented Nav -->
-      <nav class="flex items-center space-x-1 overflow-x-auto py-2 no-scrollbar text-xs font-medium">
-        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-button tab-active flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-white shrink-0">
+      <nav class="flex items-center space-x-1 lg:space-x-3 overflow-x-auto py-2.5 no-scrollbar text-xs font-medium">
+        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-button tab-active flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-white shrink-0">
           <i class="fa-solid fa-chart-pie text-xs"></i>
           <span>Overview</span>
         </button>
 
-        <button onclick="switchTab('roadmap')" id="tab-btn-roadmap" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
+        <button onclick="switchTab('roadmap')" id="tab-btn-roadmap" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
           <i class="fa-solid fa-graduation-cap text-xs"></i>
           <span>Curriculum (38)</span>
         </button>
 
-        <button onclick="switchTab('mentalmodels')" id="tab-btn-mentalmodels" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
+        <button onclick="switchTab('mentalmodels')" id="tab-btn-mentalmodels" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
           <i class="fa-solid fa-brain text-xs text-amber-400"></i>
           <span>5 Mental Models Lab</span>
           <span class="text-[9px] text-amber-300 bg-amber-500/10 border border-amber-500/20 px-1 rounded">30h</span>
         </button>
 
-        <button onclick="switchTab('notes')" id="tab-btn-notes" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
+        <button onclick="switchTab('notes')" id="tab-btn-notes" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
           <i class="fa-solid fa-clipboard-list text-xs"></i>
           <span>Shift Log & Drive Pad</span>
           <span id="nav-notes-count" class="text-[9px] font-mono-code px-1 rounded bg-[#111722] text-slate-300">0</span>
         </button>
 
-        <button onclick="switchTab('fivewhys')" id="tab-btn-fivewhys" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
+        <button onclick="switchTab('fivewhys')" id="tab-btn-fivewhys" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
           <i class="fa-solid fa-diagram-project text-xs"></i>
           <span>5 Whys RCA</span>
         </button>
 
-        <button onclick="switchTab('bluf')" id="tab-btn-bluf" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
+        <button onclick="switchTab('bluf')" id="tab-btn-bluf" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
           <i class="fa-regular fa-envelope text-xs"></i>
           <span>Minto / BLUF Drafter</span>
         </button>
 
-        <button onclick="switchTab('exam')" id="tab-btn-exam" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
+        <button onclick="switchTab('exam')" id="tab-btn-exam" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
           <i class="fa-solid fa-vial text-xs"></i>
           <span>Scenario Recall Lab</span>
         </button>
 
-        <button onclick="switchTab('gemini')" id="tab-btn-gemini" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
+        <button onclick="switchTab('gemini')" id="tab-btn-gemini" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
           <i class="fa-solid fa-microchip text-xs"></i>
           <span>AI Log Diagnostic</span>
         </button>
 
-        <button onclick="switchTab('deepflow')" id="tab-btn-deepflow" class="tab-button flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
+        <button onclick="switchTab('deepflow')" id="tab-btn-deepflow" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
           <i class="fa-regular fa-clock text-xs"></i>
           <span>Deep Sprint & Audio</span>
         </button>
@@ -213,120 +213,120 @@
   </header>
 
   <!-- Main Content Area -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-5">
+  <main class="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-8">
 
     <!-- VIEW 1: OVERVIEW -->
-    <section id="tab-dashboard" class="space-y-5">
+    <section id="tab-dashboard" class="space-y-6 lg:space-y-8">
       <!-- 3 Metrics Tiles -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
         <!-- Tile 1 -->
-        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 shadow-sm">
+        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 shadow-sm">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Cognitive Ratio</span>
+            <span class="text-[11px] lg:text-xs font-medium uppercase tracking-wider text-slate-400">Cognitive Ratio</span>
             <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#111722] text-slate-300">Newport Metric</span>
           </div>
-          <div class="flex items-baseline gap-1.5 mt-1.5">
-            <span id="metric-deep-hours" class="text-2xl font-bold tracking-tight text-white">346</span>
-            <span class="text-xs text-slate-400">/ 418 hrs Deep</span>
+          <div class="flex items-baseline gap-2 mt-2 lg:mt-3">
+            <span id="metric-deep-hours" class="text-2xl lg:text-3xl font-bold tracking-tight text-white">346</span>
+            <span class="text-xs lg:text-sm text-slate-400">/ 418 hrs Deep</span>
           </div>
-          <div class="w-full bg-[#070A0F] h-1.5 rounded-full mt-2.5 overflow-hidden">
+          <div class="w-full bg-[#070A0F] h-1.5 lg:h-2 rounded-full mt-3 overflow-hidden">
             <div id="metric-deep-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-300" style="width: 83%"></div>
           </div>
-          <p class="text-[11px] text-slate-400 mt-2">83% High-Leverage Deep Engineering</p>
+          <p class="text-[11px] lg:text-xs text-slate-400 mt-2.5">83% High-Leverage Deep Engineering</p>
         </div>
 
         <!-- Tile 2 -->
-        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 shadow-sm">
-          <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Plan Execution</span>
-          <div class="flex items-baseline gap-1.5 mt-1.5">
-            <span id="metric-percent-complete" class="text-2xl font-bold tracking-tight text-emerald-400">0%</span>
-            <span id="metric-counts" class="text-xs text-slate-400">(0/38 done)</span>
+        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 shadow-sm">
+          <span class="text-[11px] lg:text-xs font-medium uppercase tracking-wider text-slate-400">Plan Execution</span>
+          <div class="flex items-baseline gap-2 mt-2 lg:mt-3">
+            <span id="metric-percent-complete" class="text-2xl lg:text-3xl font-bold tracking-tight text-emerald-400">0%</span>
+            <span id="metric-counts" class="text-xs lg:text-sm text-slate-400">(0/38 done)</span>
           </div>
-          <div class="w-full bg-[#070A0F] h-1.5 rounded-full mt-2.5 overflow-hidden">
+          <div class="w-full bg-[#070A0F] h-1.5 lg:h-2 rounded-full mt-3 overflow-hidden">
             <div id="metric-progress-bar" class="bg-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
-          <p id="metric-completed-hours" class="text-[11px] text-slate-400 mt-2">0 hrs completed (418 remain)</p>
+          <p id="metric-completed-hours" class="text-[11px] lg:text-xs text-slate-400 mt-2.5">0 hrs completed (418 remain)</p>
         </div>
 
         <!-- Tile 3 -->
-        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 shadow-sm">
+        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 shadow-sm">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Target MTTR Delta</span>
+            <span class="text-[11px] lg:text-xs font-medium uppercase tracking-wider text-slate-400">Target MTTR Delta</span>
             <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">-35% MTTR</span>
           </div>
-          <div class="flex items-baseline gap-1.5 mt-1.5">
-            <span class="text-2xl font-bold tracking-tight text-white">1.8h</span>
-            <span class="text-xs text-slate-400">from 4.2h base</span>
+          <div class="flex items-baseline gap-2 mt-2 lg:mt-3">
+            <span class="text-2xl lg:text-3xl font-bold tracking-tight text-white">1.8h</span>
+            <span class="text-xs lg:text-sm text-slate-400">from 4.2h base</span>
           </div>
-          <p class="text-[11px] text-slate-400 mt-2">Tier-1/2 local containment before escalation</p>
+          <p class="text-[11px] lg:text-xs text-slate-400 mt-3">Tier-1/2 local containment before escalation</p>
         </div>
       </div>
 
       <!-- 4 Pillars / Modules Architecture -->
       <div>
-        <div class="flex items-center justify-between mb-2.5">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Master Engineering Domains</h2>
+        <div class="flex items-center justify-between mb-3 lg:mb-4">
+          <h2 class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-400">Master Engineering Domains</h2>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           <!-- Pillar 1 -->
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
+          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
             <div>
               <div class="flex items-center justify-between">
                 <span class="text-[11px] font-mono-code text-slate-400">PIL-01</span>
                 <span id="p1-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#111722] px-1.5 py-0.5 rounded font-mono-code">0%</span>
               </div>
-              <h3 class="text-sm font-semibold text-slate-200 mt-2">Endpoint Management</h3>
-              <p class="text-xs text-slate-400 mt-1 leading-relaxed">Entra ID RBAC, Intune compliance hygiene, and physical VTC triage runbooks.</p>
+              <h3 class="text-sm lg:text-base font-semibold text-slate-200 mt-3">Endpoint Management</h3>
+              <p class="text-xs text-slate-400 mt-2 leading-relaxed">Entra ID RBAC, Intune compliance hygiene, and physical VTC triage runbooks.</p>
             </div>
-            <div class="mt-4 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
+            <div class="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
               <span><span id="p1-hrs" class="text-slate-200">119</span> hrs (98% Deep)</span>
               <span><span id="p1-items" class="text-slate-200">10</span> items</span>
             </div>
           </div>
 
           <!-- Pillar 2 -->
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
+          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
             <div>
               <div class="flex items-center justify-between">
                 <span class="text-[11px] font-mono-code text-slate-400">PIL-02</span>
                 <span id="p2-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#111722] px-1.5 py-0.5 rounded font-mono-code">0%</span>
               </div>
-              <h3 class="text-sm font-semibold text-slate-200 mt-2">Security & Compliance</h3>
-              <p class="text-xs text-slate-400 mt-1 leading-relaxed">CompTIA Security+ (SY0-701), Passkeys / FIDO2, and continuous endpoint hardening.</p>
+              <h3 class="text-sm lg:text-base font-semibold text-slate-200 mt-3">Security & Compliance</h3>
+              <p class="text-xs text-slate-400 mt-2 leading-relaxed">CompTIA Security+ (SY0-701), Passkeys / FIDO2, and continuous endpoint hardening.</p>
             </div>
-            <div class="mt-4 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
+            <div class="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
               <span><span id="p2-hrs" class="text-slate-200">152</span> hrs (98% Deep)</span>
               <span><span id="p2-items" class="text-slate-200">10</span> items</span>
             </div>
           </div>
 
           <!-- Pillar 3 -->
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
+          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
             <div>
               <div class="flex items-center justify-between">
                 <span class="text-[11px] font-mono-code text-slate-400">PIL-03</span>
                 <span id="p3-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#111722] px-1.5 py-0.5 rounded font-mono-code">0%</span>
               </div>
-              <h3 class="text-sm font-semibold text-slate-200 mt-2">Automation & AI</h3>
-              <p class="text-xs text-slate-400 mt-1 leading-relaxed">Gemini log triage, Python automation scripts, and operational telemetry dashboards.</p>
+              <h3 class="text-sm lg:text-base font-semibold text-slate-200 mt-3">Automation & AI</h3>
+              <p class="text-xs text-slate-400 mt-2 leading-relaxed">Gemini log triage, Python automation scripts, and operational telemetry dashboards.</p>
             </div>
-            <div class="mt-4 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
+            <div class="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
               <span><span id="p3-hrs" class="text-slate-200">95</span> hrs (96% Deep)</span>
               <span><span id="p3-items" class="text-slate-200">11</span> items</span>
             </div>
           </div>
 
           <!-- Pillar 4 -->
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
+          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
             <div>
               <div class="flex items-center justify-between">
                 <span class="text-[11px] font-mono-code text-slate-400">PIL-04</span>
                 <span id="p4-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#111722] px-1.5 py-0.5 rounded font-mono-code">0%</span>
               </div>
-              <h3 class="text-sm font-semibold text-slate-200 mt-2">Structured Systems</h3>
-              <p class="text-xs text-slate-400 mt-1 leading-relaxed">Bottom Line Up Front (BLUF), Minto Pyramid, Systems Thinking, and Time-Blocking.</p>
+              <h3 class="text-sm lg:text-base font-semibold text-slate-200 mt-3">Structured Systems</h3>
+              <p class="text-xs text-slate-400 mt-2 leading-relaxed">Bottom Line Up Front (BLUF), Minto Pyramid, Systems Thinking, and Time-Blocking.</p>
             </div>
-            <div class="mt-4 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
+            <div class="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
               <span><span id="p4-hrs" class="text-slate-200">52</span> hrs (98% Deep)</span>
               <span><span id="p4-items" class="text-slate-200">7</span> items</span>
             </div>
@@ -335,31 +335,31 @@
       </div>
 
       <!-- Active Priorities & Quiet Queue Hub -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         <!-- Active Priorities -->
-        <div class="lg:col-span-2 bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 space-y-3.5 shadow-sm">
-          <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+        <div class="lg:col-span-2 bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-4 shadow-sm">
+          <div class="flex items-center justify-between border-b border-white/5 pb-3">
+            <h3 class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Active Engineering Priorities
             </h3>
             <button onclick="switchTab('roadmap')" class="text-xs text-slate-400 hover:text-white transition">Open Master Table &rarr;</button>
           </div>
-          <div id="active-focus-container" class="space-y-2">
+          <div id="active-focus-container" class="space-y-3">
             <!-- Populated via script -->
           </div>
         </div>
 
         <!-- Quiet Queue Hub -->
-        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 flex flex-col justify-between space-y-3.5 shadow-sm">
-          <div class="space-y-2.5">
+        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 flex flex-col justify-between space-y-4 shadow-sm">
+          <div class="space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <i class="fa-solid fa-mug-hot text-amber-400 text-xs"></i>
-                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-200">Quiet Queue (Watchlist)</h3>
+                <h3 class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-200">Quiet Queue (Watchlist)</h3>
               </div>
               <span class="text-[10px] font-mono-code text-amber-300 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">Downtime Hub</span>
             </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
+            <p class="text-xs lg:text-[13px] text-slate-400 leading-relaxed">
               When ticket queues are calm, pivot to these high-perspective lectures without burning deep engineering blocks:
             </p>
             <div id="quiet-queue-preview" class="space-y-2 text-xs">
@@ -367,7 +367,7 @@
             </div>
           </div>
           
-          <button onclick="applyQuickFilter('QUIET_QUEUE'); switchTab('roadmap');" class="w-full py-2 bg-[#111722] hover:bg-white/10 text-slate-200 text-xs font-medium rounded-lg border border-white/5 transition flex items-center justify-center gap-2 shadow-sm">
+          <button onclick="applyQuickFilter('QUIET_QUEUE'); switchTab('roadmap');" class="w-full py-2.5 mt-2 bg-[#111722] hover:bg-white/10 text-slate-200 text-xs font-medium rounded-lg border border-white/5 transition flex items-center justify-center gap-2 shadow-sm">
             <i class="fa-solid fa-list-check text-slate-400"></i> View All 11 Quiet Queue Talks
           </button>
         </div>
@@ -375,16 +375,16 @@
     </section>
 
     <!-- VIEW 2: ROADMAP MASTER TABLE (38 MODULES) -->
-    <section id="tab-roadmap" class="hidden space-y-4">
-      <div class="bg-[#0C1018] border border-white/5 p-4 rounded-xl space-y-3 shadow-sm">
-        <div class="flex flex-col lg:flex-row gap-3 items-center justify-between">
-          <div class="relative w-full lg:w-80">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-            <input type="text" id="module-search" oninput="renderRoadmap()" placeholder="Search ID, title, or deliverable..." class="w-full bg-[#070A0F] border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-white/20">
+    <section id="tab-roadmap" class="hidden space-y-5 lg:space-y-6">
+      <div class="bg-[#0C1018] border border-white/5 p-4 lg:p-6 rounded-xl space-y-4 shadow-sm">
+        <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          <div class="relative w-full lg:w-96">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+            <input type="text" id="module-search" oninput="renderRoadmap()" placeholder="Search ID, title, or deliverable..." class="w-full bg-[#070A0F] border border-white/10 rounded-lg pl-9 pr-3 py-2 text-xs lg:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-white/20">
           </div>
 
-          <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-            <select id="filter-pillar" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+          <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+            <select id="filter-pillar" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none">
               <option value="ALL">All Domains</option>
               <option value="PIL-01">PIL-01: Endpoint Management</option>
               <option value="PIL-02">PIL-02: Security & Compliance</option>
@@ -392,49 +392,49 @@
               <option value="PIL-04">PIL-04: Structured Systems</option>
             </select>
 
-            <select id="filter-worktype" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+            <select id="filter-worktype" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none">
               <option value="ALL">All Work Modes</option>
               <option value="Deep">Deep Engineering (High Leverage)</option>
               <option value="Quiet">Quiet Queue (Keynotes/Lectures)</option>
             </select>
 
-            <select id="filter-status" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+            <select id="filter-status" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none">
               <option value="ALL">All Statuses</option>
               <option value="Not Started">Not Started</option>
               <option value="In Progress">In Progress</option>
               <option value="Completed">Completed</option>
             </select>
 
-            <span id="filter-count-badge" class="px-2 py-1 text-xs text-slate-400 bg-[#070A0F] border border-white/10 rounded-md font-mono-code">38 Items</span>
+            <span id="filter-count-badge" class="px-3 py-2 text-xs text-slate-400 bg-[#070A0F] border border-white/10 rounded-md font-mono-code">38 Items</span>
           </div>
         </div>
 
-        <div class="flex items-center gap-1.5 pt-1 overflow-x-auto text-xs no-scrollbar">
+        <div class="flex items-center gap-2 pt-2 overflow-x-auto text-xs no-scrollbar">
           <span class="text-slate-400 text-[11px] uppercase tracking-wider shrink-0 mr-1">Quick Views:</span>
-          <button onclick="applyQuickFilter('ALL')" class="px-2.5 py-1 rounded-md bg-[#070A0F] hover:bg-[#111722] text-slate-300 border border-white/5 text-[11px] transition">All (38)</button>
-          <button onclick="applyQuickFilter('DEEP')" class="px-2.5 py-1 rounded-md bg-[#070A0F] hover:bg-[#111722] text-indigo-300 border border-white/5 text-[11px] transition">Deep Only</button>
-          <button onclick="applyQuickFilter('QUIET_QUEUE')" class="px-2.5 py-1 rounded-md bg-[#070A0F] hover:bg-[#111722] text-amber-300 border border-amber-500/20 text-[11px] transition flex items-center gap-1">
+          <button onclick="applyQuickFilter('ALL')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-slate-300 border border-white/5 text-[11px] transition">All (38)</button>
+          <button onclick="applyQuickFilter('DEEP')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-indigo-300 border border-white/5 text-[11px] transition">Deep Only</button>
+          <button onclick="applyQuickFilter('QUIET_QUEUE')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-amber-300 border border-amber-500/20 text-[11px] transition flex items-center gap-1.5">
             <i class="fa-solid fa-mug-hot text-[10px]"></i> Quiet Queue (11)
           </button>
-          <button onclick="applyQuickFilter('INITIATIVES')" class="px-2.5 py-1 rounded-md bg-[#070A0F] hover:bg-[#111722] text-slate-300 border border-white/5 text-[11px] transition">Core Initiatives (9)</button>
-          <button onclick="applyQuickFilter('IN_PROGRESS')" class="px-2.5 py-1 rounded-md bg-[#070A0F] hover:bg-[#111722] text-amber-300/90 border border-white/5 text-[11px] transition">In Progress</button>
+          <button onclick="applyQuickFilter('INITIATIVES')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-slate-300 border border-white/5 text-[11px] transition">Core Initiatives (9)</button>
+          <button onclick="applyQuickFilter('IN_PROGRESS')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-amber-300/90 border border-white/5 text-[11px] transition">In Progress</button>
         </div>
       </div>
 
       <!-- Desktop Table -->
       <div class="hidden sm:block bg-[#0C1018] border border-white/5 rounded-xl overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
+          <table class="w-full text-left border-collapse text-xs lg:text-sm">
             <thead>
-              <tr class="bg-[#111722]/50 text-slate-400 font-medium border-b border-white/5 text-[11px]">
-                <th class="py-3 px-3.5 w-24">ID</th>
-                <th class="py-3 px-3.5 w-24">Domain</th>
-                <th class="py-3 px-3.5">Module Objective & Target Deliverable</th>
-                <th class="py-3 px-3.5 w-32">Format</th>
-                <th class="py-3 px-3.5 w-32 text-center">Work Mode</th>
-                <th class="py-3 px-3.5 w-16 text-center">Hours</th>
-                <th class="py-3 px-3.5 w-32 text-center">Status</th>
-                <th class="py-3 px-3.5 w-16 text-right">Link</th>
+              <tr class="bg-[#111722]/50 text-slate-400 font-medium border-b border-white/5 text-[11px] lg:text-xs">
+                <th class="py-3.5 px-4 w-24">ID</th>
+                <th class="py-3.5 px-4 w-28">Domain</th>
+                <th class="py-3.5 px-4">Module Objective & Target Deliverable</th>
+                <th class="py-3.5 px-4 w-36">Format</th>
+                <th class="py-3.5 px-4 w-36 text-center">Work Mode</th>
+                <th class="py-3.5 px-4 w-20 text-center">Hours</th>
+                <th class="py-3.5 px-4 w-36 text-center">Status</th>
+                <th class="py-3.5 px-4 w-20 text-right">Link</th>
               </tr>
             </thead>
             <tbody id="roadmap-table-body" class="divide-y divide-white/5">
@@ -445,66 +445,66 @@
       </div>
 
       <!-- Mobile List Cards -->
-      <div id="roadmap-mobile-container" class="sm:hidden space-y-2.5">
+      <div id="roadmap-mobile-container" class="sm:hidden space-y-3">
         <!-- Rendered via script -->
       </div>
     </section>
 
     <!-- VIEW 3: 5 MENTAL MODELS & STRUCTURED THINKING LAB -->
-    <section id="tab-mentalmodels" class="hidden space-y-5">
-      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 space-y-3.5 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+    <section id="tab-mentalmodels" class="hidden space-y-5 lg:space-y-8">
+      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-4 lg:space-y-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div>
             <div class="flex items-center gap-2">
               <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-300">Core Competency</span>
-              <h2 class="text-sm font-semibold text-white">5 High-Impact Mental Models & Cognitive Habit Re-Wiring</h2>
+              <h2 class="text-sm lg:text-base font-semibold text-white">5 High-Impact Mental Models & Cognitive Habit Re-Wiring</h2>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">30-hour self-study companion: Convert cognitive frameworks into daily engineering instincts.</p>
+            <p class="text-xs lg:text-sm text-slate-400 mt-1">30-hour self-study companion: Convert cognitive frameworks into daily engineering instincts.</p>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-400 bg-[#070A0F] border border-white/10 px-2.5 py-1 rounded font-mono-code">Goal: 30h Study</span>
-            <span id="mm-reps-counter" class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded font-mono-code">Drills: 0 / 5 Passed</span>
+          <div class="flex items-center gap-2 lg:gap-3">
+            <span class="text-xs text-slate-400 bg-[#070A0F] border border-white/10 px-3 py-1.5 rounded font-mono-code">Goal: 30h Study</span>
+            <span id="mm-reps-counter" class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded font-mono-code">Drills: 0 / 5 Passed</span>
           </div>
         </div>
 
-        <p class="text-xs text-slate-300 leading-relaxed">
+        <p class="text-xs lg:text-sm text-slate-300 leading-relaxed max-w-5xl">
           Technical competence alone caps your ceiling at reactive firefighting. Senior engineering velocity requires <strong>structured communication</strong> (Barbara Minto's Pyramid), <strong>systems thinking</strong> (Donella Meadows' leverage points), and <strong>root-cause first principles</strong>. Use this interactive laboratory to ingrain the 5 foundational models.
         </p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 pt-1" id="mm-selector-grid">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 pt-2" id="mm-selector-grid">
           <!-- Populated dynamically via JS -->
         </div>
       </div>
 
-      <div id="mm-study-pane" class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 space-y-5 shadow-sm">
+      <div id="mm-study-pane" class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-5 lg:space-y-6 shadow-sm">
         <!-- Injected via selectMentalModel() -->
       </div>
     </section>
 
     <!-- VIEW 4: OPS NOTES & DRIVE STAGING PAD -->
-    <section id="tab-notes" class="hidden space-y-4">
-      <div class="bg-[#0C1018] border border-white/5 p-4 sm:p-5 rounded-xl space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+    <section id="tab-notes" class="hidden space-y-5 lg:space-y-6">
+      <div class="bg-[#0C1018] border border-white/5 p-4 sm:p-5 lg:p-6 rounded-xl space-y-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div>
-            <h3 class="text-sm font-semibold text-white">Shift Log & Google Drive Handover Staging</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Log hardware, incidents, or tasks on the fly, then compile into a clean Google Doc handover digest.</p>
+            <h3 class="text-sm lg:text-base font-semibold text-white">Shift Log & Google Drive Handover Staging</h3>
+            <p class="text-xs lg:text-sm text-slate-400 mt-1">Log hardware, incidents, or tasks on the fly, then compile into a clean Google Doc handover digest.</p>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="compileHandoverToClipboard()" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 text-xs font-medium transition flex items-center gap-1.5">
+          <div class="flex items-center gap-3">
+            <button onclick="compileHandoverToClipboard()" class="px-4 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 text-xs font-medium transition flex items-center gap-1.5">
               <i class="fa-solid fa-copy text-xs"></i> <span>Copy Digest for Drive</span>
             </button>
-            <a href="https://docs.google.com/document/create" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-[#111722] hover:bg-white/10 text-slate-200 border border-white/10 text-xs transition flex items-center gap-1.5">
+            <a href="https://docs.google.com/document/create" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-lg bg-[#111722] hover:bg-white/10 text-slate-200 border border-white/10 text-xs transition flex items-center gap-1.5">
               <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span>New G-Doc</span>
             </a>
           </div>
         </div>
 
         <!-- Fast Structured Entry -->
-        <div class="bg-[#070A0F] border border-white/5 p-3 rounded-lg space-y-3">
-          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+        <div class="bg-[#070A0F] border border-white/5 p-4 rounded-lg space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs lg:text-sm">
             <div>
-              <label class="block text-[10px] font-mono-code text-slate-400 mb-1">ENTRY TYPE</label>
-              <select id="note-type-select" class="w-full bg-[#111722] border border-white/10 text-slate-200 rounded-md p-1.5 text-xs focus:outline-none">
+              <label class="block text-[10px] font-mono-code text-slate-400 mb-1.5">ENTRY TYPE</label>
+              <select id="note-type-select" class="w-full bg-[#111722] border border-white/10 text-slate-200 rounded-md p-2 focus:outline-none focus:border-white/20">
                 <option value="Hardware / Asset">Hardware / Asset Triage</option>
                 <option value="Incident / Bug">Incident Resolution</option>
                 <option value="Operational Task">Operational Task</option>
@@ -512,14 +512,14 @@
               </select>
             </div>
             <div>
-              <label class="block text-[10px] font-mono-code text-slate-400 mb-1">ENTITY / HOSTNAME / TICKET</label>
-              <input type="text" id="note-entity-input" placeholder="e.g. SYD-LT-402, INC-9102" class="w-full bg-[#111722] border border-white/10 text-slate-200 rounded-md p-1.5 text-xs focus:outline-none">
+              <label class="block text-[10px] font-mono-code text-slate-400 mb-1.5">ENTITY / HOSTNAME / TICKET</label>
+              <input type="text" id="note-entity-input" placeholder="e.g. SYD-LT-402, INC-9102" class="w-full bg-[#111722] border border-white/10 text-slate-200 rounded-md p-2 focus:outline-none focus:border-white/20">
             </div>
             <div class="sm:col-span-2">
-              <label class="block text-[10px] font-mono-code text-slate-400 mb-1">SUMMARY / ACTION TAKEN</label>
+              <label class="block text-[10px] font-mono-code text-slate-400 mb-1.5">SUMMARY / ACTION TAKEN</label>
               <div class="flex gap-2">
-                <input type="text" id="note-summary-input" placeholder="e.g. Re-escrowed BitLocker key to Entra ID; client compliant" class="w-full bg-[#111722] border border-white/10 text-slate-200 rounded-md p-1.5 text-xs focus:outline-none">
-                <button onclick="addLogEntry()" class="px-3.5 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition shrink-0">
+                <input type="text" id="note-summary-input" placeholder="e.g. Re-escrowed BitLocker key to Entra ID; client compliant" class="w-full bg-[#111722] border border-white/10 text-slate-200 rounded-md p-2 focus:outline-none focus:border-white/20">
+                <button onclick="addLogEntry()" class="px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 text-white font-medium transition shrink-0">
                   Add Log
                 </button>
               </div>
@@ -528,20 +528,20 @@
         </div>
 
         <!-- Staging Table -->
-        <div class="space-y-2">
-          <div class="flex items-center justify-between text-xs text-slate-400">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-xs lg:text-sm text-slate-400">
             <span id="staged-count-label">0 Items Staged Today</span>
             <button onclick="clearAllNotes()" class="text-slate-400 hover:text-rose-400 transition">Clear All Staged</button>
           </div>
           <div class="bg-[#070A0F] border border-white/5 rounded-lg overflow-hidden">
-            <table class="w-full text-left border-collapse text-xs">
+            <table class="w-full text-left border-collapse text-xs lg:text-sm">
               <thead>
-                <tr class="bg-[#111722]/50 text-slate-400 border-b border-white/5 text-[10px] font-mono-code">
-                  <th class="py-2 px-3 w-16">TIME</th>
-                  <th class="py-2 px-3 w-32">TYPE</th>
-                  <th class="py-2 px-3 w-32">ENTITY</th>
-                  <th class="py-2 px-3">SUMMARY &amp; ACTIONS</th>
-                  <th class="py-2 px-3 w-16 text-right">ACTION</th>
+                <tr class="bg-[#111722]/50 text-slate-400 border-b border-white/5 text-[10px] lg:text-xs font-mono-code">
+                  <th class="py-2.5 px-4 w-20">TIME</th>
+                  <th class="py-2.5 px-4 w-40">TYPE</th>
+                  <th class="py-2.5 px-4 w-40">ENTITY</th>
+                  <th class="py-2.5 px-4">SUMMARY &amp; ACTIONS</th>
+                  <th class="py-2.5 px-4 w-20 text-right">ACTION</th>
                 </tr>
               </thead>
               <tbody id="notes-table-body" class="divide-y divide-white/5 text-slate-300">
@@ -554,62 +554,62 @@
     </section>
 
     <!-- VIEW 5: 5 WHYS ROOT CAUSE ANALYSIS -->
-    <section id="tab-fivewhys" class="hidden space-y-4">
-      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 space-y-4 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+    <section id="tab-fivewhys" class="hidden space-y-5 lg:space-y-6">
+      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div>
-            <h3 class="text-sm font-semibold text-white">5 Whys Root-Cause Analysis Studio</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Dissect complex IT failure modes down to fundamental system leverage points.</p>
+            <h3 class="text-sm lg:text-base font-semibold text-white">5 Whys Root-Cause Analysis Studio</h3>
+            <p class="text-xs lg:text-sm text-slate-400 mt-1">Dissect complex IT failure modes down to fundamental system leverage points.</p>
           </div>
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="text-[11px] text-slate-400">Presets:</span>
-            <button onclick="loadWhyPreset('vtc')" class="px-2.5 py-1 text-xs rounded bg-[#111722] hover:bg-white/10 text-slate-300 border border-white/5 transition">Teams Room Drop</button>
-            <button onclick="loadWhyPreset('mfa')" class="px-2.5 py-1 text-xs rounded bg-[#111722] hover:bg-white/10 text-slate-300 border border-white/5 transition">Entra MFA 50074</button>
-            <button onclick="loadWhyPreset('bitlocker')" class="px-2.5 py-1 text-xs rounded bg-[#111722] hover:bg-white/10 text-slate-300 border border-white/5 transition">BitLocker 0x87D1041C</button>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[11px] lg:text-xs text-slate-400">Presets:</span>
+            <button onclick="loadWhyPreset('vtc')" class="px-3 py-1.5 text-xs lg:text-sm rounded bg-[#111722] hover:bg-white/10 text-slate-300 border border-white/5 transition">Teams Room Drop</button>
+            <button onclick="loadWhyPreset('mfa')" class="px-3 py-1.5 text-xs lg:text-sm rounded bg-[#111722] hover:bg-white/10 text-slate-300 border border-white/5 transition">Entra MFA 50074</button>
+            <button onclick="loadWhyPreset('bitlocker')" class="px-3 py-1.5 text-xs lg:text-sm rounded bg-[#111722] hover:bg-white/10 text-slate-300 border border-white/5 transition">BitLocker 0x87D1041C</button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
-          <div class="space-y-2.5 bg-[#070A0F] border border-white/5 p-3.5 rounded-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div class="space-y-4 bg-[#070A0F] border border-white/5 p-4 lg:p-5 rounded-xl">
             <div>
-              <label class="block text-[10px] font-mono-code text-slate-400 mb-1">INCIDENT SYMPTOM (SURFACE LEVEL)</label>
-              <input type="text" id="why-symptom" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="Teams Room display went black mid-executive meeting.">
+              <label class="block text-[10px] lg:text-xs font-mono-code text-slate-400 mb-1.5">INCIDENT SYMPTOM (SURFACE LEVEL)</label>
+              <input type="text" id="why-symptom" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20" value="Teams Room display went black mid-executive meeting.">
             </div>
             <div>
-              <label class="block text-[10px] font-mono-code text-slate-400 mb-1">WHY 1: IMMEDIATE PHYSICAL CAUSE</label>
-              <input type="text" id="why-1" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="The HDMI ingest signal lost synchronization with the console compute.">
+              <label class="block text-[10px] lg:text-xs font-mono-code text-slate-400 mb-1.5">WHY 1: IMMEDIATE PHYSICAL CAUSE</label>
+              <input type="text" id="why-1" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20" value="The HDMI ingest signal lost synchronization with the console compute.">
             </div>
             <div>
-              <label class="block text-[10px] font-mono-code text-slate-400 mb-1">WHY 2: DEVICE / DRIVER STATE</label>
-              <input type="text" id="why-2" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="USB Root Hub put the capture card into low-power sleep mode after 30 mins.">
+              <label class="block text-[10px] lg:text-xs font-mono-code text-slate-400 mb-1.5">WHY 2: DEVICE / DRIVER STATE</label>
+              <input type="text" id="why-2" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20" value="USB Root Hub put the capture card into low-power sleep mode after 30 mins.">
             </div>
             <div>
-              <label class="block text-[10px] font-mono-code text-slate-400 mb-1">WHY 3: CONFIGURATION GAP</label>
-              <input type="text" id="why-3" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="The host was imaged with a generic desktop power plan instead of Teams Rooms CSP.">
+              <label class="block text-[10px] lg:text-xs font-mono-code text-slate-400 mb-1.5">WHY 3: CONFIGURATION GAP</label>
+              <input type="text" id="why-3" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20" value="The host was imaged with a generic desktop power plan instead of Teams Rooms CSP.">
             </div>
             <div>
-              <label class="block text-[10px] font-mono-code text-slate-400 mb-1">WHY 4: PROCESS DEFECT</label>
-              <input type="text" id="why-4" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="No automated staging verification checklist checked USB selective suspend state.">
+              <label class="block text-[10px] lg:text-xs font-mono-code text-slate-400 mb-1.5">WHY 4: PROCESS DEFECT</label>
+              <input type="text" id="why-4" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20" value="No automated staging verification checklist checked USB selective suspend state.">
             </div>
             <div>
-              <label class="block text-[10px] font-mono-code text-emerald-400 mb-1">WHY 5: SYSTEMIC ROOT LEVERAGE POINT</label>
-              <input type="text" id="why-5" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-emerald-500/30 text-emerald-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none" value="Lack of centralized Intune configuration baseline specifically scoped for Conference Room OUs.">
+              <label class="block text-[10px] lg:text-xs font-mono-code text-emerald-400 mb-1.5">WHY 5: SYSTEMIC ROOT LEVERAGE POINT</label>
+              <input type="text" id="why-5" oninput="updateWhyOutput()" class="w-full bg-[#111722] border border-emerald-500/30 text-emerald-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500/50" value="Lack of centralized Intune configuration baseline specifically scoped for Conference Room OUs.">
             </div>
           </div>
 
-          <div class="flex flex-col justify-between bg-[#070A0F] border border-white/5 p-4 rounded-xl space-y-3">
+          <div class="flex flex-col justify-between bg-[#070A0F] border border-white/5 p-4 lg:p-5 rounded-xl space-y-4">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-white/5">
-                <span class="text-xs font-semibold text-slate-300">Executive Post-Mortem & Resolution (BLUF)</span>
-                <span class="text-[9px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Minto Compliant</span>
+              <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                <span class="text-xs lg:text-sm font-semibold text-slate-300">Executive Post-Mortem & Resolution (BLUF)</span>
+                <span class="text-[9px] lg:text-[10px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">Minto Compliant</span>
               </div>
-              <div id="why-tree-output" class="mt-3 p-3 rounded-lg bg-[#111722] border border-white/5 text-[11px] font-mono-code text-slate-300 whitespace-pre-wrap leading-relaxed select-all">
+              <div id="why-tree-output" class="mt-4 p-4 rounded-lg bg-[#111722] border border-white/5 text-[11px] lg:text-xs font-mono-code text-slate-300 whitespace-pre-wrap leading-relaxed select-all">
                 <!-- Dynamically generated -->
               </div>
             </div>
-            <div class="pt-2 border-t border-white/5 flex items-center justify-between">
-              <span class="text-[11px] text-slate-400">Ready to paste into ServiceNow / Jira</span>
-              <button onclick="copyWhyTree()" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-medium text-xs rounded-lg transition flex items-center gap-1.5">
+            <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+              <span class="text-[11px] lg:text-xs text-slate-400">Ready to paste into ServiceNow / Jira</span>
+              <button onclick="copyWhyTree()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium text-xs lg:text-sm rounded-lg transition flex items-center gap-1.5">
                 <i class="fa-regular fa-copy text-xs"></i> Copy Root-Cause Memo
               </button>
             </div>
@@ -619,21 +619,21 @@
     </section>
 
     <!-- VIEW 6: MINTO PYRAMID & BLUF BRIEFING SUITE -->
-    <section id="tab-bluf" class="hidden space-y-4">
-      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 space-y-4 shadow-sm">
+    <section id="tab-bluf" class="hidden space-y-5 lg:space-y-6">
+      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-5 shadow-sm">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-[#111722] text-slate-300">Barbara Minto Standard</span>
-            <h2 class="text-sm font-semibold text-white">Bottom Line Up Front (BLUF) & S-C-Q-R Briefing Suite</h2>
+            <span class="text-[10px] lg:text-[11px] font-mono-code uppercase px-2 py-0.5 rounded bg-[#111722] text-slate-300">Barbara Minto Standard</span>
+            <h2 class="text-sm lg:text-base font-semibold text-white">Bottom Line Up Front (BLUF) & S-C-Q-R Briefing Suite</h2>
           </div>
-          <p class="text-xs text-slate-400 mt-0.5">Draft memos for CIOs, VPs, and ticket submitters with zero cognitive friction.</p>
+          <p class="text-xs lg:text-sm text-slate-400 mt-1">Draft memos for CIOs, VPs, and ticket submitters with zero cognitive friction.</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
-          <div class="space-y-3 bg-[#070A0F] border border-white/5 p-4 rounded-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div class="space-y-4 bg-[#070A0F] border border-white/5 p-4 lg:p-5 rounded-xl">
             <div>
-              <label class="block text-xs text-slate-400 mb-1">Executive Archetype</label>
-              <select id="bluf-type" onchange="loadBlufTemplate()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+              <label class="block text-xs lg:text-sm text-slate-400 mb-1.5">Executive Archetype</label>
+              <select id="bluf-type" onchange="loadBlufTemplate()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20">
                 <option value="hardware-approval">VP Request: VTC Hardware Replacement ($450)</option>
                 <option value="acknowledgement-loop">Acknowledgement Loop: High-Priority Ticket with SLA</option>
                 <option value="consolidated-questions">Question Consolidation: End-User Diagnostic Packet</option>
@@ -643,34 +643,34 @@
             </div>
 
             <div>
-              <label class="block text-xs text-slate-400 mb-1">1. Bottom Line Up Front (Sentence 1 Decision / Request)</label>
-              <input type="text" id="bluf-bottomline" oninput="generateBlufText()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+              <label class="block text-xs lg:text-sm text-slate-400 mb-1.5">1. Bottom Line Up Front (Sentence 1 Decision / Request)</label>
+              <input type="text" id="bluf-bottomline" oninput="generateBlufText()" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20">
             </div>
 
             <div>
-              <label class="block text-xs text-slate-400 mb-1">2. Situation & Complication (S-C)</label>
-              <textarea id="bluf-cause" oninput="generateBlufText()" rows="2" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none"></textarea>
+              <label class="block text-xs lg:text-sm text-slate-400 mb-1.5">2. Situation & Complication (S-C)</label>
+              <textarea id="bluf-cause" oninput="generateBlufText()" rows="3" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20"></textarea>
             </div>
 
             <div>
-              <label class="block text-xs text-slate-400 mb-1">3. Resolution & Operational Impact</label>
-              <textarea id="bluf-nextstep" oninput="generateBlufText()" rows="2" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none"></textarea>
+              <label class="block text-xs lg:text-sm text-slate-400 mb-1.5">3. Resolution & Operational Impact</label>
+              <textarea id="bluf-nextstep" oninput="generateBlufText()" rows="3" class="w-full bg-[#111722] border border-white/10 text-slate-200 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20"></textarea>
             </div>
           </div>
 
-          <div class="flex flex-col justify-between bg-[#070A0F] border border-white/5 p-4 rounded-xl space-y-3">
+          <div class="flex flex-col justify-between bg-[#070A0F] border border-white/5 p-4 lg:p-5 rounded-xl space-y-4">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-white/5">
-                <span class="text-xs font-semibold text-slate-400">Executive Clipboard Preview</span>
-                <span class="text-[10px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Minto Compliant</span>
+              <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                <span class="text-xs lg:text-sm font-semibold text-slate-400">Executive Clipboard Preview</span>
+                <span class="text-[10px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">Minto Compliant</span>
               </div>
-              <div id="bluf-preview-box" class="mt-3 p-3 rounded-lg bg-[#111722] border border-white/5 text-xs text-slate-300 font-mono-code whitespace-pre-wrap leading-relaxed select-all">
+              <div id="bluf-preview-box" class="mt-4 p-4 rounded-lg bg-[#111722] border border-white/5 text-xs lg:text-sm text-slate-300 font-mono-code whitespace-pre-wrap leading-relaxed select-all">
                 <!-- Live generated -->
               </div>
             </div>
 
-            <div class="pt-2 border-t border-white/5 flex justify-end">
-              <button onclick="copyBlufToClipboard()" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-medium text-xs rounded-lg transition flex items-center gap-1.5">
+            <div class="pt-3 border-t border-white/5 flex justify-end">
+              <button onclick="copyBlufToClipboard()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium text-xs lg:text-sm rounded-lg transition flex items-center gap-1.5">
                 <i class="fa-regular fa-copy text-xs"></i> Copy Briefing
               </button>
             </div>
@@ -680,201 +680,201 @@
     </section>
 
     <!-- VIEW 7: SCENARIO RECALL LAB (COMPTIA & MD-102) -->
-    <section id="tab-exam" class="hidden space-y-4">
-      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 space-y-4 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+    <section id="tab-exam" class="hidden space-y-5 lg:space-y-6">
+      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div>
             <div class="flex items-center gap-2">
-              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-300">Exam Simulation</span>
-              <h2 class="text-sm font-semibold text-white">Scenario-Based Active Recall Lab</h2>
+              <span class="text-[10px] lg:text-[11px] font-mono-code uppercase px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-300">Exam Simulation</span>
+              <h2 class="text-sm lg:text-base font-semibold text-white">Scenario-Based Active Recall Lab</h2>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">Solve realistic enterprise incident scenarios; prevent knowledge degradation.</p>
+            <p class="text-xs lg:text-sm text-slate-400 mt-1">Solve realistic enterprise incident scenarios; prevent knowledge degradation.</p>
           </div>
           <div class="flex items-center gap-3">
-            <span id="quiz-score-badge" class="text-xs font-mono-code text-slate-300 bg-[#070A0F] px-2.5 py-1 rounded border border-white/10">Score: 0 / 5</span>
-            <button onclick="resetQuiz()" class="text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
+            <span id="quiz-score-badge" class="text-xs lg:text-sm font-mono-code text-slate-300 bg-[#070A0F] px-3 py-1.5 rounded border border-white/10">Score: 0 / 5</span>
+            <button onclick="resetQuiz()" class="text-xs lg:text-sm text-slate-400 hover:text-white"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
           </div>
         </div>
 
-        <div id="quiz-container" class="space-y-3">
+        <div id="quiz-container" class="space-y-4">
           <!-- Dynamically populated -->
         </div>
       </div>
     </section>
 
     <!-- VIEW 8: AI LOG DIAGNOSTIC (OFFLINE ENGINE) -->
-    <section id="tab-gemini" class="hidden space-y-4">
-      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 space-y-4 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+    <section id="tab-gemini" class="hidden space-y-5 lg:space-y-6">
+      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div>
             <div class="flex items-center gap-2">
-              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-[#111722] text-slate-300">Diagnostic Suite</span>
-              <h2 class="text-sm font-semibold text-white">AI-Assisted Root Cause & Script Generator</h2>
+              <span class="text-[10px] lg:text-[11px] font-mono-code uppercase px-2 py-0.5 rounded bg-[#111722] text-slate-300">Diagnostic Suite</span>
+              <h2 class="text-sm lg:text-base font-semibold text-white">AI-Assisted Root Cause & Script Generator</h2>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">Parse unstructured client event logs, isolate true causes, and generate remediation code.</p>
+            <p class="text-xs lg:text-sm text-slate-400 mt-1">Parse unstructured client event logs, isolate true causes, and generate remediation code.</p>
           </div>
-          <span class="text-xs text-slate-400 px-2 py-1 bg-[#070A0F] border border-white/10 rounded-md font-mono-code">50% Log Parsing Reduction</span>
+          <span class="text-xs lg:text-sm text-slate-400 px-3 py-1.5 bg-[#070A0F] border border-white/10 rounded-md font-mono-code">50% Log Parsing Reduction</span>
         </div>
 
         <div>
-          <span class="text-xs text-slate-400 block mb-1.5">Sample Incidents:</span>
-          <div class="flex flex-wrap gap-1.5 text-xs">
-            <button onclick="loadSampleLog('intune-compliance')" class="px-2.5 py-1 bg-[#070A0F] hover:bg-[#111722] text-slate-300 rounded border border-white/5 transition">
+          <span class="text-xs lg:text-sm text-slate-400 block mb-2">Sample Incidents:</span>
+          <div class="flex flex-wrap gap-2 text-xs lg:text-sm">
+            <button onclick="loadSampleLog('intune-compliance')" class="px-3 py-1.5 bg-[#070A0F] hover:bg-[#111722] text-slate-300 rounded-lg border border-white/5 transition">
               Intune BitLocker CSP (0x87D1041C)
             </button>
-            <button onclick="loadSampleLog('conditional-access')" class="px-2.5 py-1 bg-[#070A0F] hover:bg-[#111722] text-slate-300 rounded border border-white/5 transition">
+            <button onclick="loadSampleLog('conditional-access')" class="px-3 py-1.5 bg-[#070A0F] hover:bg-[#111722] text-slate-300 rounded-lg border border-white/5 transition">
               Entra Sign-in 50074 (MFA Stale Device)
             </button>
-            <button onclick="loadSampleLog('vtc-teamsroom')" class="px-2.5 py-1 bg-[#070A0F] hover:bg-[#111722] text-slate-300 rounded border border-white/5 transition">
+            <button onclick="loadSampleLog('vtc-teamsroom')" class="px-3 py-1.5 bg-[#070A0F] hover:bg-[#111722] text-slate-300 rounded-lg border border-white/5 transition">
               Teams Rooms EDID Handshake Drop
             </button>
-            <button onclick="loadSampleLog('fido2-passkey')" class="px-2.5 py-1 bg-[#070A0F] hover:bg-[#111722] text-slate-300 rounded border border-white/5 transition">
+            <button onclick="loadSampleLog('fido2-passkey')" class="px-3 py-1.5 bg-[#070A0F] hover:bg-[#111722] text-slate-300 rounded-lg border border-white/5 transition">
               WebAuthn 0x80090029 (TPM Attestation)
             </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
-          <div class="space-y-3">
-            <label class="block text-xs text-slate-400">Raw Telemetry / Error Trace:</label>
-            <textarea id="ai-log-input" rows="8" class="w-full bg-[#070A0F] border border-white/10 text-slate-200 text-xs font-mono-code rounded-lg p-3 focus:outline-none leading-relaxed" placeholder="Paste event logs or error messages here..."></textarea>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div class="space-y-4">
+            <label class="block text-xs lg:text-sm text-slate-400">Raw Telemetry / Error Trace:</label>
+            <textarea id="ai-log-input" rows="10" class="w-full bg-[#070A0F] border border-white/10 text-slate-200 text-xs lg:text-sm font-mono-code rounded-lg p-4 focus:outline-none focus:border-white/20 leading-relaxed" placeholder="Paste event logs or error messages here..."></textarea>
 
-            <div class="flex items-center justify-between gap-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex items-center gap-2">
-                <span class="text-xs text-slate-400">Mode:</span>
-                <select id="ai-mode" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none">
+                <span class="text-xs lg:text-sm text-slate-400">Mode:</span>
+                <select id="ai-mode" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-white/20">
                   <option value="triage">Root Cause & Remediation Steps</option>
                   <option value="powershell">Generate Production PowerShell Script</option>
                   <option value="bluf-incident">Draft Executive Post-Mortem Memo</option>
                 </select>
               </div>
 
-              <button id="btn-run-ai" onclick="runGeminiTriage()" class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white font-medium text-xs rounded-lg transition flex items-center gap-1.5">
+              <button id="btn-run-ai" onclick="runGeminiTriage()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium text-xs lg:text-sm rounded-lg transition flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-bolt text-xs"></i> Run Triage
               </button>
             </div>
           </div>
 
-          <div class="space-y-2 flex flex-col justify-between">
+          <div class="space-y-3 flex flex-col justify-between">
             <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="text-xs text-slate-400">Diagnostic Synthesis:</label>
-                <button onclick="copyAiOutput()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs lg:text-sm text-slate-400">Diagnostic Synthesis:</label>
+                <button onclick="copyAiOutput()" class="text-xs lg:text-sm text-slate-400 hover:text-white flex items-center gap-1.5">
                   <i class="fa-regular fa-copy"></i> Copy
                 </button>
               </div>
-              <div id="ai-output-box" class="h-64 overflow-y-auto bg-[#070A0F] border border-white/10 rounded-lg p-3 text-xs font-mono-code text-slate-300 leading-relaxed">
+              <div id="ai-output-box" class="h-72 lg:h-80 overflow-y-auto bg-[#070A0F] border border-white/10 rounded-lg p-4 text-xs lg:text-sm font-mono-code text-slate-300 leading-relaxed">
 Click "Run Triage" or load an incident sample.
               </div>
             </div>
-            <p class="text-[11px] text-slate-400">Safe offline triage enabled. Evaluated completely within the client browser.</p>
+            <p class="text-[11px] lg:text-xs text-slate-400">Safe offline triage enabled. Evaluated completely within the client browser.</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- VIEW 9: DEEP FLOW SPRINT & AUDIO -->
-    <section id="tab-deepflow" class="hidden space-y-5">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div class="lg:col-span-2 bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 space-y-3.5 shadow-sm">
-          <div class="flex items-center justify-between border-b border-white/5 pb-3">
+    <section id="tab-deepflow" class="hidden space-y-6 lg:space-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div class="lg:col-span-2 bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-4 shadow-sm">
+          <div class="flex items-center justify-between border-b border-white/5 pb-4">
             <div>
-              <h2 class="text-sm font-semibold text-white">Cal Newport Time-Blocked Cadence</h2>
-              <p class="text-xs text-slate-400">Fixed-schedule productivity to defend deep engineering capacity.</p>
+              <h2 class="text-sm lg:text-base font-semibold text-white">Cal Newport Time-Blocked Cadence</h2>
+              <p class="text-xs lg:text-sm text-slate-400 mt-1">Fixed-schedule productivity to defend deep engineering capacity.</p>
             </div>
-            <span class="text-xs text-emerald-400 font-mono-code bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">4.5h Deep / Day</span>
+            <span class="text-xs lg:text-sm text-emerald-400 font-mono-code bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded">4.5h Deep / Day</span>
           </div>
 
-          <div class="space-y-2 text-xs">
-            <div class="p-3 rounded-lg bg-[#070A0F] border border-white/5">
-              <div class="flex items-center justify-between mb-0.5">
+          <div class="space-y-3 text-xs lg:text-sm">
+            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5">
+              <div class="flex items-center justify-between mb-1">
                 <span class="font-mono-code text-slate-300">08:30 - 09:00 AM (30m)</span>
                 <span class="text-slate-400 font-medium">Morning Triage</span>
               </div>
               <h4 class="font-semibold text-slate-200">Queue Triage & Acknowledgement Loops</h4>
-              <p class="text-slate-400 mt-0.5 leading-relaxed">Dispatch instant ticket receipt loops with committed diagnostic deadlines.</p>
+              <p class="text-slate-400 mt-1 leading-relaxed">Dispatch instant ticket receipt loops with committed diagnostic deadlines.</p>
             </div>
 
-            <div class="p-3 rounded-lg bg-[#070A0F] border border-indigo-500/20">
-              <div class="flex items-center justify-between mb-0.5">
+            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-indigo-500/20">
+              <div class="flex items-center justify-between mb-1">
                 <span class="font-mono-code text-indigo-300 font-semibold">09:00 - 10:30 AM (90m)</span>
-                <span class="text-indigo-300 font-medium bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded text-[10px]">DEEP SPRINT #1</span>
+                <span class="text-indigo-300 font-medium bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded text-[10px] lg:text-xs">DEEP SPRINT #1</span>
               </div>
               <h4 class="font-semibold text-white">Intune Policy Packaging & Python Log Tooling</h4>
-              <p class="text-slate-400 mt-0.5 leading-relaxed">Mute chat and email. Work on automated remediation scripts and compliance baselines.</p>
+              <p class="text-slate-400 mt-1 leading-relaxed">Mute chat and email. Work on automated remediation scripts and compliance baselines.</p>
             </div>
 
-            <div class="p-3 rounded-lg bg-[#070A0F] border border-white/5">
-              <div class="flex items-center justify-between mb-0.5">
+            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5">
+              <div class="flex items-center justify-between mb-1">
                 <span class="font-mono-code text-slate-300">11:00 - 11:30 AM (30m)</span>
                 <span class="text-slate-400 font-medium">Midday Sweep</span>
               </div>
               <h4 class="font-semibold text-slate-200">Question Consolidation & Consultations</h4>
-              <p class="text-slate-400 mt-0.5 leading-relaxed">Batch user questions into single numbered diagnostic packets.</p>
+              <p class="text-slate-400 mt-1 leading-relaxed">Batch user questions into single numbered diagnostic packets.</p>
             </div>
 
-            <div class="p-3 rounded-lg bg-[#070A0F] border border-indigo-500/20">
-              <div class="flex items-center justify-between mb-0.5">
+            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-indigo-500/20">
+              <div class="flex items-center justify-between mb-1">
                 <span class="font-mono-code text-indigo-300 font-semibold">01:30 - 03:00 PM (90m)</span>
-                <span class="text-indigo-300 font-medium bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded text-[10px]">DEEP SPRINT #2</span>
+                <span class="text-indigo-300 font-medium bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded text-[10px] lg:text-xs">DEEP SPRINT #2</span>
               </div>
               <h4 class="font-semibold text-white">Security+ Certification Lab & FIDO2 Cryptography</h4>
-              <p class="text-slate-400 mt-0.5 leading-relaxed">Hands-on WebAuthn ceremonies, threat simulation labs, and Gemini AI prompt routines.</p>
+              <p class="text-slate-400 mt-1 leading-relaxed">Hands-on WebAuthn ceremonies, threat simulation labs, and Gemini AI prompt routines.</p>
             </div>
 
-            <div class="p-3 rounded-lg bg-[#070A0F] border border-white/5">
-              <div class="flex items-center justify-between mb-0.5">
+            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5">
+              <div class="flex items-center justify-between mb-1">
                 <span class="font-mono-code text-slate-300">04:30 - 05:00 PM (30m)</span>
                 <span class="text-amber-400 font-medium">Daily Closeout</span>
               </div>
               <h4 class="font-semibold text-slate-200">First-Principles Logging & Shutdown Ritual</h4>
-              <p class="text-slate-400 mt-0.5 leading-relaxed">Execute Newport's shutdown checklist, close open ticket loops, and cleanly exit work.</p>
+              <p class="text-slate-400 mt-1 leading-relaxed">Execute Newport's shutdown checklist, close open ticket loops, and cleanly exit work.</p>
             </div>
           </div>
         </div>
 
-        <div class="space-y-4">
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-5 text-center space-y-4 shadow-sm">
+        <div class="space-y-5">
+          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-5 lg:p-6 text-center space-y-5 shadow-sm">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Immersion Timer</span>
-              <span id="noise-indicator" class="text-[10px] font-mono-code text-slate-400">Noise: OFF</span>
+              <span class="text-[11px] lg:text-xs font-medium uppercase tracking-wider text-slate-400">Immersion Timer</span>
+              <span id="noise-indicator" class="text-[10px] lg:text-[11px] font-mono-code text-slate-400">Noise: OFF</span>
             </div>
             
             <div>
-              <div id="timer-display" class="text-5xl font-bold font-mono-code text-white tracking-tight">30:00</div>
-              <span id="timer-status-text" class="text-xs text-slate-400 mt-1 block">30m Focus Sprint Ready</span>
+              <div id="timer-display" class="text-6xl lg:text-7xl font-bold font-mono-code text-white tracking-tight py-2">30:00</div>
+              <span id="timer-status-text" class="text-xs lg:text-sm text-slate-400 mt-2 block">30m Focus Sprint Ready</span>
             </div>
             
-            <div class="flex justify-center gap-1.5 text-xs">
-              <button onclick="setTimerDuration(25)" id="btn-t-25" class="px-2.5 py-1 bg-[#070A0F] text-slate-400 hover:text-white rounded border border-white/5 transition font-mono-code">25m</button>
-              <button onclick="setTimerDuration(30)" id="btn-t-30" class="px-2.5 py-1 bg-sky-500/20 text-sky-300 rounded border border-sky-500/30 transition font-mono-code font-medium">30m</button>
-              <button onclick="setTimerDuration(50)" id="btn-t-50" class="px-2.5 py-1 bg-[#070A0F] text-slate-400 hover:text-white rounded border border-white/5 transition font-mono-code">50m</button>
-              <button onclick="setTimerDuration(90)" id="btn-t-90" class="px-2.5 py-1 bg-[#070A0F] text-slate-400 hover:text-white rounded border border-white/5 transition font-mono-code">90m</button>
+            <div class="flex justify-center gap-2 text-xs lg:text-sm">
+              <button onclick="setTimerDuration(25)" id="btn-t-25" class="px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code">25m</button>
+              <button onclick="setTimerDuration(30)" id="btn-t-30" class="px-3 py-1.5 bg-sky-500/20 text-sky-300 rounded-md border border-sky-500/30 transition font-mono-code font-medium">30m</button>
+              <button onclick="setTimerDuration(50)" id="btn-t-50" class="px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code">50m</button>
+              <button onclick="setTimerDuration(90)" id="btn-t-90" class="px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code">90m</button>
             </div>
 
-            <div class="p-2.5 rounded-lg bg-[#070A0F] border border-white/5 flex items-center justify-between text-xs">
+            <div class="p-3 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5 flex items-center justify-between text-xs lg:text-sm">
               <div class="flex items-center gap-2">
                 <i class="fa-solid fa-headphones text-slate-400"></i>
                 <span class="text-slate-300">Brown Noise Synthesizer</span>
               </div>
-              <button id="btn-toggle-noise" onclick="toggleBrownNoise()" class="px-2.5 py-1 text-[11px] bg-[#111722] hover:bg-white/10 text-slate-300 rounded border border-white/5 transition">
+              <button id="btn-toggle-noise" onclick="toggleBrownNoise()" class="px-3 py-1.5 text-xs bg-[#111722] hover:bg-white/10 text-slate-300 rounded-md border border-white/5 transition">
                 Start Sound
               </button>
             </div>
 
-            <div class="flex justify-center gap-2 pt-1">
-              <button id="btn-timer-toggle" onclick="toggleTimer()" class="px-5 py-2 bg-white text-slate-900 font-semibold text-xs rounded-lg hover:bg-slate-200 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-play text-[10px]"></i> <span>Start 30m Block</span>
+            <div class="flex justify-center gap-3 pt-2">
+              <button id="btn-timer-toggle" onclick="toggleTimer()" class="px-6 py-2.5 bg-white text-slate-900 font-semibold text-sm rounded-lg hover:bg-slate-200 transition flex items-center gap-2">
+                <i class="fa-solid fa-play text-[11px]"></i> <span>Start 30m Block</span>
               </button>
-              <button onclick="resetTimer()" class="px-3 py-2 bg-[#070A0F] hover:bg-white/10 text-slate-400 hover:text-white text-xs rounded-lg border border-white/5 transition">
+              <button onclick="resetTimer()" class="px-4 py-2.5 bg-[#070A0F] hover:bg-white/10 text-slate-400 hover:text-white text-sm rounded-lg border border-white/5 transition">
                 <i class="fa-solid fa-arrow-rotate-left"></i>
               </button>
             </div>
           </div>
 
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 text-center shadow-sm">
-            <span class="text-xs text-slate-400 block mb-2">Done for the day? Protect cognitive recovery.</span>
-            <button onclick="openShutdownModal()" class="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-medium text-xs rounded-lg border border-amber-500/20 transition flex items-center justify-center gap-2">
+          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-5 lg:p-6 text-center shadow-sm">
+            <span class="text-xs lg:text-sm text-slate-400 block mb-3">Done for the day? Protect cognitive recovery.</span>
+            <button onclick="openShutdownModal()" class="w-full py-2.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-medium text-xs lg:text-sm rounded-lg border border-amber-500/20 transition flex items-center justify-center gap-2">
               <i class="fa-solid fa-moon"></i> Execute Shutdown Ritual
             </button>
           </div>
@@ -885,13 +885,13 @@ Click "Run Triage" or load an incident sample.
   </main>
 
   <!-- Sticky Footer -->
-  <footer class="border-t border-white/5 py-3 text-xs text-slate-400 bg-[#070A0F] mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px]">
+  <footer class="border-t border-white/5 py-4 text-xs text-slate-400 bg-[#070A0F] mt-auto">
+    <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] lg:text-xs">
       <div>FY27 EUC, Security, AI & Communication Development Framework</div>
       <div class="flex items-center gap-3 font-mono-code text-slate-400">
         <span>38 Modules</span>
-        <span>•</span>
-        <span>418 Hours (346h Deep • 72h Quiet Queue)</span>
+        <span class="hidden sm:inline">•</span>
+        <span class="hidden sm:inline">418 Hours (346h Deep • 72h Quiet Queue)</span>
         <span>•</span>
         <span id="footer-shutdown-state" class="text-slate-400">Day Active</span>
       </div>
@@ -1051,29 +1051,29 @@ Click "Run Triage" or load an incident sample.
 
       focusItems.forEach(item => {
         const card = document.createElement('div');
-        card.className = "p-3 rounded-lg bg-[#070A0F] border border-white/5 flex items-center justify-between text-xs";
-        let statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] text-slate-400 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Pending</span>`;
+        card.className = "p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between text-xs lg:text-sm gap-3";
+        let statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] lg:text-xs text-slate-400 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Pending</span>`;
         if (item.status === "In Progress") {
-          statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] text-amber-300 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Active</span>`;
+          statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] lg:text-xs text-amber-300 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Active</span>`;
         } else if (item.status === "Completed") {
-          statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Done</span>`;
+          statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] lg:text-xs text-emerald-400 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Done</span>`;
         }
 
         const workTag = item.workType === 'Deep' 
-          ? `<span class="text-[9px] font-mono-code px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">Deep</span>`
-          : `<span class="text-[9px] font-mono-code px-1.5 py-0.5 rounded bg-[#111722] text-slate-400">Quiet</span>`;
+          ? `<span class="text-[9px] lg:text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">Deep</span>`
+          : `<span class="text-[9px] lg:text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#111722] text-slate-400">Quiet</span>`;
 
         card.innerHTML = `
-          <div class="space-y-0.5 max-w-[70%]">
+          <div class="space-y-1 sm:max-w-[75%]">
             <div class="flex items-center gap-2">
-              <span class="font-mono-code text-[11px] text-slate-400">${item.id}</span>
+              <span class="font-mono-code text-[11px] lg:text-xs text-slate-400">${item.id}</span>
               ${workTag}
               <span class="font-medium text-slate-200 truncate">${item.title}</span>
             </div>
-            <p class="text-[11px] text-slate-400 truncate">${item.deliverable}</p>
+            <p class="text-[11px] lg:text-xs text-slate-400 truncate">${item.deliverable}</p>
           </div>
-          <div class="flex items-center gap-3">
-            <span class="font-mono-code text-slate-400 text-xs">${item.hours}h</span>
+          <div class="flex items-center sm:justify-end gap-3 w-full sm:w-auto">
+            <span class="font-mono-code text-slate-400 text-xs lg:text-sm">${item.hours}h</span>
             ${statusBadge}
           </div>
         `;
@@ -1090,13 +1090,13 @@ Click "Run Triage" or load an incident sample.
         row.href = item.url;
         row.target = "_blank";
         row.rel = "noopener noreferrer";
-        row.className = "p-2 rounded-lg bg-[#070A0F] hover:bg-[#111722] border border-white/5 flex items-center justify-between text-slate-300 transition block";
+        row.className = "p-3 rounded-lg bg-[#070A0F] hover:bg-[#111722] border border-white/5 flex items-center justify-between text-slate-300 transition block text-xs lg:text-sm";
         row.innerHTML = `
-          <div class="truncate pr-2">
-            <div class="font-medium text-slate-200 truncate">${item.title}</div>
-            <span class="text-[10px] text-slate-400 font-mono-code">${item.id} • ${item.hours}h Lecture</span>
+          <div class="truncate pr-3">
+            <div class="font-medium text-slate-200 truncate mb-0.5">${item.title}</div>
+            <span class="text-[10px] lg:text-[11px] text-slate-400 font-mono-code">${item.id} • ${item.hours}h Lecture</span>
           </div>
-          <i class="fa-solid fa-play text-[10px] text-amber-400 shrink-0"></i>
+          <i class="fa-solid fa-play text-[10px] lg:text-xs text-amber-400 shrink-0"></i>
         `;
         container.appendChild(row);
       });
@@ -1138,34 +1138,34 @@ Click "Run Triage" or load an incident sample.
         const tr = document.createElement('tr');
         tr.className = "hover:bg-white/[0.02] transition";
 
-        let statusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#070A0F] border border-white/5 text-slate-400"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Not Started</span>`;
+        let statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium bg-[#070A0F] border border-white/5 text-slate-400"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Not Started</span>`;
         if (m.status === "In Progress") {
-          statusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#070A0F] border border-amber-500/20 text-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> In Progress</span>`;
+          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium bg-[#070A0F] border border-amber-500/20 text-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> In Progress</span>`;
         } else if (m.status === "Completed") {
-          statusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#070A0F] border border-emerald-500/20 text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Done</span>`;
+          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium bg-[#070A0F] border border-emerald-500/20 text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Done</span>`;
         }
 
         const workBadge = m.quietQueue
-          ? `<span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-center justify-center gap-1"><i class="fa-solid fa-mug-hot text-[9px]"></i> Quiet Queue</span>`
-          : `<span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">Deep Sprint</span>`;
+          ? `<span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-center justify-center gap-1.5"><i class="fa-solid fa-mug-hot text-[9px]"></i> Quiet Queue</span>`
+          : `<span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">Deep Sprint</span>`;
 
         tr.innerHTML = `
-          <td class="py-2.5 px-3.5 font-mono-code text-slate-400 text-xs">${m.id}</td>
-          <td class="py-2.5 px-3.5 font-mono-code text-slate-400 text-xs">${m.pillar}</td>
-          <td class="py-2.5 px-3.5">
+          <td class="py-3 px-4 font-mono-code text-slate-400">${m.id}</td>
+          <td class="py-3 px-4 font-mono-code text-slate-400">${m.pillar}</td>
+          <td class="py-3 px-4">
             <div class="font-medium text-slate-200">${m.title}</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${m.deliverable}</div>
+            <div class="text-[11px] lg:text-xs text-slate-400 mt-1">${m.deliverable}</div>
           </td>
-          <td class="py-2.5 px-3.5 text-slate-400 text-xs">${m.category}</td>
-          <td class="py-2.5 px-3.5 text-center">${workBadge}</td>
-          <td class="py-2.5 px-3.5 text-center font-mono-code text-slate-300">${m.hours}h</td>
-          <td class="py-2.5 px-3.5 text-center">
+          <td class="py-3 px-4 text-slate-400">${m.category}</td>
+          <td class="py-3 px-4 text-center">${workBadge}</td>
+          <td class="py-3 px-4 text-center font-mono-code text-slate-300">${m.hours}h</td>
+          <td class="py-3 px-4 text-center">
             <button onclick="cycleStatus('${m.id}')" class="transition hover:opacity-80 active:scale-95" title="Click to cycle status">
               ${statusBadge}
             </button>
           </td>
-          <td class="py-2.5 px-3.5 text-right">
-            <a href="${m.url}" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-white text-xs transition">
+          <td class="py-3 px-4 text-right">
+            <a href="${m.url}" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-white transition">
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
             </a>
           </td>
@@ -1339,7 +1339,7 @@ Click "Run Triage" or load an incident sample.
           options: [
             "Ask for their Python version. Wait for reply. Ask for the error traceback. Wait. Ask for the input CSV sample.",
             "Ask them to jump on a 45-minute screen share call immediately.",
-            "Send a consolidated packet: 'Please paste: 1. Python version (`python --version`); 2. The full terminal traceback; 3. The first 3 sanitized rows of the input CSV.'",
+            "Send a consolidated packet: 'Please paste: 1. Python version (\`python --version\`); 2. The full terminal traceback; 3. The first 3 sanitized rows of the input CSV.'",
             "Tell them Python isn't supported and close the ticket."
           ],
           correct: 2,
@@ -1429,7 +1429,7 @@ Click "Run Triage" or load an incident sample.
         const isPassed = completedMentalModelDrills[m.id];
         const card = document.createElement('button');
         card.onclick = () => selectMentalModel(m.id);
-        card.className = `p-2.5 rounded-lg border text-left transition flex flex-col justify-between ${
+        card.className = `p-3 rounded-lg border text-left transition flex flex-col justify-between ${
           isSelected 
             ? 'bg-[#172030] border-white/20 text-white shadow-sm' 
             : 'bg-[#070A0F] border-white/5 text-slate-400 hover:bg-[#111722] hover:text-slate-200'
@@ -1437,13 +1437,13 @@ Click "Run Triage" or load an incident sample.
 
         card.innerHTML = `
           <div>
-            <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center justify-between mb-1.5">
               <span class="font-mono-code text-[10px] text-slate-400">MODEL ${m.number}</span>
-              ${isPassed ? '<span class="text-[9px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1 rounded">Passed ✓</span>' : ''}
+              ${isPassed ? '<span class="text-[9px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Passed ✓</span>' : ''}
             </div>
-            <div class="text-xs font-semibold text-slate-200 truncate">${m.name}</div>
+            <div class="text-xs lg:text-sm font-semibold text-slate-200 truncate">${m.name}</div>
           </div>
-          <div class="text-[10px] text-slate-400 mt-1 truncate font-mono-code">${m.subtitle}</div>
+          <div class="text-[10px] lg:text-[11px] text-slate-400 mt-2 truncate font-mono-code">${m.subtitle}</div>
         `;
         container.appendChild(card);
       });
@@ -1457,7 +1457,7 @@ Click "Run Triage" or load an incident sample.
       const hasAnswered = completedMentalModelDrills[m.id] !== undefined;
 
       let optionsHtml = m.drillScenario.options.map((opt, optIdx) => {
-        let btnClass = "w-full text-left p-2.5 rounded-lg border text-xs transition ";
+        let btnClass = "w-full text-left p-3 lg:p-3.5 rounded-lg border text-xs lg:text-sm transition ";
         if (!hasAnswered) {
           btnClass += "bg-[#111722] border-white/5 hover:border-white/20 text-slate-300";
         } else {
@@ -1478,100 +1478,100 @@ Click "Run Triage" or load an incident sample.
       if (hasAnswered) {
         const isCorrect = completedMentalModelDrills[m.id];
         feedbackHtml = `
-          <div class="mt-3 p-3 rounded-lg border ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-rose-500/10 border-rose-500/20 text-rose-300'} text-xs leading-relaxed">
-            <span class="font-semibold block mb-0.5">${isCorrect ? '✓ Mental Model Reflex Validated' : '✗ Incorrect Instinct'}</span>
+          <div class="mt-4 p-4 rounded-lg border ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-rose-500/10 border-rose-500/20 text-rose-300'} text-xs lg:text-sm leading-relaxed">
+            <span class="font-semibold block mb-1">${isCorrect ? '✓ Mental Model Reflex Validated' : '✗ Incorrect Instinct'}</span>
             ${m.drillScenario.explanation}
           </div>
         `;
       }
 
       pane.innerHTML = `
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div>
             <div class="flex items-center gap-2">
-              <span class="text-xs font-mono-code px-2 py-0.5 rounded bg-[#111722] text-slate-300">Model ${m.number}</span>
-              <h3 class="text-base font-bold text-white">${m.name}</h3>
+              <span class="text-xs font-mono-code px-2.5 py-1 rounded bg-[#111722] text-slate-300">Model ${m.number}</span>
+              <h3 class="text-base lg:text-lg font-bold text-white">${m.name}</h3>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">${m.subtitle}</p>
+            <p class="text-xs lg:text-sm text-slate-400 mt-1.5">${m.subtitle}</p>
           </div>
-          <button onclick="switchTab('bluf')" class="px-2.5 py-1 text-xs text-slate-300 bg-[#070A0F] hover:bg-[#111722] border border-white/5 rounded transition flex items-center gap-1.5 self-start">
+          <button onclick="switchTab('bluf')" class="px-3 py-1.5 text-xs lg:text-sm text-slate-300 bg-[#070A0F] hover:bg-[#111722] border border-white/5 rounded transition flex items-center gap-1.5 self-start">
             <i class="fa-regular fa-envelope text-slate-400"></i> Open Live BLUF Drafter &rarr;
           </button>
         </div>
 
-        <div class="p-3 rounded-lg bg-[#070A0F] border border-white/5">
-          <div class="flex items-center gap-2 mb-1">
+        <div class="p-4 rounded-lg bg-[#070A0F] border border-white/5">
+          <div class="flex items-center gap-2 mb-2">
             <i class="fa-solid fa-crosshairs text-amber-400 text-xs"></i>
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">Operational Trigger: When to Fire This Mental Model</span>
+            <span class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-300">Operational Trigger: When to Fire This Mental Model</span>
           </div>
-          <p class="text-xs text-slate-300 leading-relaxed font-medium pl-5">${m.triggerCondition}</p>
+          <p class="text-xs lg:text-sm text-slate-300 leading-relaxed font-medium pl-6">${m.triggerCondition}</p>
         </div>
 
-        <div class="space-y-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+        <div class="space-y-3">
+          <span class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
             <i class="fa-solid fa-arrows-spin text-indigo-400 text-xs"></i> Cognitive Re-Wiring (Ingrain into Muscle Memory)
           </span>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs">
-            <div class="p-3 rounded-lg bg-[#070A0F] border border-white/5">
-              <span class="font-mono-code text-slate-400 text-[10px] uppercase block mb-1">1. The Psychological Cue</span>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs lg:text-sm">
+            <div class="p-4 rounded-lg bg-[#070A0F] border border-white/5">
+              <span class="font-mono-code text-slate-400 text-[10px] lg:text-[11px] uppercase block mb-1.5">1. The Psychological Cue</span>
               <p class="text-slate-300 leading-relaxed">${m.ingrainHabit.cue}</p>
             </div>
-            <div class="p-3 rounded-lg bg-[#070A0F] border border-indigo-500/20">
-              <span class="font-mono-code text-indigo-400 text-[10px] uppercase block mb-1">2. The Execution Routine</span>
+            <div class="p-4 rounded-lg bg-[#070A0F] border border-indigo-500/20">
+              <span class="font-mono-code text-indigo-400 text-[10px] lg:text-[11px] uppercase block mb-1.5">2. The Execution Routine</span>
               <p class="text-slate-200 leading-relaxed">${m.ingrainHabit.routine}</p>
             </div>
-            <div class="p-3 rounded-lg bg-[#070A0F] border border-white/5">
-              <span class="font-mono-code text-emerald-400 text-[10px] uppercase block mb-1">3. The Cognitive Reward</span>
+            <div class="p-4 rounded-lg bg-[#070A0F] border border-white/5">
+              <span class="font-mono-code text-emerald-400 text-[10px] lg:text-[11px] uppercase block mb-1.5">3. The Cognitive Reward</span>
               <p class="text-slate-300 leading-relaxed">${m.ingrainHabit.reward}</p>
             </div>
           </div>
         </div>
 
-        <div class="space-y-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+        <div class="space-y-3">
+          <span class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
             <i class="fa-solid fa-scale-balanced text-slate-400 text-xs"></i> Contrast: Administrative Trap vs. High-Leverage Mastery
           </span>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5 text-xs">
-            <div class="p-3.5 rounded-xl bg-rose-500/5 border border-rose-500/20 flex flex-col justify-between space-y-2.5">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 text-xs lg:text-sm">
+            <div class="p-4 lg:p-5 rounded-xl bg-rose-500/5 border border-rose-500/20 flex flex-col justify-between space-y-3">
               <div>
-                <span class="text-rose-400 font-semibold flex items-center gap-1.5 text-xs">
+                <span class="text-rose-400 font-semibold flex items-center gap-1.5 text-xs lg:text-sm">
                   <i class="fa-solid fa-circle-xmark"></i> ${m.antiPattern.title}
                 </span>
-                <div class="mt-2 p-2.5 rounded-lg bg-[#070A0F] border border-rose-500/10 text-slate-400 font-mono-code text-[11px] leading-relaxed whitespace-pre-wrap">
+                <div class="mt-3 p-3 lg:p-4 rounded-lg bg-[#070A0F] border border-rose-500/10 text-slate-400 font-mono-code text-[11px] lg:text-xs leading-relaxed whitespace-pre-wrap">
 ${m.antiPattern.quote}
                 </div>
               </div>
-              <div class="text-[11px] text-rose-300/80 pt-2 border-t border-rose-500/10 leading-relaxed">
+              <div class="text-[11px] lg:text-xs text-rose-300/80 pt-3 border-t border-rose-500/10 leading-relaxed">
                 <strong>Why It Fails:</strong> ${m.antiPattern.flaw}
               </div>
             </div>
 
-            <div class="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col justify-between space-y-2.5">
+            <div class="p-4 lg:p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col justify-between space-y-3">
               <div>
-                <span class="text-emerald-400 font-semibold flex items-center gap-1.5 text-xs">
+                <span class="text-emerald-400 font-semibold flex items-center gap-1.5 text-xs lg:text-sm">
                   <i class="fa-solid fa-circle-check"></i> ${m.masteryPattern.title}
                 </span>
-                <div class="mt-2 p-2.5 rounded-lg bg-[#070A0F] border border-emerald-500/10 text-slate-200 font-mono-code text-[11px] leading-relaxed whitespace-pre-wrap">
+                <div class="mt-3 p-3 lg:p-4 rounded-lg bg-[#070A0F] border border-emerald-500/10 text-slate-200 font-mono-code text-[11px] lg:text-xs leading-relaxed whitespace-pre-wrap">
 ${m.masteryPattern.quote}
                 </div>
               </div>
-              <div class="text-[11px] text-emerald-300/80 pt-2 border-t border-emerald-500/10 leading-relaxed">
+              <div class="text-[11px] lg:text-xs text-emerald-300/80 pt-3 border-t border-emerald-500/10 leading-relaxed">
                 <strong>Strategic Impact:</strong> ${m.masteryPattern.benefit}
               </div>
             </div>
           </div>
         </div>
 
-        <div class="space-y-2.5 pt-2 border-t border-white/5">
+        <div class="space-y-4 pt-4 border-t border-white/5">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <span class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
               <i class="fa-solid fa-dumbbell text-amber-400 text-xs"></i> Scenario Gym: Test Your Mental Model Reflex
             </span>
-            ${hasAnswered ? `<button onclick="resetModelDrill('${m.id}')" class="text-xs text-slate-400 hover:text-white">Retry Drill</button>` : ''}
+            ${hasAnswered ? `<button onclick="resetModelDrill('${m.id}')" class="text-xs lg:text-sm text-slate-400 hover:text-white">Retry Drill</button>` : ''}
           </div>
 
-          <p class="text-xs text-slate-200 font-medium leading-relaxed">${m.drillScenario.question}</p>
-          <div class="space-y-2">
+          <p class="text-xs lg:text-sm text-slate-200 font-medium leading-relaxed">${m.drillScenario.question}</p>
+          <div class="space-y-2.5">
             ${optionsHtml}
           </div>
           ${feedbackHtml}
@@ -1613,7 +1613,7 @@ ${m.masteryPattern.quote}
       document.getElementById('nav-notes-count').innerText = stagedNotes.length;
 
       if (!stagedNotes.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400 text-xs">No entries staged yet. Log quick observations or actions above.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="py-6 lg:py-8 text-center text-slate-400 text-xs lg:text-sm">No entries staged yet. Log quick observations or actions above.</td></tr>`;
         return;
       }
 
@@ -1621,13 +1621,13 @@ ${m.masteryPattern.quote}
         const tr = document.createElement('tr');
         tr.className = "hover:bg-white/[0.02] transition";
         tr.innerHTML = `
-          <td class="py-2 px-3 font-mono-code text-[11px] text-slate-400">${n.time}</td>
-          <td class="py-2 px-3 font-medium text-slate-300">${n.type}</td>
-          <td class="py-2 px-3 font-mono-code text-sky-400">${n.entity || '-'}</td>
-          <td class="py-2 px-3 text-slate-200">${n.summary}</td>
-          <td class="py-2 px-3 text-right">
+          <td class="py-2.5 px-4 font-mono-code text-[11px] lg:text-xs text-slate-400">${n.time}</td>
+          <td class="py-2.5 px-4 font-medium text-slate-300">${n.type}</td>
+          <td class="py-2.5 px-4 font-mono-code text-sky-400">${n.entity || '-'}</td>
+          <td class="py-2.5 px-4 text-slate-200">${n.summary}</td>
+          <td class="py-2.5 px-4 text-right">
             <button onclick="deleteNote(${idx})" class="text-slate-400 hover:text-rose-400 transition" title="Delete entry">
-              <i class="fa-regular fa-trash-can text-xs"></i>
+              <i class="fa-regular fa-trash-can text-xs lg:text-sm"></i>
             </button>
           </td>
         `;
@@ -1884,12 +1884,12 @@ Eliminate the root constraint at Layer 5 to permanently eradicate symptoms at La
       container.innerHTML = '';
       QUIZ_QUESTIONS.forEach((q, idx) => {
         const card = document.createElement('div');
-        card.className = "p-3.5 rounded-xl bg-[#070A0F] border border-white/5 space-y-2.5 text-xs";
+        card.className = "p-4 lg:p-5 rounded-xl bg-[#070A0F] border border-white/5 space-y-3 text-xs lg:text-sm";
         const answered = quizAnswers[q.id] !== undefined;
         const isCorrect = answered && quizAnswers[q.id] === q.correct;
 
         let optionsHtml = q.options.map((opt, optIdx) => {
-          let btnClass = "w-full text-left p-2 rounded-lg border text-xs transition ";
+          let btnClass = "w-full text-left p-3 rounded-lg border text-xs lg:text-sm transition ";
           if (!answered) {
             btnClass += "bg-[#111722] border-white/5 hover:border-white/20 text-slate-300";
           } else {
@@ -1911,20 +1911,20 @@ Eliminate the root constraint at Layer 5 to permanently eradicate symptoms at La
         let feedbackHtml = '';
         if (answered) {
           feedbackHtml = `
-            <div class="mt-2 p-2.5 rounded-lg border ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-rose-500/10 border-rose-500/20 text-rose-300'} text-xs leading-relaxed">
-              <span class="font-semibold block mb-0.5">${isCorrect ? '✓ Verified Understanding' : '✗ Incorrect Assumption'}</span>
+            <div class="mt-3 p-3 rounded-lg border ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-rose-500/10 border-rose-500/20 text-rose-300'} text-xs lg:text-sm leading-relaxed">
+              <span class="font-semibold block mb-1">${isCorrect ? '✓ Verified Understanding' : '✗ Incorrect Assumption'}</span>
               ${q.explanation}
             </div>
           `;
         }
 
         card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#111722] text-slate-300">Question ${idx + 1} of ${QUIZ_QUESTIONS.length}</span>
-            <span class="text-xs font-semibold text-slate-300">${q.title}</span>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span class="text-[10px] lg:text-[11px] font-mono-code px-2 py-0.5 rounded bg-[#111722] text-slate-300 inline-block w-max">Question ${idx + 1} of ${QUIZ_QUESTIONS.length}</span>
+            <span class="text-xs lg:text-sm font-semibold text-slate-300">${q.title}</span>
           </div>
-          <p class="text-xs text-slate-200 leading-relaxed font-medium">${q.scenario}</p>
-          <div class="space-y-1.5 pt-1">
+          <p class="text-xs lg:text-sm text-slate-200 leading-relaxed font-medium mt-1">${q.scenario}</p>
+          <div class="space-y-2 pt-2">
             ${optionsHtml}
           </div>
           ${feedbackHtml}
@@ -2049,7 +2049,7 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
 
 ### Action Plan
 1. Query client state via \`dsregcmd /status\` and \`mdmdiagnosticstool.exe\`.
-2. Inspect Windows Event Viewer under \`DeviceManagement-Enterprise-Diagnostics-Provider\`.
+​2. Inspect Windows Event Viewer under \`DeviceManagement-Enterprise-Diagnostics-Provider\`.
 3. Apply first-principles remediation and update ticket notes using BLUF format.`;
     }
 
@@ -2058,16 +2058,16 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
       let html = rawText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       html = html.replace(/```([a-zA-Z]*)\n([\s\S]*?)```/g, (match, lang, code) => {
         return `<div class="my-2 rounded-lg bg-[#070A0F] border border-white/10 overflow-hidden">
-          <div class="px-2.5 py-1 bg-[#111722] text-[10px] text-slate-400 flex justify-between items-center font-mono-code uppercase">
+          <div class="px-3 py-1.5 bg-[#111722] text-[10px] lg:text-[11px] text-slate-400 flex justify-between items-center font-mono-code uppercase">
             <span>${lang || 'code'}</span>
-            <button onclick="copyDirect('${encodeURIComponent(code.trim())}')" class="hover:text-white lowercase">copy</button>
+            <button onclick="copyDirect('${encodeURIComponent(code.trim())}')" class="hover:text-white lowercase transition">copy</button>
           </div>
-          <pre class="p-2.5 text-emerald-400 font-mono-code text-xs overflow-x-auto whitespace-pre">${code.trim()}</pre>
+          <pre class="p-3 text-emerald-400 font-mono-code text-xs lg:text-sm overflow-x-auto whitespace-pre">${code.trim()}</pre>
         </div>`;
       });
-      html = html.replace(/^### (.*$)/gim, '<h4 class="text-xs font-semibold text-slate-200 mt-2 mb-1">$1</h4>');
+      html = html.replace(/^### (.*$)/gim, '<h4 class="text-xs lg:text-sm font-semibold text-slate-200 mt-3 mb-1.5">$1</h4>');
       html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
-      html = html.replace(/^\s*[-•]\s+(.*$)/gim, '<li class="ml-4 list-disc text-slate-400 text-xs">$1</li>');
+      html = html.replace(/^\s*[-•]\s+(.*$)/gim, '<li class="ml-5 list-disc text-slate-400 text-xs lg:text-sm my-0.5">$1</li>');
       return html;
     }
 
@@ -2122,9 +2122,9 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
         }
         isNoisePlaying = false;
         btn.innerText = "Start Sound";
-        btn.className = "px-2.5 py-1 text-[11px] bg-[#111722] hover:bg-white/10 text-slate-300 rounded border border-white/5 transition";
+        btn.className = "px-3 py-1.5 text-xs bg-[#111722] hover:bg-white/10 text-slate-300 rounded-md border border-white/5 transition";
         indicator.innerText = "Noise: OFF";
-        indicator.className = "text-[10px] font-mono-code text-slate-400";
+        indicator.className = "text-[10px] lg:text-[11px] font-mono-code text-slate-400";
         showToast("Focus noise stopped", 'info');
       } else {
         const bufferSize = audioCtx.sampleRate * 2;
@@ -2149,9 +2149,9 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
 
         isNoisePlaying = true;
         btn.innerText = "Mute Sound";
-        btn.className = "px-2.5 py-1 text-[11px] bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30 transition";
+        btn.className = "px-3 py-1.5 text-xs bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30 transition";
         indicator.innerText = "Noise: ACTIVE";
-        indicator.className = "text-[10px] font-mono-code text-indigo-400";
+        indicator.className = "text-[10px] lg:text-[11px] font-mono-code text-indigo-400";
         showToast("Synthesized Brown Noise active", 'success');
       }
     }
@@ -2174,15 +2174,15 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
       timerRemaining = mins * 60;
       document.getElementById('timer-display').innerText = formatTime(timerRemaining);
       document.getElementById('timer-status-text').innerText = `${mins}m Focus Block Ready`;
-      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Start ${mins}m Block`;
+      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start ${mins}m Block</span>`;
 
       [25, 30, 50, 90].forEach(m => {
         const b = document.getElementById(`btn-t-${m}`);
         if (!b) return;
         if (m === mins) {
-          b.className = "px-2.5 py-1 bg-sky-500/20 text-sky-300 rounded border border-sky-500/30 transition font-mono-code font-medium";
+          b.className = "px-3 py-1.5 bg-sky-500/20 text-sky-300 rounded-md border border-sky-500/30 transition font-mono-code font-medium";
         } else {
-          b.className = "px-2.5 py-1 bg-[#070A0F] text-slate-400 hover:text-white rounded border border-white/5 transition font-mono-code";
+          b.className = "px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code";
         }
       });
     }
@@ -2192,11 +2192,11 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
         clearInterval(timerInterval);
         isTimerRunning = false;
         document.getElementById('timer-status-text').innerText = 'Paused';
-        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Resume`;
+        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Resume</span>`;
       } else {
         isTimerRunning = true;
         document.getElementById('timer-status-text').innerText = 'Deep sprint active';
-        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-pause text-[10px]"></i> Pause`;
+        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-pause text-[11px]"></i> <span>Pause</span>`;
         timerInterval = setInterval(() => {
           if (timerRemaining > 0) {
             timerRemaining--;
@@ -2205,7 +2205,7 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
             clearInterval(timerInterval);
             isTimerRunning = false;
             document.getElementById('timer-status-text').innerText = 'Sprint complete';
-            document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Start New Sprint`;
+            document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start New Sprint</span>`;
             showToast('Sprint completed.', 'success');
           }
         }, 1000);
@@ -2218,7 +2218,7 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
       timerRemaining = timerDuration;
       document.getElementById('timer-display').innerText = formatTime(timerRemaining);
       document.getElementById('timer-status-text').innerText = 'Focus Sprint Ready';
-      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Start Sprint`;
+      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start Sprint</span>`;
     }
 
     // Modal Helpers
@@ -2287,8 +2287,8 @@ Get-Service -Name "TeamsRoomsLifecycle" | Restart-Service -Force
       if (type === 'success') dotColor = "bg-emerald-400";
       if (type === 'warning') dotColor = "bg-amber-400";
 
-      toast.className = `bg-[#0C1018] border border-white/10 text-white px-3 py-2 rounded-xl text-xs flex items-center gap-2 shadow-2xl transition-all duration-200 transform translate-x-4 pointer-events-auto`;
-      toast.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColor}"></span> <span class="font-medium">${message}</span>`;
+      toast.className = `bg-[#0C1018] border border-white/10 text-white px-4 py-2.5 rounded-xl text-xs lg:text-sm flex items-center gap-2 shadow-2xl transition-all duration-200 transform translate-x-4 pointer-events-auto`;
+      toast.innerHTML = `<span class="w-2.5 h-2.5 rounded-full ${dotColor}"></span> <span class="font-medium">${message}</span>`;
       container.appendChild(toast);
 
       setTimeout(() => toast.classList.remove('translate-x-4'), 10);
