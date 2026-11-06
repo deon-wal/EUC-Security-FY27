@@ -605,9 +605,9 @@
   <!-- SCRIPT LOGIC -->
   <script>
     // Bumping storage key version to instantly clear out old schema data and pull new data correctly
-    const STORAGE_KEY_MODULES = "euc_ops_modules_q_v2";
-    const STORAGE_KEY_DRILLS = "euc_ops_drills_q_v2";
-    const STORAGE_KEY_SCRATCH = "euc_ops_scratchpad_v2";
+    const STORAGE_KEY_MODULES = "euc_ops_modules_q_v3";
+    const STORAGE_KEY_DRILLS = "euc_ops_drills_q_v3";
+    const STORAGE_KEY_SCRATCH = "euc_ops_scratchpad_v3";
 
     const INITIAL_MODULES = [
       { id: "MOD-Q1-1", quarter: "Q1", domain: "Endpoint Management", title: "MD-102: Endpoint Administrator", application: "Deploy fleet policies; fix Intune enrolment errors", project: "Configure dynamic groups & Intune enrolment profiles", resource: "MS Learn", hours: 10, status: "Not Started", quietQueue: false },
@@ -687,12 +687,39 @@
       const tabs = ['dashboard', 'roadmap', 'mentalmodels', 'deepflow', 'scratch'];
       tabs.forEach(t => {
         const el = document.getElementById(`tab-${t}`);
-        const btn = document.getElementById(`tab-btn-${t}`); if (!el \vert{}\vert{} !btn) return; if (t === tabId) { el.classList.remove('hidden'); btn.classList.add('tab-active'); } else { el.classList.add('hidden'); btn.classList.remove('tab-active'); } }); window.scrollTo({ top: 0, behavior: 'smooth' }); }  function updateMetrics() { const totalItems = modules.length; const completedItems = modules.filter(m => m.status === 'Completed').length; const totalHours = modules.reduce((sum, m) => sum + m.hours, 0); const completedHours = modules.filter(m => m.status === 'Completed').reduce((sum, m) => sum + m.hours, 0); const deepHours = modules.filter(m => !m.quietQueue).reduce((sum, m) => sum + m.hours, 0); const deepRatio = totalHours > 0 ? Math.round((deepHours / totalHours) * 100) : 0; const pct = totalHours > 0 ? Math.round((completedHours / totalHours) * 100) : 0;  document.getElementById('metric-deep-hours').innerText = deepHours; document.getElementById('metric-total-hours').innerText = totalHours; document.getElementById('metric-deep-bar').style.width = `${deepRatio}%`;
-      document.getElementById('quick-deep-ratio').innerText = `${deepRatio}\%`; document.getElementById('metric-deep-text').innerText = `${deepRatio}% High-Leverage Deep Engineering`;
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (!el || !btn) return;
+        if (t === tabId) {
+          el.classList.remove('hidden');
+          btn.classList.add('tab-active');
+        } else {
+          el.classList.add('hidden');
+          btn.classList.remove('tab-active');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateMetrics() {
+      const totalItems = modules.length;
+      const completedItems = modules.filter(m => m.status === 'Completed').length;
+      const totalHours = modules.reduce((sum, m) => sum + m.hours, 0);
+      const completedHours = modules.filter(m => m.status === 'Completed').reduce((sum, m) => sum + m.hours, 0);
+      const deepHours = modules.filter(m => !m.quietQueue).reduce((sum, m) => sum + m.hours, 0);
+      const deepRatio = totalHours > 0 ? Math.round((deepHours / totalHours) * 100) : 0;
+      const pct = totalHours > 0 ? Math.round((completedHours / totalHours) * 100) : 0;
+
+      document.getElementById('metric-deep-hours').innerText = deepHours;
+      document.getElementById('metric-total-hours').innerText = totalHours;
+      document.getElementById('metric-deep-bar').style.width = `${deepRatio}%`;
+      document.getElementById('quick-deep-ratio').innerText = `${deepRatio}%`;
+      document.getElementById('metric-deep-text').innerText = `${deepRatio}% High-Leverage Deep Engineering`;
 
       document.getElementById('metric-percent-complete').innerText = `${pct}%`;
       document.getElementById('metric-counts').innerText = `(${completedItems}/${totalItems} done)`;
-      document.getElementById('metric-progress-bar').style.width = `${pct}\%`; document.getElementById('metric-completed-hours').innerText = `${completedHours} hrs completed (${totalHours - completedHours} remain)`; document.getElementById('quick-progress-stat').innerText = `${pct}%`;
+      document.getElementById('metric-progress-bar').style.width = `${pct}%`;
+      document.getElementById('metric-completed-hours').innerText = `${completedHours} hrs completed (${totalHours - completedHours} remain)`;
+      document.getElementById('quick-progress-stat').innerText = `${pct}%`;
       document.getElementById('footer-total-hours').innerText = totalHours;
 
       const pillars = ['Q1', 'Q2', 'Q3', 'Q4'];
@@ -703,7 +730,8 @@
         const pCompletedHours = pItems.filter(m => m.status === 'Completed').reduce((s, m) => s + m.hours, 0);
         const pPct = pHours > 0 ? Math.round((pCompletedHours / pHours) * 100) : 0;
 
-        document.getElementById(`p${pNum}-hrs`).innerText = pHours; document.getElementById(`p${pNum}-items`).innerText = pItems.length;
+        document.getElementById(`p${pNum}-hrs`).innerText = pHours;
+        document.getElementById(`p${pNum}-items`).innerText = pItems.length;
         document.getElementById(`p${pNum}-progress-badge`).innerText = `${pPct}%`;
       });
 
@@ -737,13 +765,15 @@
         card.innerHTML = `
           <div class="space-y-1 sm:max-w-[75%]">
             <div class="flex items-center gap-2">
-              <span class="font-mono-code text-[11px] lg:text-xs text-slate-400">${item.quarter}</span>${workTag}
+              <span class="font-mono-code text-[11px] lg:text-xs text-slate-400">${item.quarter}</span>
+              ${workTag}
               <span class="font-medium text-slate-200 truncate">${item.title}</span>
             </div>
             <p class="text-[11px] lg:text-xs text-slate-400 truncate">App: ${item.application}</p>
           </div>
           <div class="flex items-center sm:justify-end gap-3 w-full sm:w-auto">
-            <span class="font-mono-code text-slate-400 text-xs lg:text-sm">${item.hours}h</span>${statusBadge}
+            <span class="font-mono-code text-slate-400 text-xs lg:text-sm">${item.hours}h</span>
+            ${statusBadge}
           </div>
         `;
         container.appendChild(card);
@@ -767,7 +797,7 @@
         row.innerHTML = `
           <div class="truncate pr-3">
             <div class="font-medium text-slate-200 truncate mb-0.5">${item.title}</div>
-            <span class="text-[10px] lg:text-[11px] text-slate-400 font-mono-code">${item.quarter} •${item.resource}</span>
+            <span class="text-[10px] lg:text-[11px] text-slate-400 font-mono-code">${item.quarter} • ${item.resource}</span>
           </div>
           <i class="fa-solid fa-play text-[10px] lg:text-xs text-amber-400 shrink-0"></i>
         `;
@@ -839,7 +869,7 @@
         card.innerHTML = `
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="font-mono-code text-[11px] text-slate-400">${m.quarter} •${m.domain}</span>
+              <span class="font-mono-code text-[11px] text-slate-400">${m.quarter} • ${m.domain}</span>
             </div>
             <button onclick="cycleStatus('${m.id}')">${statusBadge}</button>
           </div>
@@ -867,7 +897,10 @@
         showToast(`Started: ${item.title}`, 'info');
       } else if (item.status === "In Progress") {
         item.status = "Completed";
-        showToast(`Completed: ${item.title}`, 'success'); } else { item.status = "Not Started"; showToast(`Reset: ${item.title}`, 'info');
+        showToast(`Completed: ${item.title}`, 'success');
+      } else {
+        item.status = "Not Started";
+        showToast(`Reset: ${item.title}`, 'info');
       }
 
       saveState();
@@ -1090,7 +1123,8 @@
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between mb-1.5">
-              <span class="font-mono-code text-[10px] text-slate-400">MODEL ${m.number}</span>${isPassed ? '<span class="text-[9px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Passed ✓</span>' : ''}
+              <span class="font-mono-code text-[10px] text-slate-400">MODEL ${m.number}</span>
+              ${isPassed ? '<span class="text-[9px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Passed ✓</span>' : ''}
             </div>
             <div class="text-xs lg:text-sm font-semibold text-slate-200 truncate">${m.name}</div>
           </div>
@@ -1119,8 +1153,8 @@
           }
         }
         return `
-          <button onclick="submitModelDrill('${m.id}',${optIdx})" ${hasAnswered ? 'disabled' : ''} class="${btnClass}">
-            <span class="font-mono-code mr-1.5 text-slate-400">[${String.fromCharCode(65 + optIdx)}]</span>${opt}
+          <button onclick="submitModelDrill('${m.id}', ${optIdx})" ${hasAnswered ? 'disabled' : ''} class="${btnClass}">
+            <span class="font-mono-code mr-1.5 text-slate-400">[${String.fromCharCode(65 + optIdx)}]</span> ${opt}
           </button>
         `;
       }).join('');
@@ -1216,3 +1250,281 @@ ${m.masteryPattern.quote}
               <i class="fa-solid fa-dumbbell text-amber-400 text-xs"></i> Scenario Gym: Test Your Mental Model Reflex
             </span>
             ${hasAnswered ? `<button onclick="resetModelDrill('${m.id}')" class="text-xs lg:text-sm text-slate-400 hover:text-white">Retry Drill</button>` : ''}
+          </div>
+
+          <p class="text-xs lg:text-sm text-slate-200 font-medium leading-relaxed">${m.drillScenario.question}</p>
+          <div class="space-y-2.5">
+            ${optionsHtml}
+          </div>
+          ${feedbackHtml}
+        </div>
+      `;
+    }
+
+    function submitModelDrill(modelId, selectedIdx) {
+      const m = MENTAL_MODELS_DATA.find(item => item.id === modelId);
+      if (!m) return;
+      const isCorrect = selectedIdx === m.drillScenario.correct;
+      completedMentalModelDrills[modelId] = isCorrect;
+      saveState();
+
+      const passedCount = Object.values(completedMentalModelDrills).filter(v => v === true).length;
+      document.getElementById('mm-reps-counter').innerText = `Drills: ${passedCount} / ${MENTAL_MODELS_DATA.length} Passed`;
+
+      if (isCorrect) {
+        showToast(`Correct! Model ${m.number} instinct reinforced.`, 'success');
+      } else {
+        showToast(`Incorrect instinct. Review the Minto/Systems principles.`, 'warning');
+      }
+      selectMentalModel(modelId);
+    }
+
+    function resetModelDrill(modelId) {
+      delete completedMentalModelDrills[modelId];
+      saveState();
+      const passedCount = Object.values(completedMentalModelDrills).filter(v => v === true).length;
+      document.getElementById('mm-reps-counter').innerText = `Drills: ${passedCount} / ${MENTAL_MODELS_DATA.length} Passed`;
+      selectMentalModel(modelId);
+    }
+
+    // Timer & Brown Noise
+    let audioCtx = null;
+    let brownNoiseNode = null;
+    let isNoisePlaying = false;
+
+    function initAudioContext() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function toggleBrownNoise() {
+      initAudioContext();
+      const btn = document.getElementById('btn-toggle-noise');
+      const indicator = document.getElementById('noise-indicator');
+
+      if (isNoisePlaying) {
+        if (brownNoiseNode) {
+          try { brownNoiseNode.stop(); brownNoiseNode.disconnect(); } catch (e) {}
+          brownNoiseNode = null;
+        }
+        isNoisePlaying = false;
+        btn.innerText = "Start Sound";
+        btn.className = "px-3 py-1.5 text-xs bg-[#111722] hover:bg-white/10 text-slate-300 rounded-md border border-white/5 transition";
+        indicator.innerText = "Noise: OFF";
+        indicator.className = "text-[10px] lg:text-[11px] font-mono-code text-slate-400";
+        showToast("Focus noise stopped", 'info');
+      } else {
+        const bufferSize = audioCtx.sampleRate * 2;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 3.5;
+        }
+        brownNoiseNode = audioCtx.createBufferSource();
+        brownNoiseNode.buffer = noiseBuffer;
+        brownNoiseNode.loop = true;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        brownNoiseNode.connect(gain);
+        gain.connect(audioCtx.destination);
+        brownNoiseNode.start();
+
+        isNoisePlaying = true;
+        btn.innerText = "Mute Sound";
+        btn.className = "px-3 py-1.5 text-xs bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30 transition";
+        indicator.innerText = "Noise: ACTIVE";
+        indicator.className = "text-[10px] lg:text-[11px] font-mono-code text-indigo-400";
+        showToast("Synthesized Brown Noise active", 'success');
+      }
+    }
+
+    let timerDuration = 30 * 60;
+    let timerRemaining = 30 * 60;
+    let timerInterval = null;
+    let isTimerRunning = false;
+
+    function formatTime(totalSec) {
+      const mins = Math.floor(totalSec / 60);
+      const secs = totalSec % 60;
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function setTimerDuration(mins) {
+      if (isTimerRunning) clearInterval(timerInterval);
+      isTimerRunning = false;
+      timerDuration = mins * 60;
+      timerRemaining = mins * 60;
+      document.getElementById('timer-display').innerText = formatTime(timerRemaining);
+      document.getElementById('timer-status-text').innerText = `${mins}m Focus Block Ready`;
+      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start ${mins}m Block</span>`;
+
+      [25, 30, 50, 90].forEach(m => {
+        const b = document.getElementById(`btn-t-${m}`);
+        if (!b) return;
+        if (m === mins) {
+          b.className = "px-3 py-1.5 bg-sky-500/20 text-sky-300 rounded-md border border-sky-500/30 transition font-mono-code font-medium";
+        } else {
+          b.className = "px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code";
+        }
+      });
+    }
+
+    function toggleTimer() {
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        document.getElementById('timer-status-text').innerText = 'Paused';
+        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Resume</span>`;
+      } else {
+        isTimerRunning = true;
+        document.getElementById('timer-status-text').innerText = 'Deep sprint active';
+        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-pause text-[11px]"></i> <span>Pause</span>`;
+        timerInterval = setInterval(() => {
+          if (timerRemaining > 0) {
+            timerRemaining--;
+            document.getElementById('timer-display').innerText = formatTime(timerRemaining);
+          } else {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            document.getElementById('timer-status-text').innerText = 'Sprint complete';
+            document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start New Sprint</span>`;
+            showToast('Sprint completed.', 'success');
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      if (isTimerRunning) clearInterval(timerInterval);
+      isTimerRunning = false;
+      timerRemaining = timerDuration;
+      document.getElementById('timer-display').innerText = formatTime(timerRemaining);
+      document.getElementById('timer-status-text').innerText = 'Focus Sprint Ready';
+      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start Sprint</span>`;
+    }
+
+    // Modal Helpers
+    function openResetModal() { document.getElementById('reset-modal').classList.remove('hidden'); }
+    function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
+    function confirmResetData() {
+      localStorage.removeItem(STORAGE_KEY_MODULES);
+      localStorage.removeItem(STORAGE_KEY_DRILLS);
+      localStorage.removeItem(STORAGE_KEY_SCRATCH);
+      modules = JSON.parse(JSON.stringify(INITIAL_MODULES));
+      completedMentalModelDrills = {};
+      
+      document.getElementById('scratchpad-input').value = '';
+      
+      updateMetrics();
+      renderRoadmap();
+      initMentalModels();
+      closeResetModal();
+      showToast("Progress reset to default state", 'info');
+    }
+
+    function openShutdownModal() { document.getElementById('shutdown-modal').classList.remove('hidden'); }
+    function closeShutdownModal() { document.getElementById('shutdown-modal').classList.add('hidden'); }
+    function executeShutdown() {
+      const c1 = document.getElementById('sr-check-1').checked;
+      const c2 = document.getElementById('sr-check-2').checked;
+      const c3 = document.getElementById('sr-check-3').checked;
+      if (!c1 || !c2 || !c3) {
+        showToast("Complete all 3 ritual verification steps before shutdown.", 'warning');
+        return;
+      }
+      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('shutdown-status-time').innerText = `Shutdown logged at ${timestamp}`;
+      document.getElementById('footer-shutdown-state').innerText = `Shutdown Complete (${timestamp})`;
+      document.getElementById('footer-shutdown-state').className = "text-emerald-400 font-semibold";
+
+      if (isNoisePlaying) toggleBrownNoise();
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+      }
+      showToast('"Shutdown Complete" logged. Step away and recharge.', 'success');
+      setTimeout(closeShutdownModal, 800);
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      let dotColor = "bg-slate-400";
+      if (type === 'success') dotColor = "bg-emerald-400";
+      if (type === 'warning') dotColor = "bg-amber-400";
+
+      toast.className = `bg-[#0C1018] border border-white/10 text-white px-4 py-2.5 rounded-xl text-xs lg:text-sm flex items-center gap-2 shadow-2xl transition-all duration-200 transform translate-x-4 pointer-events-auto`;
+      toast.innerHTML = `<span class="w-2.5 h-2.5 rounded-full ${dotColor}"></span> <span class="font-medium">${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.remove('translate-x-4'), 10);
+      setTimeout(() => {
+        toast.classList.add('translate-x-4', 'opacity-0');
+        setTimeout(() => toast.remove(), 200);
+      }, 2500);
+    }
+
+    function exportData() {
+      const exportObject = {
+        modules,
+        drills: completedMentalModelDrills,
+        scratchpad: document.getElementById('scratchpad-input').value,
+        exportDate: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `FY27_EUC_Ops_Progress_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Progress exported as JSON", 'success');
+    }
+
+    function importData(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed.modules && Array.isArray(parsed.modules)) {
+            modules = parsed.modules;
+            if (parsed.drills) completedMentalModelDrills = parsed.drills;
+            if (parsed.scratchpad) {
+              document.getElementById('scratchpad-input').value = parsed.scratchpad;
+              localStorage.setItem(STORAGE_KEY_SCRATCH, parsed.scratchpad);
+            }
+          } else if (Array.isArray(parsed) && parsed[0]?.id) {
+            modules = parsed;
+          }
+          saveState();
+          updateMetrics();
+          renderRoadmap();
+          initMentalModels();
+          showToast(`Imported ${modules.length} modules`, 'success');
+        } catch (err) {
+          showToast('Failed to parse JSON file', 'warning');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    window.onload = function () {
+      loadSavedState();
+      initScratchpad();
+      updateMetrics();
+      renderRoadmap();
+      initMentalModels();
+    };
+  </script>
+</body>
+</html>
