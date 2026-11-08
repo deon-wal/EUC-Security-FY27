@@ -1,1530 +1,1617 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EUC & Security Operations Cockpit | Enterprise Workstation</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome 6 Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            obsidian: {
-              950: '#070A0F',
-              900: '#0C1018',
-              850: '#111722',
-              800: '#172030',
-              700: '#222F46',
-              600: '#324260'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENGINEERING ACADEMY // ARCHIVE</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        raincoat: {
+                            400: '#fde047',
+                            500: '#eab308', /* The iconic Dark yellow */
+                            600: '#ca8a04',
+                            800: '#854d0e',
+                            900: '#713f12',
+                            950: '#422006',
+                        },
+                        cave: {
+                            400: '#94a3b8',
+                            500: '#64748b', /* Muted stone/blue */
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617', /* Deep cave black */
+                        },
+                        ops: {
+                            bg: '#050505', 
+                            card: '#0a0a0a',
+                            border: '#1f1f1f', 
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['Fira Code', 'JetBrains Mono', 'monospace']
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-    :root { color-scheme: dark; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #070A0F;
-      color: #F1F5F9;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .font-mono-code {
-      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: #070A0F; }
-    ::-webkit-scrollbar-thumb { background: #172030; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #222F46; }
-    .tab-active {
-      background-color: #172030 !important;
-      color: #F8FAFC !important;
-      border-color: rgba(255, 255, 255, 0.15) !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    }
-  </style>
+    </script>
+    
+    <!-- Lucide Icons & Google Fonts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #050505;
+            background-image: radial-gradient(circle at 50% 0%, #0f172a 0%, #050505 60%);
+            background-attachment: fixed;
+        }
+
+        /* Custom minimal scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+            border-left: 1px solid #1f1f1f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .slow-fade {
+            transition: all 0.4s ease-in-out;
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased bg-[#070A0F] text-[#F1F5F9]">
+<body class="bg-ops-bg text-gray-400 font-sans h-full flex flex-col overflow-hidden antialiased selection:bg-raincoat-900 selection:text-raincoat-400">
 
-  <!-- Toast Container -->
-  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- Custom Modals & Toasts Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
-  <!-- Reset Confirmation Modal -->
-  <div id="reset-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-[#0C1018] border border-white/10 rounded-xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center gap-2.5 text-amber-400">
-        <i class="fa-solid fa-triangle-exclamation text-base"></i>
-        <h3 class="font-semibold text-sm text-slate-100">Reset All Progress?</h3>
-      </div>
-      <p class="text-xs text-slate-400 leading-relaxed">
-        This resets all modules, mental model drills, and your scratchpad back to defaults.
-      </p>
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/5">
-        <button onclick="closeResetModal()" class="px-3 py-1.5 text-xs text-slate-300 hover:text-white rounded-lg bg-[#111722] border border-white/5 transition">Cancel</button>
-        <button onclick="confirmResetData()" class="px-3 py-1.5 text-xs text-white rounded-lg bg-rose-600/80 hover:bg-rose-600 transition font-medium">Reset Data</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Cal Newport Daily Shutdown Modal -->
-  <div id="shutdown-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-[#0C1018] border border-white/10 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-white/10 pb-3">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-moon text-amber-400"></i>
-          <h3 class="font-semibold text-sm text-white">Cal Newport Daily Shutdown Ritual</h3>
-        </div>
-        <button onclick="closeShutdownModal()" class="text-slate-400 hover:text-slate-200 text-xs"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <p class="text-xs text-slate-400 leading-relaxed">
-        Terminate work-day cognitive loops. A structured review prevents incomplete loops from draining focus during recovery hours.
-      </p>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-start gap-2.5 p-2 rounded-lg bg-[#070A0F] border border-white/5 cursor-pointer">
-          <input type="checkbox" id="sr-check-1" class="mt-0.5 rounded border-white/20 text-emerald-500 bg-[#111722]">
-          <span class="text-slate-300">Reviewed all active tickets and acknowledged incoming priority requests</span>
-        </label>
-        <label class="flex items-start gap-2.5 p-2 rounded-lg bg-[#070A0F] border border-white/5 cursor-pointer">
-          <input type="checkbox" id="sr-check-2" class="mt-0.5 rounded border-white/20 text-emerald-500 bg-[#111722]">
-          <span class="text-slate-300">Recorded verified root causes in ticket notes (First-Principles BLUF)</span>
-        </label>
-        <label class="flex items-start gap-2.5 p-2 rounded-lg bg-[#070A0F] border border-white/5 cursor-pointer">
-          <input type="checkbox" id="sr-check-3" class="mt-0.5 rounded border-white/20 text-emerald-500 bg-[#111722]">
-          <span class="text-slate-300">Selected tomorrow's single 90-minute deep engineering sprint deliverable</span>
-        </label>
-      </div>
-      <div class="pt-2 flex items-center justify-between border-t border-white/10">
-        <span id="shutdown-status-time" class="text-[11px] font-mono-code text-slate-400">Pending checklist</span>
-        <button onclick="executeShutdown()" class="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-medium text-xs rounded-lg transition flex items-center gap-1.5 shadow-sm">
-          <i class="fa-solid fa-lock text-[10px]"></i> Log "Shutdown Complete"
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Primary Sticky Header -->
-  <header class="sticky top-0 z-40 bg-[#070A0F]/95 backdrop-blur-md border-b border-white/5">
-    <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <!-- Top Bar -->
-      <div class="flex items-center justify-between h-14 border-b border-white/5">
-        <div class="flex items-center gap-2.5 lg:gap-4">
-          <div class="w-8 h-8 rounded-lg bg-[#111722] border border-white/10 flex items-center justify-center text-emerald-400">
-            <i class="fa-solid fa-terminal text-xs"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-1.5">
-              <h1 class="font-semibold text-xs sm:text-sm lg:text-base text-white">EUC & Security Ops Cockpit</h1>
-            </div>
-            <p class="text-[10px] text-slate-400 hidden sm:block">Linear Workstation • Cal Newport Deep Work • Calibrated Triage</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2 lg:gap-3">
-          <!-- Deep Ratio -->
-          <div class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C1018] border border-white/5 text-xs">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
-            <span class="text-slate-400 text-[11px]">Deep Ratio:</span>
-            <span id="quick-deep-ratio" class="font-medium text-white font-mono-code text-[11px]">100%</span>
-          </div>
-
-          <!-- Total Progress -->
-          <div class="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-[#0C1018] border border-white/5 text-xs">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            <span class="text-slate-400 text-[11px] hidden md:inline">Progress:</span>
-            <span id="quick-progress-stat" class="font-medium text-emerald-400 font-mono-code text-[11px]">0.0%</span>
-          </div>
-
-          <!-- Action Buttons -->
-          <button onclick="openShutdownModal()" class="h-7 lg:h-8 px-2 lg:px-3 text-xs font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-md transition flex items-center gap-1.5" title="Daily Shutdown Ritual">
-            <i class="fa-solid fa-moon text-amber-400 text-[11px]"></i><span class="hidden lg:inline text-[11px]">Shutdown</span>
-          </button>
-          <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importData(event)">
-          <button onclick="document.getElementById('import-file-input').click()" class="h-7 lg:h-8 px-2 lg:px-3 text-xs text-slate-300 hover:text-white bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center gap-1.5" title="Import Progress (.json)">
-            <i class="fa-solid fa-arrow-up-from-bracket text-[11px]"></i><span class="hidden md:inline text-[11px]">Import</span>
-          </button>
-          <button onclick="exportData()" class="h-7 lg:h-8 px-2 lg:px-3 text-xs text-slate-300 hover:text-white bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center gap-1.5" title="Export Progress (.json)">
-            <i class="fa-solid fa-arrow-down-to-bracket text-[11px]"></i><span class="hidden md:inline text-[11px]">Export</span>
-          </button>
-          <button onclick="openResetModal()" class="h-7 lg:h-8 w-7 lg:w-8 text-xs text-slate-400 hover:text-rose-400 bg-[#0C1018] hover:bg-[#111722] border border-white/5 rounded-md transition flex items-center justify-center" title="Reset to defaults">
-            <i class="fa-solid fa-arrow-rotate-left text-[11px]"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Segmented Nav -->
-      <nav class="flex items-center space-x-1 lg:space-x-3 overflow-x-auto py-2.5 no-scrollbar text-xs font-medium">
-        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-button tab-active flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-white shrink-0">
-          <i class="fa-solid fa-chart-pie text-xs"></i>
-          <span>Overview</span>
-        </button>
-
-        <button onclick="switchTab('roadmap')" id="tab-btn-roadmap" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
-          <i class="fa-solid fa-graduation-cap text-xs"></i>
-          <span>Curriculum (16)</span>
-        </button>
-
-        <button onclick="switchTab('mentalmodels')" id="tab-btn-mentalmodels" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
-          <i class="fa-solid fa-brain text-xs text-amber-400"></i>
-          <span>5 Mental Models Lab</span>
-        </button>
-
-        <button onclick="switchTab('deepflow')" id="tab-btn-deepflow" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
-          <i class="fa-regular fa-clock text-xs"></i>
-          <span>Deep Sprint & Audio</span>
-        </button>
-
-        <button onclick="switchTab('scratch')" id="tab-btn-scratch" class="tab-button flex items-center gap-1.5 px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg border border-transparent transition text-slate-400 hover:text-white shrink-0">
-          <i class="fa-solid fa-pen-to-square text-xs text-sky-400"></i>
-          <span>Scratch Log</span>
-        </button>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Main Content Area -->
-  <main class="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-8">
-
-    <!-- VIEW 1: OVERVIEW -->
-    <section id="tab-dashboard" class="space-y-6 lg:space-y-8">
-      <!-- 3 Metrics Tiles -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-        <!-- Tile 1 -->
-        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 shadow-sm">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] lg:text-xs font-medium uppercase tracking-wider text-slate-400">Cognitive Ratio</span>
-            <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#111722] text-slate-300">Newport Metric</span>
-          </div>
-          <div class="flex items-baseline gap-2 mt-2 lg:mt-3">
-            <span id="metric-deep-hours" class="text-2xl lg:text-3xl font-bold tracking-tight text-white">0</span>
-            <span class="text-xs lg:text-sm text-slate-400">/ <span id="metric-total-hours">0</span> hrs Deep</span>
-          </div>
-          <div class="w-full bg-[#070A0F] h-1.5 lg:h-2 rounded-full mt-3 overflow-hidden">
-            <div id="metric-deep-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-300" style="width: 100%"></div>
-          </div>
-          <p id="metric-deep-text" class="text-[11px] lg:text-xs text-slate-400 mt-2.5">100% High-Leverage Deep Engineering</p>
-        </div>
-
-        <!-- Tile 2 -->
-        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 shadow-sm">
-          <span class="text-[11px] lg:text-xs font-medium uppercase tracking-wider text-slate-400">Plan Execution</span>
-          <div class="flex items-baseline gap-2 mt-2 lg:mt-3">
-            <span id="metric-percent-complete" class="text-2xl lg:text-3xl font-bold tracking-tight text-emerald-400">0%</span>
-            <span id="metric-counts" class="text-xs lg:text-sm text-slate-400">(0/16 done)</span>
-          </div>
-          <div class="w-full bg-[#070A0F] h-1.5 lg:h-2 rounded-full mt-3 overflow-hidden">
-            <div id="metric-progress-bar" class="bg-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-          </div>
-          <p id="metric-completed-hours" class="text-[11px] lg:text-xs text-slate-400 mt-2.5">0 hrs completed (160 remain)</p>
-        </div>
-
-        <!-- Tile 3 -->
-        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 shadow-sm">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] lg:text-xs font-medium uppercase tracking-wider text-slate-400">Target MTTR Delta</span>
-            <span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">-35% MTTR</span>
-          </div>
-          <div class="flex items-baseline gap-2 mt-2 lg:mt-3">
-            <span class="text-2xl lg:text-3xl font-bold tracking-tight text-white">1.8h</span>
-            <span class="text-xs lg:text-sm text-slate-400">from 4.2h base</span>
-          </div>
-          <p class="text-[11px] lg:text-xs text-slate-400 mt-3">Tier-1/2 local containment before escalation</p>
-        </div>
-      </div>
-
-      <!-- 4 Pillars / Modules Architecture -->
-      <div>
-        <div class="flex items-center justify-between mb-3 lg:mb-4">
-          <h2 class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-400">Master Engineering Domains</h2>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          <!-- Pillar 1 -->
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-mono-code text-slate-400">Q1</span>
-                <span id="p1-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#111722] px-1.5 py-0.5 rounded font-mono-code">0%</span>
-              </div>
-              <h3 class="text-sm lg:text-base font-semibold text-slate-200 mt-3">Endpoint Management</h3>
-              <p class="text-xs text-slate-400 mt-2 leading-relaxed">MD-102, Device Compliance, App Management, and Hybrid Architecture.</p>
-            </div>
-            <div class="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
-              <span><span id="p1-hrs" class="text-slate-200">40</span> hrs</span>
-              <span><span id="p1-items" class="text-slate-200">4</span> items</span>
-            </div>
-          </div>
-
-          <!-- Pillar 2 -->
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-mono-code text-slate-400">Q2</span>
-                <span id="p2-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#111722] px-1.5 py-0.5 rounded font-mono-code">0%</span>
-              </div>
-              <h3 class="text-sm lg:text-base font-semibold text-slate-200 mt-3">Security & Compliance</h3>
-              <p class="text-xs text-slate-400 mt-2 leading-relaxed">CompTIA Security+ (SY0-701), FIDO2 Passkeys, and Windows Hello fleets.</p>
-            </div>
-            <div class="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
-              <span><span id="p2-hrs" class="text-slate-200">40</span> hrs</span>
-              <span><span id="p2-items" class="text-slate-200">4</span> items</span>
-            </div>
-          </div>
-
-          <!-- Pillar 3 -->
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-mono-code text-slate-400">Q3</span>
-                <span id="p3-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#111722] px-1.5 py-0.5 rounded font-mono-code">0%</span>
-              </div>
-              <h3 class="text-sm lg:text-base font-semibold text-slate-200 mt-3">Automation & AI</h3>
-              <p class="text-xs text-slate-400 mt-2 leading-relaxed">Python fundamentals, RegEx log parsing, Google AI triage prompts.</p>
-            </div>
-            <div class="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
-              <span><span id="p3-hrs" class="text-slate-200">40</span> hrs</span>
-              <span><span id="p3-items" class="text-slate-200">4</span> items</span>
-            </div>
-          </div>
-
-          <!-- Pillar 4 -->
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 lg:p-6 flex flex-col justify-between hover:border-white/20 transition shadow-sm">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-mono-code text-slate-400">Q4</span>
-                <span id="p4-progress-badge" class="text-[11px] font-medium text-slate-300 bg-[#111722] px-1.5 py-0.5 rounded font-mono-code">0%</span>
-              </div>
-              <h3 class="text-sm lg:text-base font-semibold text-slate-200 mt-3">Problem-Solving & Comms</h3>
-              <p class="text-xs text-slate-400 mt-2 leading-relaxed">MIT Systems Thinking, Root Cause Analysis, 5-Whys, Minto BLUF.</p>
-            </div>
-            <div class="mt-5 pt-3 border-t border-white/5 flex justify-between text-xs text-slate-400 font-mono-code">
-              <span><span id="p4-hrs" class="text-slate-200">40</span> hrs</span>
-              <span><span id="p4-items" class="text-slate-200">4</span> items</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Active Priorities & Quiet Queue Hub -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        <!-- Active Priorities -->
-        <div class="lg:col-span-2 bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-4 shadow-sm">
-          <div class="flex items-center justify-between border-b border-white/5 pb-3">
-            <h3 class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Active Engineering Priorities
+    <div id="confirm-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border border-[#222] rounded-md max-w-sm w-full p-6 shadow-2xl">
+            <h3 class="text-raincoat-500 font-mono font-normal mb-3 flex items-center gap-2">
+                <i data-lucide="help-circle" class="w-4 h-4"></i> CONFIRM ACTION
             </h3>
-            <button onclick="switchTab('roadmap')" class="text-xs text-slate-400 hover:text-white transition">Open Master Table &rarr;</button>
-          </div>
-          <div id="active-focus-container" class="space-y-3">
-            <!-- Populated via script -->
-          </div>
+            <p id="confirm-text" class="text-gray-300 font-mono text-sm mb-8 leading-relaxed"></p>
+            <div class="flex justify-end space-x-4">
+                <button onclick="closeConfirm(false)" class="px-4 py-2 text-gray-500 font-mono text-xs hover:text-gray-300 slow-fade">CANCEL</button>
+                <button onclick="closeConfirm(true)" class="px-5 py-2 bg-[#111] text-raincoat-500 font-mono text-xs border border-[#333] hover:border-raincoat-800 hover:bg-raincoat-950/30 slow-fade">PROCEED</button>
+            </div>
         </div>
-
-        <!-- Quiet Queue Hub -->
-        <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 flex flex-col justify-between space-y-4 shadow-sm">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-mug-hot text-amber-400 text-xs"></i>
-                <h3 class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-200">Quiet Queue (Watchlist)</h3>
-              </div>
-              <span class="text-[10px] font-mono-code text-amber-300 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">Downtime Hub</span>
-            </div>
-            <p class="text-xs lg:text-[13px] text-slate-400 leading-relaxed">
-              When ticket queues are calm, pivot to these high-perspective modules without burning deep engineering blocks:
-            </p>
-            <div id="quiet-queue-preview" class="space-y-2 text-xs">
-              <!-- Injected by script -->
-            </div>
-          </div>
-          
-          <button onclick="applyQuickFilter('QUIET_QUEUE'); switchTab('roadmap');" class="w-full py-2.5 mt-2 bg-[#111722] hover:bg-white/10 text-slate-200 text-xs font-medium rounded-lg border border-white/5 transition flex items-center justify-center gap-2 shadow-sm">
-            <i class="fa-solid fa-list-check text-slate-400"></i> View All Quiet Queue Modules
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 2: ROADMAP MASTER TABLE -->
-    <section id="tab-roadmap" class="hidden space-y-5 lg:space-y-6">
-      <div class="bg-[#0C1018] border border-white/5 p-4 lg:p-6 rounded-xl space-y-4 shadow-sm">
-        <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
-          <div class="relative w-full lg:w-96">
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-            <input type="text" id="module-search" oninput="renderRoadmap()" placeholder="Search ID, title, or deliverable..." class="w-full bg-[#070A0F] border border-white/10 rounded-lg pl-9 pr-3 py-2 text-xs lg:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-white/20">
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
-            <select id="filter-pillar" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none">
-              <option value="ALL">All Quarters</option>
-              <option value="Q1">Q1: Endpoint Management</option>
-              <option value="Q2">Q2: Security & Compliance</option>
-              <option value="Q3">Q3: Automation & AI</option>
-              <option value="Q4">Q4: Problem-Solving & Comms</option>
-            </select>
-
-            <select id="filter-worktype" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none">
-              <option value="ALL">All Work Modes</option>
-              <option value="Deep">Deep Engineering (High Leverage)</option>
-              <option value="Quiet">Quiet Queue (Keynotes/Lectures)</option>
-            </select>
-
-            <select id="filter-status" onchange="renderRoadmap()" class="bg-[#070A0F] border border-white/10 text-slate-300 text-xs lg:text-sm rounded-lg px-3 py-2 focus:outline-none">
-              <option value="ALL">All Statuses</option>
-              <option value="Not Started">Not Started</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-            </select>
-
-            <span id="filter-count-badge" class="px-3 py-2 text-xs text-slate-400 bg-[#070A0F] border border-white/10 rounded-md font-mono-code">16 Items</span>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2 pt-2 overflow-x-auto text-xs no-scrollbar">
-          <span class="text-slate-400 text-[11px] uppercase tracking-wider shrink-0 mr-1">Quick Views:</span>
-          <button onclick="applyQuickFilter('ALL')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-slate-300 border border-white/5 text-[11px] transition">All (16)</button>
-          <button onclick="applyQuickFilter('DEEP')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-indigo-300 border border-white/5 text-[11px] transition">Deep Only</button>
-          <button onclick="applyQuickFilter('QUIET_QUEUE')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-amber-300 border border-amber-500/20 text-[11px] transition flex items-center gap-1.5">
-            <i class="fa-solid fa-mug-hot text-[10px]"></i> Quiet Queue
-          </button>
-          <button onclick="applyQuickFilter('IN_PROGRESS')" class="px-3 py-1.5 rounded-md bg-[#070A0F] hover:bg-[#111722] text-amber-300/90 border border-white/5 text-[11px] transition">In Progress</button>
-        </div>
-      </div>
-
-      <!-- Desktop Table -->
-      <div class="hidden sm:block bg-[#0C1018] border border-white/5 rounded-xl overflow-hidden shadow-sm">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs lg:text-sm">
-            <thead>
-              <tr class="bg-[#111722]/50 text-slate-400 font-medium border-b border-white/5 text-[11px] lg:text-xs">
-                <th class="py-3.5 px-4 w-16">Quarter</th>
-                <th class="py-3.5 px-4 w-32">Domain</th>
-                <th class="py-3.5 px-4 w-48">Training Module</th>
-                <th class="py-3.5 px-4">Work Application</th>
-                <th class="py-3.5 px-4">Practical Project</th>
-                <th class="py-3.5 px-4 w-28">Resource</th>
-                <th class="py-3.5 px-4 w-24 text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody id="roadmap-table-body" class="divide-y divide-white/5">
-              <!-- Populated via script -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Mobile List Cards -->
-      <div id="roadmap-mobile-container" class="sm:hidden space-y-3">
-        <!-- Rendered via script -->
-      </div>
-    </section>
-
-    <!-- VIEW 3: 5 MENTAL MODELS & STRUCTURED THINKING LAB -->
-    <section id="tab-mentalmodels" class="hidden space-y-5 lg:space-y-8">
-      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-4 lg:space-y-5 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-[10px] font-mono-code uppercase px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-300">Core Competency</span>
-              <h2 class="text-sm lg:text-base font-semibold text-white">5 High-Impact Mental Models & Cognitive Habit Re-Wiring</h2>
-            </div>
-            <p class="text-xs lg:text-sm text-slate-400 mt-1">Convert cognitive frameworks into daily engineering instincts.</p>
-          </div>
-          <div class="flex items-center gap-2 lg:gap-3">
-            <span id="mm-reps-counter" class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded font-mono-code">Drills: 0 / 5 Passed</span>
-          </div>
-        </div>
-
-        <p class="text-xs lg:text-sm text-slate-300 leading-relaxed max-w-5xl">
-          Technical competence alone caps your ceiling at reactive firefighting. Senior engineering velocity requires <strong>structured communication</strong> (Barbara Minto's Pyramid), <strong>systems thinking</strong> (Donella Meadows' leverage points), and <strong>root-cause first principles</strong>. Use this interactive laboratory to ingrain the 5 foundational models.
-        </p>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 pt-2" id="mm-selector-grid">
-          <!-- Populated dynamically via JS -->
-        </div>
-      </div>
-
-      <div id="mm-study-pane" class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-5 lg:space-y-6 shadow-sm">
-        <!-- Injected via selectMentalModel() -->
-      </div>
-    </section>
-
-    <!-- VIEW 4: DEEP FLOW SPRINT & AUDIO -->
-    <section id="tab-deepflow" class="hidden space-y-6 lg:space-y-8">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        <div class="lg:col-span-2 bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 space-y-4 shadow-sm">
-          <div class="flex items-center justify-between border-b border-white/5 pb-4">
-            <div>
-              <h2 class="text-sm lg:text-base font-semibold text-white">Cal Newport Time-Blocked Cadence</h2>
-              <p class="text-xs lg:text-sm text-slate-400 mt-1">Fixed-schedule productivity to defend deep engineering capacity.</p>
-            </div>
-            <span class="text-xs lg:text-sm text-emerald-400 font-mono-code bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded">4.5h Deep / Day</span>
-          </div>
-
-          <div class="space-y-3 text-xs lg:text-sm">
-            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5">
-              <div class="flex items-center justify-between mb-1">
-                <span class="font-mono-code text-slate-300">08:30 - 09:00 AM (30m)</span>
-                <span class="text-slate-400 font-medium">Morning Triage</span>
-              </div>
-              <h4 class="font-semibold text-slate-200">Queue Triage & Acknowledgement Loops</h4>
-              <p class="text-slate-400 mt-1 leading-relaxed">Dispatch instant ticket receipt loops with committed diagnostic deadlines.</p>
-            </div>
-
-            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-indigo-500/20">
-              <div class="flex items-center justify-between mb-1">
-                <span class="font-mono-code text-indigo-300 font-semibold">09:00 - 10:30 AM (90m)</span>
-                <span class="text-indigo-300 font-medium bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded text-[10px] lg:text-xs">DEEP SPRINT #1</span>
-              </div>
-              <h4 class="font-semibold text-white">Intune Policy Packaging & Python Log Tooling</h4>
-              <p class="text-slate-400 mt-1 leading-relaxed">Mute chat and email. Work on automated remediation scripts and compliance baselines.</p>
-            </div>
-
-            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5">
-              <div class="flex items-center justify-between mb-1">
-                <span class="font-mono-code text-slate-300">11:00 - 11:30 AM (30m)</span>
-                <span class="text-slate-400 font-medium">Midday Sweep</span>
-              </div>
-              <h4 class="font-semibold text-slate-200">Question Consolidation & Consultations</h4>
-              <p class="text-slate-400 mt-1 leading-relaxed">Batch user questions into single numbered diagnostic packets.</p>
-            </div>
-
-            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-indigo-500/20">
-              <div class="flex items-center justify-between mb-1">
-                <span class="font-mono-code text-indigo-300 font-semibold">01:30 - 03:00 PM (90m)</span>
-                <span class="text-indigo-300 font-medium bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded text-[10px] lg:text-xs">DEEP SPRINT #2</span>
-              </div>
-              <h4 class="font-semibold text-white">Security+ Certification Lab & FIDO2 Cryptography</h4>
-              <p class="text-slate-400 mt-1 leading-relaxed">Hands-on WebAuthn ceremonies, threat simulation labs.</p>
-            </div>
-
-            <div class="p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5">
-              <div class="flex items-center justify-between mb-1">
-                <span class="font-mono-code text-slate-300">04:30 - 05:00 PM (30m)</span>
-                <span class="text-amber-400 font-medium">Daily Closeout</span>
-              </div>
-              <h4 class="font-semibold text-slate-200">First-Principles Logging & Shutdown Ritual</h4>
-              <p class="text-slate-400 mt-1 leading-relaxed">Execute Newport's shutdown checklist, close open ticket loops, and cleanly exit work.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-5">
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-5 lg:p-6 text-center space-y-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] lg:text-xs font-medium uppercase tracking-wider text-slate-400">Immersion Timer</span>
-              <span id="noise-indicator" class="text-[10px] lg:text-[11px] font-mono-code text-slate-400">Noise: OFF</span>
-            </div>
-            
-            <div>
-              <div id="timer-display" class="text-6xl lg:text-7xl font-bold font-mono-code text-white tracking-tight py-2">30:00</div>
-              <span id="timer-status-text" class="text-xs lg:text-sm text-slate-400 mt-2 block">30m Focus Sprint Ready</span>
-            </div>
-            
-            <div class="flex justify-center gap-2 text-xs lg:text-sm">
-              <button onclick="setTimerDuration(25)" id="btn-t-25" class="px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code">25m</button>
-              <button onclick="setTimerDuration(30)" id="btn-t-30" class="px-3 py-1.5 bg-sky-500/20 text-sky-300 rounded-md border border-sky-500/30 transition font-mono-code font-medium">30m</button>
-              <button onclick="setTimerDuration(50)" id="btn-t-50" class="px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code">50m</button>
-              <button onclick="setTimerDuration(90)" id="btn-t-90" class="px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code">90m</button>
-            </div>
-
-            <div class="p-3 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5 flex items-center justify-between text-xs lg:text-sm">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-headphones text-slate-400"></i>
-                <span class="text-slate-300">Brown Noise Synthesizer</span>
-              </div>
-              <button id="btn-toggle-noise" onclick="toggleBrownNoise()" class="px-3 py-1.5 text-xs bg-[#111722] hover:bg-white/10 text-slate-300 rounded-md border border-white/5 transition">
-                Start Sound
-              </button>
-            </div>
-
-            <div class="flex justify-center gap-3 pt-2">
-              <button id="btn-timer-toggle" onclick="toggleTimer()" class="px-6 py-2.5 bg-white text-slate-900 font-semibold text-sm rounded-lg hover:bg-slate-200 transition flex items-center gap-2">
-                <i class="fa-solid fa-play text-[11px]"></i> <span>Start 30m Block</span>
-              </button>
-              <button onclick="resetTimer()" class="px-4 py-2.5 bg-[#070A0F] hover:bg-white/10 text-slate-400 hover:text-white text-sm rounded-lg border border-white/5 transition">
-                <i class="fa-solid fa-arrow-rotate-left"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="bg-[#0C1018] border border-white/5 rounded-xl p-5 lg:p-6 text-center shadow-sm">
-            <span class="text-xs lg:text-sm text-slate-400 block mb-3">Done for the day? Protect cognitive recovery.</span>
-            <button onclick="openShutdownModal()" class="w-full py-2.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-medium text-xs lg:text-sm rounded-lg border border-amber-500/20 transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-moon"></i> Execute Shutdown Ritual
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 5: SCRATCHPAD LOG -->
-    <section id="tab-scratch" class="hidden space-y-6 lg:space-y-8 h-[calc(100vh-200px)]">
-      <div class="bg-[#0C1018] border border-white/5 rounded-xl p-4 sm:p-5 lg:p-6 shadow-sm h-full flex flex-col">
-        <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
-          <div>
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-pen-to-square text-sky-400"></i>
-              <h2 class="text-sm lg:text-base font-semibold text-white">Scratch Log</h2>
-            </div>
-            <p class="text-xs lg:text-sm text-slate-400 mt-1">Raw, unformatted notes and temporary snippets. Auto-saves locally.</p>
-          </div>
-          <div class="flex items-center gap-3">
-            <span id="scratch-status" class="text-xs font-mono-code text-slate-500">Saved</span>
-            <button onclick="clearScratchpad()" class="px-3 py-1.5 text-xs lg:text-sm text-slate-400 hover:text-rose-400 bg-[#070A0F] border border-white/5 hover:border-rose-500/20 rounded transition flex items-center gap-1.5">
-              <i class="fa-regular fa-trash-can"></i> Clear
-            </button>
-          </div>
-        </div>
-        <textarea id="scratchpad-input" oninput="saveScratchpad()" placeholder="Start typing raw notes, commands, or thoughts here..." class="w-full flex-1 bg-[#070A0F] border border-white/10 rounded-lg p-4 text-sm font-mono-code text-slate-300 focus:outline-none focus:border-white/20 resize-none leading-relaxed"></textarea>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Sticky Footer -->
-  <footer class="border-t border-white/5 py-4 text-xs text-slate-400 bg-[#070A0F] mt-auto">
-    <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] lg:text-xs">
-      <div>FY27 EUC, Security, AI & Communication Development Framework</div>
-      <div class="flex items-center gap-3 font-mono-code text-slate-400">
-        <span>16 Modules</span>
-        <span class="hidden sm:inline">•</span>
-        <span class="hidden sm:inline"><span id="footer-total-hours">160</span> Hours</span>
-        <span>•</span>
-        <span id="footer-shutdown-state" class="text-slate-400">Day Active</span>
-      </div>
     </div>
-  </footer>
 
-  <!-- SCRIPT LOGIC -->
-  <script>
-    // Bumping storage key version to instantly clear out old schema data and pull new data correctly
-    const STORAGE_KEY_MODULES = "euc_ops_modules_q_v3";
-    const STORAGE_KEY_DRILLS = "euc_ops_drills_q_v3";
-    const STORAGE_KEY_SCRATCH = "euc_ops_scratchpad_v3";
-
-    const INITIAL_MODULES = [
-      { id: "MOD-Q1-1", quarter: "Q1", domain: "Endpoint Management", title: "MD-102: Endpoint Administrator", application: "Deploy fleet policies; fix Intune enrolment errors", project: "Configure dynamic groups & Intune enrolment profiles", resource: "MS Learn", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q1-2", quarter: "Q1", domain: "Endpoint Management", title: "Device Compliance & Maintenance", application: "Audit device compliance; manage update rings", project: "Deploy compliance policies & pilot update rings", resource: "MS Learn", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q1-3", quarter: "Q1", domain: "Endpoint Management", title: "Entra ID & Endpoint Architecture", application: "Troubleshoot device join & user access errors", project: "Map hybrid vs cloud device join flows in lab", resource: "MS Docs", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q1-4", quarter: "Q1", domain: "Endpoint Management", title: "Intune Application Management", application: "Package & deploy apps via Company Portal", project: "Package & deploy Win32 & LOB apps via Intune", resource: "MS Learn", hours: 10, status: "Not Started", quietQueue: false },
-      
-      { id: "MOD-Q2-1", quarter: "Q2", domain: "Security & Compliance", title: "CompTIA Security+ (SY0-701)", application: "Harden endpoints; prepare for security audits", project: "Map device vulnerabilities to NIST/CIS benchmarks", resource: "Prof Messer", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q2-2", quarter: "Q2", domain: "Security & Compliance", title: "FIDO2 & Passkey Architecture", application: "Troubleshoot modern auth & credential security", project: "Test WebAuthn/FIDO2 auth in browser sandbox", resource: "FIDO Alliance", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q2-3", quarter: "Q2", domain: "Security & Compliance", title: "Entra ID Passkeys & FIDO2", application: "Onboard passwordless users; handle MFA recovery", project: "Build tenant-wide FIDO2 security key policy", resource: "MS Docs", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q2-4", quarter: "Q2", domain: "Security & Compliance", title: "Windows Passwordless Deployment", application: "Configure Windows Hello for Business fleetwide", project: "Configure Windows Hello & passkey login policies", resource: "MS Docs", hours: 10, status: "Not Started", quietQueue: false },
-      
-      { id: "MOD-Q3-1", quarter: "Q3", domain: "Automation & AI", title: "Python Setup & Fundamentals", application: "Build scripts to clean caches & collect logs", project: "Write automated file & log cleanup scripts", resource: "Automate Ch 1", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q3-2", quarter: "Q3", domain: "Automation & AI", title: "Regular Expressions (RegEx)", application: "Parse MAC/IP addresses & codes from logs", project: "Build RegEx script to parse network logs", resource: "Automate Ch 7", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q3-3", quarter: "Q3", domain: "Automation & AI", title: "Automated Spreadsheet Reports", application: "Audit device inventory & track lifecycles", project: "Build Python script to audit inventory spreadsheets", resource: "Automate Ch 13", hours: 10, status: "Not Started", quietQueue: false },
-      { id: "MOD-Q3-4", quarter: "Q3", domain: "Automation & AI", title: "Google AI & Gemini Prompts", application: "Accelerate ticket triage & KB authoring", project: "Create structured prompts for hardware troubleshooting", resource: "Google AI", hours: 10, status: "Not Started", quietQueue: false },
-      
-      { id: "MOD-Q4-1", quarter: "Q4", domain: "Problem-Solving & Comms", title: "MIT Systems Thinking", application: "Analyze regional bottlenecks (VTC, printers, network)", project: "Model causal loop diagrams for hardware failures", resource: "MIT OCW", hours: 10, status: "Not Started", quietQueue: true },
-      { id: "MOD-Q4-2", quarter: "Q4", domain: "Problem-Solving & Comms", title: "Systems Thinking in Leadership", application: "Lead root-cause analysis on P1/P2 incidents", project: "Build standardized RCA incident templates", resource: "YouTube", hours: 10, status: "Not Started", quietQueue: true },
-      { id: "MOD-Q4-3", quarter: "Q4", domain: "Problem-Solving & Comms", title: "Critical Thinking & Cognitive Bias", application: "Isolate hardware & software defects objectively", project: "Create 5-Whys troubleshooting matrices", resource: "TED Talk", hours: 10, status: "Not Started", quietQueue: true },
-      { id: "MOD-Q4-4", quarter: "Q4", domain: "Problem-Solving & Comms", title: "Minto Pyramid & BLUF Comms", application: "Author change tickets (CHG) & leadership briefs", project: "Draft BLUF executive change request memo", resource: "Medium", hours: 10, status: "Not Started", quietQueue: false }
-    ];
-
-    let modules = JSON.parse(JSON.stringify(INITIAL_MODULES));
-    let completedMentalModelDrills = {};
-    let scratchpadTimer = null;
-
-    function saveState() {
-      try {
-        localStorage.setItem(STORAGE_KEY_MODULES, JSON.stringify(modules));
-        localStorage.setItem(STORAGE_KEY_DRILLS, JSON.stringify(completedMentalModelDrills));
-      } catch (e) {
-        console.warn("Storage write failed", e);
-      }
-    }
-
-    function loadSavedState() {
-      try {
-        const savedM = localStorage.getItem(STORAGE_KEY_MODULES);
-        if (savedM) {
-          const parsed = JSON.parse(savedM);
-          if (Array.isArray(parsed) && parsed.length === INITIAL_MODULES.length) modules = parsed;
-        }
-        const savedD = localStorage.getItem(STORAGE_KEY_DRILLS);
-        if (savedD) completedMentalModelDrills = JSON.parse(savedD);
-      } catch (e) {
-        console.warn("Storage read failed", e);
-      }
-    }
-
-    function initScratchpad() {
-      const savedScratch = localStorage.getItem(STORAGE_KEY_SCRATCH);
-      if (savedScratch) {
-        document.getElementById('scratchpad-input').value = savedScratch;
-      }
-    }
-
-    function saveScratchpad() {
-      document.getElementById('scratch-status').innerText = 'Saving...';
-      clearTimeout(scratchpadTimer);
-      scratchpadTimer = setTimeout(() => {
-        const text = document.getElementById('scratchpad-input').value;
-        localStorage.setItem(STORAGE_KEY_SCRATCH, text);
-        document.getElementById('scratch-status').innerText = 'Saved';
-      }, 500);
-    }
-
-    function clearScratchpad() {
-      if(confirm("Are you sure you want to clear your scratchpad?")) {
-        document.getElementById('scratchpad-input').value = '';
-        localStorage.setItem(STORAGE_KEY_SCRATCH, '');
-        showToast("Scratchpad cleared", 'info');
-      }
-    }
-
-    function switchTab(tabId) {
-      const tabs = ['dashboard', 'roadmap', 'mentalmodels', 'deepflow', 'scratch'];
-      tabs.forEach(t => {
-        const el = document.getElementById(`tab-${t}`);
-        const btn = document.getElementById(`tab-btn-${t}`);
-        if (!el || !btn) return;
-        if (t === tabId) {
-          el.classList.remove('hidden');
-          btn.classList.add('tab-active');
-        } else {
-          el.classList.add('hidden');
-          btn.classList.remove('tab-active');
-        }
-      });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function updateMetrics() {
-      const totalItems = modules.length;
-      const completedItems = modules.filter(m => m.status === 'Completed').length;
-      const totalHours = modules.reduce((sum, m) => sum + m.hours, 0);
-      const completedHours = modules.filter(m => m.status === 'Completed').reduce((sum, m) => sum + m.hours, 0);
-      const deepHours = modules.filter(m => !m.quietQueue).reduce((sum, m) => sum + m.hours, 0);
-      const deepRatio = totalHours > 0 ? Math.round((deepHours / totalHours) * 100) : 0;
-      const pct = totalHours > 0 ? Math.round((completedHours / totalHours) * 100) : 0;
-
-      document.getElementById('metric-deep-hours').innerText = deepHours;
-      document.getElementById('metric-total-hours').innerText = totalHours;
-      document.getElementById('metric-deep-bar').style.width = `${deepRatio}%`;
-      document.getElementById('quick-deep-ratio').innerText = `${deepRatio}%`;
-      document.getElementById('metric-deep-text').innerText = `${deepRatio}% High-Leverage Deep Engineering`;
-
-      document.getElementById('metric-percent-complete').innerText = `${pct}%`;
-      document.getElementById('metric-counts').innerText = `(${completedItems}/${totalItems} done)`;
-      document.getElementById('metric-progress-bar').style.width = `${pct}%`;
-      document.getElementById('metric-completed-hours').innerText = `${completedHours} hrs completed (${totalHours - completedHours} remain)`;
-      document.getElementById('quick-progress-stat').innerText = `${pct}%`;
-      document.getElementById('footer-total-hours').innerText = totalHours;
-
-      const pillars = ['Q1', 'Q2', 'Q3', 'Q4'];
-      pillars.forEach((p, idx) => {
-        const pNum = idx + 1;
-        const pItems = modules.filter(m => m.quarter === p);
-        const pHours = pItems.reduce((s, m) => s + m.hours, 0);
-        const pCompletedHours = pItems.filter(m => m.status === 'Completed').reduce((s, m) => s + m.hours, 0);
-        const pPct = pHours > 0 ? Math.round((pCompletedHours / pHours) * 100) : 0;
-
-        document.getElementById(`p${pNum}-hrs`).innerText = pHours;
-        document.getElementById(`p${pNum}-items`).innerText = pItems.length;
-        document.getElementById(`p${pNum}-progress-badge`).innerText = `${pPct}%`;
-      });
-
-      renderActiveFocus();
-      renderQuietQueuePreview();
-    }
-
-    function renderActiveFocus() {
-      const container = document.getElementById('active-focus-container');
-      container.innerHTML = '';
-      let focusItems = modules.filter(m => m.status === 'In Progress');
-      if (focusItems.length < 3) {
-        const deepInit = modules.filter(m => m.status === 'Not Started');
-        focusItems = focusItems.concat(deepInit).slice(0, 3);
-      }
-
-      focusItems.forEach(item => {
-        const card = document.createElement('div');
-        card.className = "p-3.5 lg:p-4 rounded-lg bg-[#070A0F] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between text-xs lg:text-sm gap-3";
-        let statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] lg:text-xs text-slate-400 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Pending</span>`;
-        if (item.status === "In Progress") {
-          statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] lg:text-xs text-amber-300 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Active</span>`;
-        } else if (item.status === "Completed") {
-          statusBadge = `<span class="inline-flex items-center gap-1 text-[11px] lg:text-xs text-emerald-400 font-mono-code"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Done</span>`;
-        }
-
-        const workTag = !item.quietQueue 
-          ? `<span class="text-[9px] lg:text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">Deep</span>`
-          : `<span class="text-[9px] lg:text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#111722] text-slate-400">Quiet</span>`;
-
-        card.innerHTML = `
-          <div class="space-y-1 sm:max-w-[75%]">
-            <div class="flex items-center gap-2">
-              <span class="font-mono-code text-[11px] lg:text-xs text-slate-400">${item.quarter}</span>
-              ${workTag}
-              <span class="font-medium text-slate-200 truncate">${item.title}</span>
+    <!-- Top Navigation Console -->
+    <header class="h-14 border-b border-[#1f1f1f] bg-black/40 backdrop-blur-md shrink-0 flex items-center justify-between px-6 z-30">
+        <div class="flex items-center space-x-4">
+            <div class="h-7 w-7 rounded-full bg-raincoat-500/10 border border-raincoat-900 flex items-center justify-center text-raincoat-500 font-mono font-bold text-xs shadow-[0_0_10px_rgba(234,179,8,0.1)]">
+                EA
             </div>
-            <p class="text-[11px] lg:text-xs text-slate-400 truncate">App: ${item.application}</p>
-          </div>
-          <div class="flex items-center sm:justify-end gap-3 w-full sm:w-auto">
-            <span class="font-mono-code text-slate-400 text-xs lg:text-sm">${item.hours}h</span>
-            ${statusBadge}
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
+            <div>
+                <div class="flex items-center space-x-3">
+                    <span class="font-sans text-xs text-gray-200 font-semibold tracking-widest uppercase">Engineering Academy</span>
+                    <span class="text-[9px] px-2 py-0.5 rounded bg-cave-900/50 text-cave-400 border border-cave-800 font-mono tracking-wider">ONLINE</span>
+                </div>
+                <div class="text-[10px] text-gray-600 font-mono tracking-wide mt-0.5">ARCHIVE v4.2 // 12-WEEK CYCLE</div>
+            </div>
+        </div>
 
-    function renderQuietQueuePreview() {
-      const container = document.getElementById('quiet-queue-preview');
-      container.innerHTML = '';
-      const quietItems = modules.filter(m => m.quietQueue).slice(0, 3);
-      
-      if(quietItems.length === 0) {
-        container.innerHTML = '<div class="text-slate-500 italic p-2 text-center text-xs">No quiet queue items available.</div>';
-        return;
-      }
-      
-      quietItems.forEach(item => {
-        const row = document.createElement('a');
-        row.href = "#";
-        row.className = "p-3 rounded-lg bg-[#070A0F] hover:bg-[#111722] border border-white/5 flex items-center justify-between text-slate-300 transition block text-xs lg:text-sm";
-        row.innerHTML = `
-          <div class="truncate pr-3">
-            <div class="font-medium text-slate-200 truncate mb-0.5">${item.title}</div>
-            <span class="text-[10px] lg:text-[11px] text-slate-400 font-mono-code">${item.quarter} • ${item.resource}</span>
-          </div>
-          <i class="fa-solid fa-play text-[10px] lg:text-xs text-amber-400 shrink-0"></i>
-        `;
-        container.appendChild(row);
-      });
-    }
+        <!-- Global Status Bar -->
+        <div class="hidden md:flex items-center space-x-8 text-xs font-mono tracking-wide">
+            <div class="flex items-center space-x-2">
+                <span class="text-gray-600">CYCLE:</span>
+                <span id="global-week-display" class="text-gray-300">WEEK 4/12</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-gray-600">HOURS LOGGED:</span>
+                <span id="global-hours-display" class="text-gray-300">3.5 / 5.0h</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-gray-600">ALIGNMENT:</span>
+                <span id="global-progress-display" class="text-raincoat-500">28%</span>
+            </div>
+        </div>
 
-    function renderRoadmap() {
-      const tbody = document.getElementById('roadmap-table-body');
-      const mobileContainer = document.getElementById('roadmap-mobile-container');
-      tbody.innerHTML = '';
-      mobileContainer.innerHTML = '';
-
-      const query = document.getElementById('module-search').value.toLowerCase().trim();
-      const pillarFilter = document.getElementById('filter-pillar').value;
-      const workFilter = document.getElementById('filter-worktype').value;
-      const statusFilter = document.getElementById('filter-status').value;
-
-      const filtered = modules.filter(m => {
-        const matchesQuery = m.title.toLowerCase().includes(query) ||
-                             m.application.toLowerCase().includes(query) || 
-                             m.project.toLowerCase().includes(query);
-        const matchesPillar = pillarFilter === 'ALL' || m.quarter === pillarFilter;
-        let matchesWork = true;
-        if (workFilter === 'Deep') matchesWork = m.quietQueue === false;
-        if (workFilter === 'Quiet') matchesWork = m.quietQueue === true;
-        const matchesStatus = statusFilter === 'ALL' || m.status === statusFilter;
-        return matchesQuery && matchesPillar && matchesWork && matchesStatus;
-      });
-
-      document.getElementById('filter-count-badge').innerText = `${filtered.length} Items`;
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">No matching items found.</td></tr>`;
-        mobileContainer.innerHTML = `<div class="p-4 text-center text-slate-400 text-xs">No matching items found.</div>`;
-        return;
-      }
-
-      filtered.forEach(m => {
-        // Desktop Row
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-white/[0.02] transition";
-
-        let statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium bg-[#070A0F] border border-white/5 text-slate-400"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Not Started</span>`;
-        if (m.status === "In Progress") {
-          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium bg-[#070A0F] border border-amber-500/20 text-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> In Progress</span>`;
-        } else if (m.status === "Completed") {
-          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium bg-[#070A0F] border border-emerald-500/20 text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Done</span>`;
-        }
-
-        tr.innerHTML = `
-          <td class="py-3 px-4 font-mono-code text-slate-400">${m.quarter}</td>
-          <td class="py-3 px-4 font-medium text-slate-300 text-[11px]">${m.domain}</td>
-          <td class="py-3 px-4 font-semibold text-slate-200">${m.title}</td>
-          <td class="py-3 px-4 text-slate-400 text-xs">${m.application}</td>
-          <td class="py-3 px-4 text-slate-400 text-xs">${m.project}</td>
-          <td class="py-3 px-4 text-sky-400 font-mono-code text-[11px]">${m.resource}</td>
-          <td class="py-3 px-4 text-center">
-            <button onclick="cycleStatus('${m.id}')" class="transition hover:opacity-80 active:scale-95" title="Click to cycle status">
-              ${statusBadge}
+        <!-- Quick Utilities -->
+        <div class="flex items-center space-x-3">
+            <button onclick="advanceWeek()" title="Advance Cycle" class="text-raincoat-500 hover:text-raincoat-400 slow-fade text-xs flex items-center gap-1.5 font-mono border border-raincoat-900/50 bg-raincoat-950/20 px-2.5 py-1 rounded">
+                <i data-lucide="fast-forward" class="w-4 h-4"></i>
+                <span class="hidden md:inline">ADVANCE WEEK</span>
             </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-
-        // Mobile Card
-        const card = document.createElement('div');
-        card.className = "p-4 rounded-xl bg-[#0C1018] border border-white/5 space-y-3 text-xs";
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="font-mono-code text-[11px] text-slate-400">${m.quarter} • ${m.domain}</span>
-            </div>
-            <button onclick="cycleStatus('${m.id}')">${statusBadge}</button>
-          </div>
-          <div>
-            <h4 class="font-semibold text-slate-200">${m.title}</h4>
-            <div class="mt-2 space-y-1.5 text-[11px] text-slate-400">
-              <p><strong>App:</strong> ${m.application}</p>
-              <p><strong>Project:</strong> ${m.project}</p>
-            </div>
-          </div>
-          <div class="flex items-center justify-between pt-3 border-t border-white/5 font-mono-code text-[11px]">
-            <span class="text-sky-400">${m.resource}</span>
-          </div>
-        `;
-        mobileContainer.appendChild(card);
-      });
-    }
-
-    function cycleStatus(id) {
-      const item = modules.find(m => m.id === id);
-      if (!item) return;
-
-      if (item.status === "Not Started") {
-        item.status = "In Progress";
-        showToast(`Started: ${item.title}`, 'info');
-      } else if (item.status === "In Progress") {
-        item.status = "Completed";
-        showToast(`Completed: ${item.title}`, 'success');
-      } else {
-        item.status = "Not Started";
-        showToast(`Reset: ${item.title}`, 'info');
-      }
-
-      saveState();
-      updateMetrics();
-      renderRoadmap();
-    }
-
-    function applyQuickFilter(type) {
-      document.getElementById('module-search').value = '';
-      if (type === 'ALL') {
-        document.getElementById('filter-pillar').value = 'ALL';
-        document.getElementById('filter-worktype').value = 'ALL';
-        document.getElementById('filter-status').value = 'ALL';
-      } else if (type === 'DEEP') {
-        document.getElementById('filter-pillar').value = 'ALL';
-        document.getElementById('filter-worktype').value = 'Deep';
-        document.getElementById('filter-status').value = 'ALL';
-      } else if (type === 'QUIET_QUEUE') {
-        document.getElementById('filter-pillar').value = 'ALL';
-        document.getElementById('filter-worktype').value = 'Quiet';
-        document.getElementById('filter-status').value = 'ALL';
-      } else if (type === 'IN_PROGRESS') {
-        document.getElementById('filter-pillar').value = 'ALL';
-        document.getElementById('filter-worktype').value = 'ALL';
-        document.getElementById('filter-status').value = 'In Progress';
-      }
-      renderRoadmap();
-    }
-
-    // Mental Models Suite
-    const MENTAL_MODELS_DATA = [
-      {
-        id: "bluf",
-        number: "01",
-        name: "Bottom Line Up Front (BLUF)",
-        subtitle: "The Minto Pyramid Executive Standard",
-        triggerCondition: "Use whenever communicating with leadership, requesting budget/approvals, drafting ticket resolution summaries, or writing any message longer than 2 sentences.",
-        ingrainHabit: {
-          cue: "You are about to click 'Send' or begin typing an email / Slack message to a manager or client.",
-          routine: "Apply the 'Sentence One Rule': If the recipient closes the window after reading only line one, do they know the exact decision, financial cost, or requested action? If no, delete and invert your paragraph so the conclusion comes first.",
-          reward: "Eliminates frustrating back-and-forth; approvals are granted on the first pass; leadership views you as a concise, executive-level operator."
-        },
-        antiPattern: {
-          title: "The Chronological Detective (Administrative Trap)",
-          quote: `"Hi team, I investigated the Finance room display today. I reseated the HDMI, tried a loaner hub, rebooted the PC, tested EDID resolutions, and finally discovered the panel backlight has a burnt inverter board. The unit is past warranty from 2024. Therefore, I think we should order a new Samsung screen which costs $450. Does someone have budget?"`,
-          flaw: "Buried the request at the very bottom after 5 lines of diagnostic history. Busy executives skip long messages, causing delays."
-        },
-        masteryPattern: {
-          title: "The Minto S-C-Q-R Executive Format",
-          quote: `BLUF: Requesting approval to order a replacement Samsung 65" commercial display ($450, IT budget) for Finance Room 402.\n\n• Situation & Complication: Backlight inverter failed during yesterday's budget meeting; unit is 18 months past OEM warranty.\n• Resolution & SLA: Screen arrives in 48 hours; install will take 90 minutes before Thursday's board session.`,
-          benefit: "Executive reads line 1, approves in 5 seconds with 'Approved', and moves on. Zero cognitive friction."
-        },
-        drillScenario: {
-          question: "You diagnosed an Intune compliance outage affecting 30 MacBooks due to an expired Apple Push Notification service (APNs) certificate. How do you brief your IT Director?",
-          options: [
-            "Write a 4-paragraph history of how Apple MDM certificates work, detailing who originally generated the Apple ID three years ago.",
-            "BLUF: 30 MacBooks cannot sync policies due to expired APNs cert. Action: Need access to Apple ID admin portal to renew token today by 2 PM; zero device wipes required.",
-            "Send a message saying: 'Hey, Macs are broken. Let me know when you have time for a call.'",
-            "Renew the cert quietly without logging anything so nobody panics."
-          ],
-          correct: 1,
-          explanation: "Option B is textbook BLUF: It states the core operational impact, the explicit dependency/action needed, the timeline, and allays the executive's worst fear (device wipes) in sentence one."
-        }
-      },
-      {
-        id: "ack-loop",
-        number: "02",
-        name: "The Acknowledgement Loop",
-        subtitle: "The Anxiety-Killer & Expectation Anchor",
-        triggerCondition: "Use immediately upon receiving an urgent ticket, incident alert, or direct ping where diagnostics will take more than 5 minutes.",
-        ingrainHabit: {
-          cue: "A high-priority ticket or message lands in your queue and you know you can't solve it in 60 seconds.",
-          routine: "Deploy the '120-Second SLA Receipt': Within two minutes, fire an acknowledgement stating exactly WHAT you are currently investigating and WHEN you will provide the next update (with a specific time).",
-          reward: "Users and executives stop anxiously pinging you with duplicate messages; your deep diagnostic concentration remains uninterrupted."
-        },
-        antiPattern: {
-          title: "The Black Hole (Silent Engineer Trap)",
-          quote: `[User submits ticket at 09:00 AM]: "Payroll database connection is failing, payroll run starts at 10 AM!"\n[Technician reads it, says nothing, and begins debugging Kerberos logs for 40 minutes in silence.]\n[User at 09:35 AM in panic]: "IS ANYONE WORKING ON THIS?! CC'ing IT Director."`,
-          flaw: "Silence is indistinguishable from negligence to an end user. The user's panic escalates even if you're working hard."
-        },
-        masteryPattern: {
-          title: "Explicit Receipt with Time-Bound Anchor",
-          quote: `"Received. I have reproduced the payroll database timeout and am currently analyzing Kerberos authentication tickets in Entra ID. I will post a confirmed status update right here by 09:35 AM."`,
-          benefit: "Sets an expectation boundary. The user breathes a sigh of relief and leaves you alone to focus on diagnostics until 09:35 AM."
-        },
-        drillScenario: {
-          question: "A Vice President pings you: 'Teams Rooms in Boardroom A is completely dead and the CEO has a client meeting in 45 minutes.' What is your immediate mental model action?",
-          options: [
-            "Ignore the message, run to the room, and take apart the cables without answering.",
-            "Reply: 'Received. Heading to Boardroom A right now to verify power, HDMI CEC, and controller health. I will update you by 09:15 AM with status.'",
-            "Reply: 'I am on break, submit a ticket in ServiceNow.'",
-            "Reply: 'Don't worry, it always does that. Just reboot it.'"
-          ],
-          correct: 1,
-          explanation: "Option B establishes the Acknowledgement Loop: Confirms receipt immediately, tells them your exact physical movement, and commits to a hard update timestamp before their meeting deadline."
-        }
-      },
-      {
-        id: "consolidation",
-        number: "03",
-        name: "Question Consolidation",
-        subtitle: "Batching & Asynchronous Friction Reduction",
-        triggerCondition: "Use whenever you require multiple diagnostic data points, credentials, or verifications from an end user or colleague.",
-        ingrainHabit: {
-          cue: "You feel the urge to send a single question in chat, wait for a reply, and then ask another question.",
-          routine: "The 'Drafting Quarantine': Open your text editor. Draft all questions. Consolidate them into a numbered list (max 3-4 items) with clear instructions on how to obtain each data point. Send as ONE unified packet.",
-          reward: "Reduces round-trip cycle time from 2 hours of fragmented ping-ponging down to a single 5-minute interaction."
-        },
-        antiPattern: {
-          title: "The Machine-Gun Ping Trap",
-          quote: `10:02 AM: "Hey, what laptop model do you have?"\n10:07 AM: "Are you on Wi-Fi or wired?"\n10:14 AM: "Can you send a screenshot of the error?"\n10:22 AM: "What building are you sitting in today?"`,
-          flaw: "Forces the user through 4 context switches. If the user steps away, the diagnostic stalls for half a day."
-        },
-        masteryPattern: {
-          title: "The Unified Diagnostic Packet",
-          quote: `"To isolate this network failure without back-and-forth delays, please reply with these 3 details in one message:\n1. Computer Name: (Found at Settings > System > About)\n2. Connection: Are you on corporate GlobalProtect VPN? (Yes/No)\n3. Screenshot: A quick capture of the exact error code shown in Company Portal."`,
-          benefit: "The user provides everything in a single response, allowing you to execute remediation immediately."
-        },
-        drillScenario: {
-          question: "A remote engineer reports their local Python log parser script is crashing. How do you solicit technical details?",
-          options: [
-            "Ask for their Python version. Wait for reply. Ask for the error traceback. Wait. Ask for the input CSV sample.",
-            "Ask them to jump on a 45-minute screen share call immediately.",
-            "Send a consolidated packet: 'Please paste: 1. Python version (\`python --version\`); 2. The full terminal traceback; 3. The first 3 sanitized rows of the input CSV.'",
-            "Tell them Python isn't supported and close the ticket."
-          ],
-          correct: 2,
-          explanation: "Option C gathers all essential diagnostic dependencies in one asynchronous round-trip, respecting both engineers' focus time."
-        }
-      },
-      {
-        id: "first-principles",
-        number: "04",
-        name: "First Principles Communication",
-        subtitle: "Deconstruction to Truth & Zero-Noise Documentation",
-        triggerCondition: "Use when writing incident post-mortems, documenting ticket resolutions, explaining complex bugs, or communicating across technical tiers.",
-        ingrainHabit: {
-          cue: "You find yourself writing vague explanations like 'it glitched', 'fixed a bug', or 'rebooted and it worked'.",
-          routine: "The 'Physics-First Filter': Strip the failure down to its fundamental verified mechanism: 1. Exact Symptom → 2. Physical/Architectural Root Cause → 3. Specific Remediation Applied → 4. Objective Verification Metric.",
-          reward: "Knowledge base entries become reusable enterprise assets; repeat tickets permanently plummet; Tier-3 engineers respect your technical rigor."
-        },
-        antiPattern: {
-          title: "The Hand-Waving Hand-off",
-          quote: `"Closed ticket: Laptop was acting weird and dropping Wi-Fi. Cleaned up some cache files, messed with device manager, updated it, and rebooted. Wi-Fi seems fine now."`,
-          flaw: "Zero root-cause analysis. When the exact same issue happens tomorrow on 50 other laptops, nobody knows why."
-        },
-        masteryPattern: {
-          title: "The Deconstructed 4-Step Truth",
-          quote: `• Symptom: Host failed WPA3-Enterprise 802.1X handshake.\n• Verified Cause: Machine auth certificate in Local Computer\\Personal store expired at 00:00 UTC.\n• Remediation: Triggered Intune SCEP certificate renewal via 'DeviceEnrollment' scheduled task.\n• Verification: RADIUS NPS log confirms successful EAP-TLS handshake; ping to gateway stable (<2ms).`,
-          benefit: "Provides undeniable proof of resolution, isolates the systemic vulnerability (cert renewal timing), and prevents future repeat escalations."
-        },
-        drillScenario: {
-          question: "You fixed an Intune compliance failure on host NYC-LT-881. How do you document the resolution note?",
-          options: [
-            "Write: 'Rebooted computer twice, sync worked.'",
-            "Write: 'Remediated BitLocker CSP escrow failure (0x87D1041C). Root cause: PCR[7] binding altered during BIOS update. Ran Backup-BitLockerKeyProtector; confirmed recovery key escrowed in Entra ID. Intune health re-evaluation: Compliant.'",
-            "Write: 'User was confused about BitLocker, fixed.'",
-            "Leave the resolution note blank to save time."
-          ],
-          correct: 1,
-          explanation: "Option B applies First Principles: identifies exact error code, the underlying physical cause (PCR[7] binding), the cmdlet used, and the verification proof."
-        }
-      },
-      {
-        id: "async-timeblock",
-        number: "05",
-        name: "Asynchronous Scheduling & Time-Blocking",
-        subtitle: "Defense Against the Hyperactive Hive Mind",
-        triggerCondition: "Use during your daily engineering schedule: 09:00 - 10:30 AM and 01:30 - 03:00 PM deep engineering windows.",
-        ingrainHabit: {
-          cue: "It's 09:00 AM. You feel an irresistible urge to open Outlook or keep Slack/Teams open on your second monitor.",
-          routine: "The 'Two-Check Cadence': Set Slack/Teams status to 'Deep Engineering Block (Back at 11:30 AM)'. Close all messaging apps. Put on headphones with brown noise. Spend the full 90 minutes exclusively on code, Intune CSPs, or exam prep. Only check messages during scheduled sweeps.",
-          reward: "Eliminates cognitive fragmentation; enables completion of hard technical projects in days rather than months."
-        },
-        antiPattern: {
-          title: "The Hyperactive Ping-Pong Trap",
-          quote: `[Technician leaves Outlook notifications pop-up on]: Technician tries to write a Python log parser. Every 3 minutes an email arrives. Technician glances at it, loses working memory, resumes coding, gets a Slack ping, answers it. 8 hours pass. Zero code finished.`,
-          flaw: "Attention residue destroys IQ and working memory. Research shows it takes 15-20 minutes to re-enter deep flow after every context switch."
-        },
-        masteryPattern: {
-          title: "Structured Focus Blocks & Batched Communication",
-          quote: `• 08:30 - 09:00 AM: Morning Triage (Dispatch all Acknowledgement Loops)\n• 09:00 - 10:30 AM: DEEP SPRINT #1 (Zero messaging; write Python automation)\n• 11:00 - 11:30 AM: Midday Sweep (Batch process all consolidated replies)\n• 01:30 - 03:00 PM: DEEP SPRINT #2 (Security+ lab immersion)\n• 04:30 - 05:00 PM: Daily Shutdown Ritual & ticket wrap-up`,
-          benefit: "Produces 3+ hours of high-leverage engineering daily while maintaining an impeccably responsive reputation with users."
-        },
-        drillScenario: {
-          question: "It is 09:15 AM and you are 15 minutes into a 90-minute Python automation sprint. A non-urgent Slack ping pops up from a peer asking what you think of a new mouse model. What do you do?",
-          options: [
-            "Immediately stop scripting and spend 20 minutes chatting about computer mice.",
-            "Ignore the urge to react; keep messaging apps closed during your deep block; reply during your 11:00 AM Midday Sweep window.",
-            "Get angry and send a rude message back.",
-            "Abandon your sprint for the rest of the day."
-          ],
-          correct: 1,
-          explanation: "Option B protects your deep work window against shallow distractions. Replying during the designated midday sweep maintains focus without alienating your peer."
-        }
-      }
-    ];
-
-    let activeMentalModelId = "bluf";
-
-    function initMentalModels() {
-      renderMentalModelSelector();
-      selectMentalModel(activeMentalModelId);
-    }
-
-    function renderMentalModelSelector() {
-      const container = document.getElementById('mm-selector-grid');
-      container.innerHTML = '';
-      MENTAL_MODELS_DATA.forEach(m => {
-        const isSelected = m.id === activeMentalModelId;
-        const isPassed = completedMentalModelDrills[m.id];
-        const card = document.createElement('button');
-        card.onclick = () => selectMentalModel(m.id);
-        card.className = `p-3 rounded-lg border text-left transition flex flex-col justify-between ${
-          isSelected 
-            ? 'bg-[#172030] border-white/20 text-white shadow-sm' 
-            : 'bg-[#070A0F] border-white/5 text-slate-400 hover:bg-[#111722] hover:text-slate-200'
-        }`;
-
-        card.innerHTML = `
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-mono-code text-[10px] text-slate-400">MODEL ${m.number}</span>
-              ${isPassed ? '<span class="text-[9px] font-mono-code text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Passed ✓</span>' : ''}
-            </div>
-            <div class="text-xs lg:text-sm font-semibold text-slate-200 truncate">${m.name}</div>
-          </div>
-          <div class="text-[10px] lg:text-[11px] text-slate-400 mt-2 truncate font-mono-code">${m.subtitle}</div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function selectMentalModel(modelId) {
-      activeMentalModelId = modelId;
-      renderMentalModelSelector();
-      const m = MENTAL_MODELS_DATA.find(item => item.id === modelId) || MENTAL_MODELS_DATA[0];
-      const pane = document.getElementById('mm-study-pane');
-      const hasAnswered = completedMentalModelDrills[m.id] !== undefined;
-
-      let optionsHtml = m.drillScenario.options.map((opt, optIdx) => {
-        let btnClass = "w-full text-left p-3 lg:p-3.5 rounded-lg border text-xs lg:text-sm transition ";
-        if (!hasAnswered) {
-          btnClass += "bg-[#111722] border-white/5 hover:border-white/20 text-slate-300";
-        } else {
-          if (optIdx === m.drillScenario.correct) {
-            btnClass += "bg-emerald-500/10 border-emerald-500/30 text-emerald-300 font-medium";
-          } else {
-            btnClass += "bg-[#070A0F] border-white/5 text-slate-500 opacity-60";
-          }
-        }
-        return `
-          <button onclick="submitModelDrill('${m.id}', ${optIdx})" ${hasAnswered ? 'disabled' : ''} class="${btnClass}">
-            <span class="font-mono-code mr-1.5 text-slate-400">[${String.fromCharCode(65 + optIdx)}]</span> ${opt}
-          </button>
-        `;
-      }).join('');
-
-      let feedbackHtml = '';
-      if (hasAnswered) {
-        const isCorrect = completedMentalModelDrills[m.id];
-        feedbackHtml = `
-          <div class="mt-4 p-4 rounded-lg border ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-rose-500/10 border-rose-500/20 text-rose-300'} text-xs lg:text-sm leading-relaxed">
-            <span class="font-semibold block mb-1">${isCorrect ? '✓ Mental Model Reflex Validated' : '✗ Incorrect Instinct'}</span>
-            ${m.drillScenario.explanation}
-          </div>
-        `;
-      }
-
-      pane.innerHTML = `
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-mono-code px-2.5 py-1 rounded bg-[#111722] text-slate-300">Model ${m.number}</span>
-              <h3 class="text-base lg:text-lg font-bold text-white">${m.name}</h3>
-            </div>
-            <p class="text-xs lg:text-sm text-slate-400 mt-1.5">${m.subtitle}</p>
-          </div>
+            <div class="w-px h-4 bg-[#333] mx-2"></div>
+            <button onclick="exportData()" title="Export State" class="text-gray-500 hover:text-raincoat-400 slow-fade text-xs flex items-center gap-1.5 font-mono">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">EXPORT</span>
+            </button>
+            <button onclick="document.getElementById('import-file-input').click()" title="Import State" class="text-gray-500 hover:text-raincoat-400 slow-fade text-xs flex items-center gap-1.5 font-mono">
+                <i data-lucide="upload" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">IMPORT</span>
+            </button>
+            <input type="file" id="import-file-input" class="hidden" accept=".json" onchange="importData(event)">
+            <div class="w-px h-4 bg-[#333] mx-2"></div>
+            <button onclick="resetData()" title="Initialize Reset" class="text-gray-600 hover:text-gray-300 slow-fade">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            </button>
         </div>
+    </header>
 
-        <div class="p-4 rounded-lg bg-[#070A0F] border border-white/5">
-          <div class="flex items-center gap-2 mb-2">
-            <i class="fa-solid fa-crosshairs text-amber-400 text-xs"></i>
-            <span class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-300">Operational Trigger: When to Fire This Mental Model</span>
-          </div>
-          <p class="text-xs lg:text-sm text-slate-300 leading-relaxed font-medium pl-6">${m.triggerCondition}</p>
-        </div>
+    <div class="flex-1 flex overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="w-16 md:w-64 border-r border-[#1f1f1f] bg-black/20 flex flex-col justify-between shrink-0 z-20">
+            <nav class="p-3 space-y-1.5 mt-4">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center space-x-4 px-4 py-3 rounded-md text-sm font-mono transition-all text-raincoat-400 bg-raincoat-950/20">
+                    <i data-lucide="layout" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden md:inline tracking-wide font-medium">Overview</span>
+                </button>
 
-        <div class="space-y-3">
-          <span class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <i class="fa-solid fa-arrows-spin text-indigo-400 text-xs"></i> Cognitive Re-Wiring (Ingrain into Muscle Memory)
-          </span>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs lg:text-sm">
-            <div class="p-4 rounded-lg bg-[#070A0F] border border-white/5">
-              <span class="font-mono-code text-slate-400 text-[10px] lg:text-[11px] uppercase block mb-1.5">1. The Psychological Cue</span>
-              <p class="text-slate-300 leading-relaxed">${m.ingrainHabit.cue}</p>
-            </div>
-            <div class="p-4 rounded-lg bg-[#070A0F] border border-indigo-500/20">
-              <span class="font-mono-code text-indigo-400 text-[10px] lg:text-[11px] uppercase block mb-1.5">2. The Execution Routine</span>
-              <p class="text-slate-200 leading-relaxed">${m.ingrainHabit.routine}</p>
-            </div>
-            <div class="p-4 rounded-lg bg-[#070A0F] border border-white/5">
-              <span class="font-mono-code text-emerald-400 text-[10px] lg:text-[11px] uppercase block mb-1.5">3. The Cognitive Reward</span>
-              <p class="text-slate-300 leading-relaxed">${m.ingrainHabit.reward}</p>
-            </div>
-          </div>
-        </div>
+                <button onclick="switchView('curriculum')" id="nav-curriculum" class="nav-btn w-full flex items-center space-x-4 px-4 py-3 rounded-md text-sm font-mono transition-all text-gray-500 hover:text-gray-200 hover:bg-[#111]">
+                    <i data-lucide="book" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden md:inline tracking-wide font-medium">Curriculum</span>
+                </button>
 
-        <div class="space-y-3">
-          <span class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <i class="fa-solid fa-scale-balanced text-slate-400 text-xs"></i> Contrast: Administrative Trap vs. High-Leverage Mastery
-          </span>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 text-xs lg:text-sm">
-            <div class="p-4 lg:p-5 rounded-xl bg-rose-500/5 border border-rose-500/20 flex flex-col justify-between space-y-3">
-              <div>
-                <span class="text-rose-400 font-semibold flex items-center gap-1.5 text-xs lg:text-sm">
-                  <i class="fa-solid fa-circle-xmark"></i> ${m.antiPattern.title}
-                </span>
-                <div class="mt-3 p-3 lg:p-4 rounded-lg bg-[#070A0F] border border-rose-500/10 text-slate-400 font-mono-code text-[11px] lg:text-xs leading-relaxed whitespace-pre-wrap">
-${m.antiPattern.quote}
+                <button onclick="switchView('labs')" id="nav-labs" class="nav-btn w-full flex items-center space-x-4 px-4 py-3 rounded-md text-sm font-mono transition-all text-gray-500 hover:text-gray-200 hover:bg-[#111]">
+                    <i data-lucide="microscope" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden md:inline tracking-wide font-medium">Laboratories</span>
+                </button>
+
+                <button onclick="switchView('assessments')" id="nav-assessments" class="nav-btn w-full flex items-center space-x-4 px-4 py-3 rounded-md text-sm font-mono transition-all text-gray-500 hover:text-gray-200 hover:bg-[#111]">
+                    <i data-lucide="bookmark" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden md:inline tracking-wide font-medium">Assessments</span>
+                </button>
+
+                <button onclick="switchView('kb')" id="nav-kb" class="nav-btn w-full flex items-center space-x-4 px-4 py-3 rounded-md text-sm font-mono transition-all text-gray-500 hover:text-gray-200 hover:bg-[#111]">
+                    <i data-lucide="database" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden md:inline tracking-wide font-medium">Knowledge Base</span>
+                </button>
+
+                <button onclick="switchView('competency')" id="nav-competency" class="nav-btn w-full flex items-center space-x-4 px-4 py-3 rounded-md text-sm font-mono transition-all text-gray-500 hover:text-gray-200 hover:bg-[#111]">
+                    <i data-lucide="activity" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden md:inline tracking-wide font-medium">Competency</span>
+                </button>
+            </nav>
+
+            <!-- Bottom Session Info -->
+            <div class="p-5 border-t border-[#1f1f1f] hidden md:block text-xs font-mono text-gray-600 bg-black/40">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="tracking-widest">SYSTEM STATE</span>
+                    <span class="text-cave-400">NOMINAL</span>
                 </div>
-              </div>
-              <div class="text-[11px] lg:text-xs text-rose-300/80 pt-3 border-t border-rose-500/10 leading-relaxed">
-                <strong>Why It Fails:</strong> ${m.antiPattern.flaw}
-              </div>
-            </div>
-
-            <div class="p-4 lg:p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col justify-between space-y-3">
-              <div>
-                <span class="text-emerald-400 font-semibold flex items-center gap-1.5 text-xs lg:text-sm">
-                  <i class="fa-solid fa-circle-check"></i> ${m.masteryPattern.title}
-                </span>
-                <div class="mt-3 p-3 lg:p-4 rounded-lg bg-[#070A0F] border border-emerald-500/10 text-slate-200 font-mono-code text-[11px] lg:text-xs leading-relaxed whitespace-pre-wrap">
-${m.masteryPattern.quote}
+                <div class="text-[10px] truncate flex items-center gap-2">
+                    <i data-lucide="shield" class="w-3 h-3"></i> ARCHIVE LINKED
                 </div>
-              </div>
-              <div class="text-[11px] lg:text-xs text-emerald-300/80 pt-3 border-t border-emerald-500/10 leading-relaxed">
-                <strong>Strategic Impact:</strong> ${m.masteryPattern.benefit}
-              </div>
             </div>
-          </div>
+        </aside>
+
+        <!-- Main Workspace Scroll Area -->
+        <main id="content-area" class="flex-1 overflow-y-auto p-6 md:p-10 bg-transparent space-y-8 relative z-10">
+
+            <!-- VIEW 1: MAIN DASHBOARD -->
+            <section id="view-dashboard" class="space-y-8 max-w-6xl mx-auto">
+                <!-- Welcome Banner -->
+                <div class="border border-[#222] bg-[#0a0a0a]/80 backdrop-blur-sm rounded-lg p-8 relative overflow-hidden">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                        <div>
+                            <div class="flex items-center space-x-3 mb-3">
+                                <span class="px-2 py-1 rounded text-[10px] font-mono text-cave-400 bg-cave-900/30 border border-cave-800 tracking-widest">PHASE: CORE CONCEPTS</span>
+                            </div>
+                            <h1 class="text-2xl font-light text-gray-100 tracking-wide font-sans mb-2">Welcome Back.</h1>
+                            <p class="text-sm text-gray-500 font-mono max-w-xl leading-relaxed">I am your technical instructor and engineering mentor. This curriculum develops your capabilities in Endpoint, Identity, AI, and Cybersecurity engineering to progress you beyond traditional EUC support.</p>
+                        </div>
+                        <div class="flex flex-col space-y-2 bg-[#050505] p-5 rounded-md border border-[#1f1f1f] min-w-[160px]">
+                            <div class="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Target Alignment</div>
+                            <div class="text-xl font-light text-gray-200 font-mono flex items-baseline gap-2" id="dash-hours-target">
+                                3.5 <span class="text-sm text-gray-500">/ 5.0 HRS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Continue Learning CTA Card -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-7 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-raincoat-500"></div>
+                        <div class="flex justify-between items-start mb-4 pl-2">
+                            <div>
+                                <span class="text-[10px] font-mono text-raincoat-500 uppercase tracking-widest flex items-center gap-2">
+                                    <i data-lucide="focus" class="w-3.5 h-3.5 animate-pulse"></i> CURRENTLY STUDYING
+                                </span>
+                                <h2 class="text-lg font-medium text-gray-200 mt-3 font-sans" id="dash-continue-title">SUBJECT 01 // Module 2: Intune Architecture</h2>
+                            </div>
+                            <span class="px-2.5 py-1 rounded text-xs font-mono bg-[#111] text-gray-400 border border-[#333]" id="dash-continue-est">EST. 45M</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-8 font-mono leading-relaxed pl-2" id="dash-continue-desc">Analyze Intune enrollment profiles, MDM authority configuration, and Win32 app delivery pipelines. Next step: Review group targeting filters.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-4 pt-5 border-t border-[#1f1f1f] pl-2">
+                            <div class="flex items-center space-x-6 text-xs font-mono text-gray-600">
+                                <span>STATE: <strong class="text-gray-300 font-normal">IN PROGRESS</strong></span>
+                            </div>
+                            <button onclick="resumeActiveModule()" class="px-6 py-2.5 rounded bg-[#111] hover:bg-raincoat-950/30 text-gray-300 hover:text-raincoat-400 border border-[#333] hover:border-raincoat-800 text-xs transition-all font-mono tracking-widest">
+                                RESUME MODULE
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recommended Study by Spare Time -->
+                    <div class="border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-7 flex flex-col justify-between">
+                        <div>
+                            <div class="mb-5">
+                                <h3 class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-1">Recommended Action</h3>
+                                <span class="text-xs text-gray-300 font-sans">Optimize available time blocks.</span>
+                            </div>
+                            
+                            <!-- Duration Selector -->
+                            <div class="grid grid-cols-3 gap-2 mb-5" id="time-selector">
+                                <button onclick="setRecommendedTime(15)" id="time-btn-15" class="py-2 rounded text-xs font-mono text-center transition-all bg-[#111] text-raincoat-400 border border-raincoat-900/50">15m</button>
+                                <button onclick="setRecommendedTime(30)" id="time-btn-30" class="py-2 rounded text-xs font-mono text-gray-500 hover:text-gray-300 bg-[#050505] text-center transition-all border border-[#222]">30m</button>
+                                <button onclick="setRecommendedTime(60)" id="time-btn-60" class="py-2 rounded text-xs font-mono text-gray-500 hover:text-gray-300 bg-[#050505] text-center transition-all border border-[#222]">60m</button>
+                            </div>
+
+                            <div id="recommended-content" class="bg-[#050505] p-4 rounded border border-[#1f1f1f] space-y-2">
+                                <!-- Dynamic content inserted here -->
+                            </div>
+                        </div>
+
+                        <button onclick="executeRecommendedStudy()" class="w-full mt-6 py-3 rounded bg-cave-950 hover:bg-cave-900 border border-cave-900 text-cave-400 text-xs font-mono transition-all flex items-center justify-center space-x-2">
+                            <span>INITIATE SEQUENCE</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resources & Technical Debt Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="dash-secondary-grid">
+                    <!-- Technical Debt Panel -->
+                    <div id="technical-debt-container" class="hidden border border-raincoat-900/50 bg-[#1a1500]/10 rounded-lg p-6">
+                        <h3 class="text-[10px] font-mono text-raincoat-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                            <i data-lucide="alert-circle" class="w-4 h-4"></i> Technical Debt / Catch Up
+                        </h3>
+                        <div id="technical-debt-list" class="space-y-3"></div>
+                    </div>
+
+                    <!-- Essential Resources Panel -->
+                    <div class="border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-6 h-full flex flex-col">
+                         <h3 class="text-[10px] font-mono text-gray-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                            <i data-lucide="link-2" class="w-4 h-4"></i> Essential Engineering Links
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1" id="resource-links-container">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject Overview Grid -->
+                <div>
+                    <h3 class="text-[10px] font-mono text-gray-600 mb-5 uppercase tracking-widest">SUBJECT ALIGNMENT</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" id="subject-cards-container">
+                        <!-- Dynamic Cards Inserted Here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2: CURRICULUM EXPLORER & MODULE ENGINE -->
+            <section id="view-curriculum" class="space-y-8 hidden max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#222] pb-6">
+                    <div>
+                        <h2 class="text-xl font-light text-gray-100 tracking-wide font-sans">Curriculum Archives</h2>
+                        <p class="text-xs text-gray-500 font-mono mt-2 tracking-wide">12-WEEK TECHNICAL PROGRAMME</p>
+                    </div>
+                    
+                    <!-- Subject Selector Tabs -->
+                    <div class="flex flex-wrap gap-2 bg-[#0a0a0a] p-1 rounded-md border border-[#222]" id="subject-tab-bar">
+                        <!-- Dynamic tabs -->
+                    </div>
+                </div>
+
+                <!-- Module Dynamic Container -->
+                <div id="module-viewer-container" class="space-y-6">
+                    <!-- Standard Subject Module Listing View or 11-Stage Module Detailed Workspace -->
+                </div>
+            </section>
+
+            <!-- VIEW 3: PRACTICAL LABORATORY ENVIRONMENT -->
+            <section id="view-labs" class="space-y-8 hidden max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#222] pb-6">
+                    <div>
+                        <h2 class="text-xl font-light text-gray-100 tracking-wide font-sans">Laboratory Environments</h2>
+                        <p class="text-xs text-gray-500 font-mono mt-2 tracking-wide">ISOLATED TECHNICAL SCENARIOS</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select id="lab-filter-subject" onchange="renderLabs()" class="bg-[#0a0a0a] border border-[#333] rounded text-xs font-mono text-gray-300 px-4 py-2 focus:outline-none focus:border-raincoat-800">
+                            <option value="ALL">ALL SUBJECTS</option>
+                            <option value="sub1">SUBJ 01: ENDPOINT</option>
+                            <option value="sub2">SUBJ 02: IAM</option>
+                            <option value="sub3">SUBJ 03: AI & ML</option>
+                            <option value="sub4">SUBJ 04: CYBERSECURITY</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Lab List Left -->
+                    <div class="space-y-4" id="lab-list-container">
+                        <!-- Inserted dynamically -->
+                    </div>
+
+                    <!-- Lab Workstation Right -->
+                    <div class="lg:col-span-2 border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-8 relative" id="lab-detail-container">
+                        <!-- Active Lab Content render -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 4: ASSESSMENT CENTRE -->
+            <section id="view-assessments" class="space-y-8 hidden max-w-6xl mx-auto">
+                <div class="border-b border-[#222] pb-6">
+                    <h2 class="text-xl font-light text-gray-100 tracking-wide font-sans">Assessment Centre</h2>
+                    <p class="text-xs text-gray-500 font-mono mt-2 tracking-wide">ARCHITECTURE EVALUATION & RUBRICS</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4" id="assessment-list-container">
+                        <!-- Dynamic list -->
+                    </div>
+
+                    <div class="lg:col-span-2 border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-8" id="assessment-detail-container">
+                        <!-- Active Assessment render -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 5: PERSONAL KNOWLEDGE BASE -->
+            <section id="view-kb" class="space-y-8 hidden max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#222] pb-6">
+                    <div>
+                        <h2 class="text-xl font-light text-gray-100 tracking-wide font-sans">Knowledge Base</h2>
+                        <p class="text-xs text-gray-500 font-mono mt-2 tracking-wide">ARCHITECTURE NOTES & COMMAND SNIPPETS</p>
+                    </div>
+                    <button onclick="openNoteModal()" class="px-4 py-2.5 rounded bg-[#111] hover:bg-cave-950/30 border border-[#333] hover:border-cave-800 text-gray-300 hover:text-cave-400 font-mono text-xs transition-all flex items-center space-x-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>NEW ENTRY</span>
+                    </button>
+                </div>
+
+                <!-- Search & Filters -->
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="relative flex-1">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-4 top-3 text-gray-600"></i>
+                        <input type="text" id="kb-search-input" onkeyup="renderKB()" placeholder="Search archives..." class="w-full bg-[#0a0a0a] rounded border border-[#222] pl-11 pr-4 py-2.5 text-xs font-mono text-gray-300 focus:outline-none focus:border-cave-600 placeholder:text-gray-700">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="filterKBTag('ALL')" class="px-4 py-2 rounded bg-cave-900/30 text-xs font-mono text-cave-400 border border-cave-800 transition-all">ALL</button>
+                        <button onclick="filterKBTag('PowerShell')" class="px-4 py-2 rounded bg-[#0a0a0a] text-xs font-mono text-gray-500 border border-[#222] hover:text-gray-300 transition-all">#PowerShell</button>
+                        <button onclick="filterKBTag('Intune')" class="px-4 py-2 rounded bg-[#0a0a0a] text-xs font-mono text-gray-500 border border-[#222] hover:text-gray-300 transition-all">#Intune</button>
+                        <button onclick="filterKBTag('EntraID')" class="px-4 py-2 rounded bg-[#0a0a0a] text-xs font-mono text-gray-500 border border-[#222] hover:text-gray-300 transition-all">#EntraID</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="kb-cards-container">
+                    <!-- Dynamic Notes -->
+                </div>
+            </section>
+
+            <!-- VIEW 6: COMPETENCY MATRIX & PROGRESS CENTER -->
+            <section id="view-competency" class="space-y-8 hidden max-w-6xl mx-auto">
+                <div class="border-b border-[#222] pb-6">
+                    <h2 class="text-xl font-light text-gray-100 tracking-wide font-sans">Competency Matrix</h2>
+                    <p class="text-xs text-gray-500 font-mono mt-2 tracking-wide">SKILL EVALUATION & REFLECTION</p>
+                </div>
+
+                <!-- Competency Grid -->
+                <div class="border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-7">
+                    <h3 class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-5">SKILL BENCHMARK</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left font-mono border-collapse">
+                            <thead>
+                                <tr class="border-b border-[#222] text-gray-600">
+                                    <th class="py-3 px-4 font-normal">DOMAIN / SKILL</th>
+                                    <th class="py-3 px-4 font-normal text-center">BEGINNER</th>
+                                    <th class="py-3 px-4 font-normal text-center">DEVELOPING</th>
+                                    <th class="py-3 px-4 font-normal text-center">COMPETENT</th>
+                                    <th class="py-3 px-4 font-normal text-center">ADVANCED</th>
+                                    <th class="py-3 px-4 font-normal text-right">NOTES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="competency-table-body" class="divide-y divide-[#1f1f1f]">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Weekly Reflection Form & History -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-7 space-y-6">
+                        <h3 class="text-[10px] font-mono text-gray-500 uppercase tracking-widest flex items-center gap-2"><i data-lucide="pen-tool" class="w-3.5 h-3.5"></i> Reflection Logger</h3>
+                        <form id="reflection-form" onsubmit="saveReflection(event)" class="space-y-5 text-xs">
+                            <div>
+                                <label class="block font-mono text-gray-400 mb-2">1. Concepts Learned</label>
+                                <textarea id="ref-learned" rows="2" class="w-full bg-[#050505] rounded border border-[#222] p-3 text-gray-300 focus:outline-none focus:border-cave-600 font-mono placeholder:text-gray-700 leading-relaxed" placeholder="Key concepts, architecture rules..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block font-mono text-gray-400 mb-2">2. Systems Executed</label>
+                                <textarea id="ref-built" rows="2" class="w-full bg-[#050505] rounded border border-[#222] p-3 text-gray-300 focus:outline-none focus:border-cave-600 font-mono placeholder:text-gray-700 leading-relaxed" placeholder="PowerShell scripts, Entra policies..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block font-mono text-gray-400 mb-2">3. Areas of Friction</label>
+                                <textarea id="ref-struggled" rows="2" class="w-full bg-[#050505] rounded border border-[#222] p-3 text-gray-300 focus:outline-none focus:border-cave-600 font-mono placeholder:text-gray-700 leading-relaxed" placeholder="Graph API auth flows, threat modeling loops..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 rounded bg-[#111] hover:bg-cave-950/30 border border-[#333] hover:border-cave-800 text-gray-400 hover:text-cave-400 font-mono transition-all">COMMIT TO LOG</button>
+                        </form>
+                    </div>
+
+                    <!-- Reflection Logs Timeline -->
+                    <div class="border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-7 space-y-5">
+                        <h3 class="text-[10px] font-mono text-gray-500 uppercase tracking-widest flex items-center gap-2"><i data-lucide="history" class="w-3.5 h-3.5"></i> Archive History</h3>
+                        <div id="reflection-history-list" class="space-y-4 max-h-[420px] overflow-y-auto pr-3">
+                            <!-- Dynamic log entries -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- NOTE EDIT/CREATE MODAL -->
+    <div id="note-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border border-[#222] rounded-lg max-w-lg w-full p-7 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-[#1f1f1f] pb-4 mb-5">
+                <h3 class="text-xs font-mono font-medium text-gray-300 tracking-widest uppercase" id="modal-note-title">CREATE ENTRY</h3>
+                <button onclick="closeNoteModal()" class="text-gray-600 hover:text-gray-300 slow-fade"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="note-form" onsubmit="saveNote(event)" class="space-y-5 text-xs">
+                <input type="hidden" id="note-id">
+                <div>
+                    <label class="block font-mono text-gray-500 mb-2 uppercase tracking-wide text-[10px]">Title</label>
+                    <input type="text" id="note-title-input" required class="w-full bg-[#050505] rounded border border-[#222] p-3 font-mono text-gray-200 focus:outline-none focus:border-cave-600" placeholder="e.g. Protocol 1 Sync">
+                </div>
+                <div>
+                    <label class="block font-mono text-gray-500 mb-2 uppercase tracking-wide text-[10px]">Tags (comma separated)</label>
+                    <input type="text" id="note-tags-input" class="w-full bg-[#050505] rounded border border-[#222] p-3 font-mono text-gray-200 focus:outline-none focus:border-cave-600" placeholder="PowerShell, Intune, System">
+                </div>
+                <div>
+                    <label class="block font-mono text-gray-500 mb-2 uppercase tracking-wide text-[10px]">Content Base</label>
+                    <textarea id="note-content-input" rows="6" required class="w-full bg-[#050505] rounded border border-[#222] p-3 font-mono text-gray-300 focus:outline-none focus:border-cave-600 leading-relaxed" placeholder="Record system observations..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 pt-3 border-t border-[#1f1f1f]">
+                    <button type="button" onclick="closeNoteModal()" class="px-5 py-2.5 rounded text-gray-500 font-mono hover:text-gray-300 slow-fade">CANCEL</button>
+                    <button type="submit" class="px-6 py-2.5 rounded bg-[#111] hover:bg-cave-950/30 border border-[#333] hover:border-cave-800 text-gray-300 hover:text-cave-400 font-mono transition-all">SAVE ENTRY</button>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <div class="space-y-4 pt-4 border-t border-white/5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs lg:text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-              <i class="fa-solid fa-dumbbell text-amber-400 text-xs"></i> Scenario Gym: Test Your Mental Model Reflex
-            </span>
-            ${hasAnswered ? `<button onclick="resetModelDrill('${m.id}')" class="text-xs lg:text-sm text-slate-400 hover:text-white">Retry Drill</button>` : ''}
-          </div>
+    <!-- JAVASCRIPT INITIALIZATION & CORE APP ENGINE -->
+    <script>
+        // Custom Modal Confirm Logic
+        let pendingConfirmCallback = null;
 
-          <p class="text-xs lg:text-sm text-slate-200 font-medium leading-relaxed">${m.drillScenario.question}</p>
-          <div class="space-y-2.5">
-            ${optionsHtml}
-          </div>
-          ${feedbackHtml}
-        </div>
-      `;
-    }
-
-    function submitModelDrill(modelId, selectedIdx) {
-      const m = MENTAL_MODELS_DATA.find(item => item.id === modelId);
-      if (!m) return;
-      const isCorrect = selectedIdx === m.drillScenario.correct;
-      completedMentalModelDrills[modelId] = isCorrect;
-      saveState();
-
-      const passedCount = Object.values(completedMentalModelDrills).filter(v => v === true).length;
-      document.getElementById('mm-reps-counter').innerText = `Drills: ${passedCount} / ${MENTAL_MODELS_DATA.length} Passed`;
-
-      if (isCorrect) {
-        showToast(`Correct! Model ${m.number} instinct reinforced.`, 'success');
-      } else {
-        showToast(`Incorrect instinct. Review the Minto/Systems principles.`, 'warning');
-      }
-      selectMentalModel(modelId);
-    }
-
-    function resetModelDrill(modelId) {
-      delete completedMentalModelDrills[modelId];
-      saveState();
-      const passedCount = Object.values(completedMentalModelDrills).filter(v => v === true).length;
-      document.getElementById('mm-reps-counter').innerText = `Drills: ${passedCount} / ${MENTAL_MODELS_DATA.length} Passed`;
-      selectMentalModel(modelId);
-    }
-
-    // Timer & Brown Noise
-    let audioCtx = null;
-    let brownNoiseNode = null;
-    let isNoisePlaying = false;
-
-    function initAudioContext() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
-    function toggleBrownNoise() {
-      initAudioContext();
-      const btn = document.getElementById('btn-toggle-noise');
-      const indicator = document.getElementById('noise-indicator');
-
-      if (isNoisePlaying) {
-        if (brownNoiseNode) {
-          try { brownNoiseNode.stop(); brownNoiseNode.disconnect(); } catch (e) {}
-          brownNoiseNode = null;
+        function showConfirm(text, callback) {
+            document.getElementById('confirm-text').innerText = text;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+            pendingConfirmCallback = callback;
         }
-        isNoisePlaying = false;
-        btn.innerText = "Start Sound";
-        btn.className = "px-3 py-1.5 text-xs bg-[#111722] hover:bg-white/10 text-slate-300 rounded-md border border-white/5 transition";
-        indicator.innerText = "Noise: OFF";
-        indicator.className = "text-[10px] lg:text-[11px] font-mono-code text-slate-400";
-        showToast("Focus noise stopped", 'info');
-      } else {
-        const bufferSize = audioCtx.sampleRate * 2;
-        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        let lastOut = 0.0;
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          output[i] = (lastOut + (0.02 * white)) / 1.02;
-          lastOut = output[i];
-          output[i] *= 3.5;
-        }
-        brownNoiseNode = audioCtx.createBufferSource();
-        brownNoiseNode.buffer = noiseBuffer;
-        brownNoiseNode.loop = true;
 
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-        brownNoiseNode.connect(gain);
-        gain.connect(audioCtx.destination);
-        brownNoiseNode.start();
-
-        isNoisePlaying = true;
-        btn.innerText = "Mute Sound";
-        btn.className = "px-3 py-1.5 text-xs bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30 transition";
-        indicator.innerText = "Noise: ACTIVE";
-        indicator.className = "text-[10px] lg:text-[11px] font-mono-code text-indigo-400";
-        showToast("Synthesized Brown Noise active", 'success');
-      }
-    }
-
-    let timerDuration = 30 * 60;
-    let timerRemaining = 30 * 60;
-    let timerInterval = null;
-    let isTimerRunning = false;
-
-    function formatTime(totalSec) {
-      const mins = Math.floor(totalSec / 60);
-      const secs = totalSec % 60;
-      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function setTimerDuration(mins) {
-      if (isTimerRunning) clearInterval(timerInterval);
-      isTimerRunning = false;
-      timerDuration = mins * 60;
-      timerRemaining = mins * 60;
-      document.getElementById('timer-display').innerText = formatTime(timerRemaining);
-      document.getElementById('timer-status-text').innerText = `${mins}m Focus Block Ready`;
-      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start ${mins}m Block</span>`;
-
-      [25, 30, 50, 90].forEach(m => {
-        const b = document.getElementById(`btn-t-${m}`);
-        if (!b) return;
-        if (m === mins) {
-          b.className = "px-3 py-1.5 bg-sky-500/20 text-sky-300 rounded-md border border-sky-500/30 transition font-mono-code font-medium";
-        } else {
-          b.className = "px-3 py-1.5 bg-[#070A0F] text-slate-400 hover:text-white rounded-md border border-white/5 transition font-mono-code";
-        }
-      });
-    }
-
-    function toggleTimer() {
-      if (isTimerRunning) {
-        clearInterval(timerInterval);
-        isTimerRunning = false;
-        document.getElementById('timer-status-text').innerText = 'Paused';
-        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Resume</span>`;
-      } else {
-        isTimerRunning = true;
-        document.getElementById('timer-status-text').innerText = 'Deep sprint active';
-        document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-pause text-[11px]"></i> <span>Pause</span>`;
-        timerInterval = setInterval(() => {
-          if (timerRemaining > 0) {
-            timerRemaining--;
-            document.getElementById('timer-display').innerText = formatTime(timerRemaining);
-          } else {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            document.getElementById('timer-status-text').innerText = 'Sprint complete';
-            document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start New Sprint</span>`;
-            showToast('Sprint completed.', 'success');
-          }
-        }, 1000);
-      }
-    }
-
-    function resetTimer() {
-      if (isTimerRunning) clearInterval(timerInterval);
-      isTimerRunning = false;
-      timerRemaining = timerDuration;
-      document.getElementById('timer-display').innerText = formatTime(timerRemaining);
-      document.getElementById('timer-status-text').innerText = 'Focus Sprint Ready';
-      document.getElementById('btn-timer-toggle').innerHTML = `<i class="fa-solid fa-play text-[11px]"></i> <span>Start Sprint</span>`;
-    }
-
-    // Modal Helpers
-    function openResetModal() { document.getElementById('reset-modal').classList.remove('hidden'); }
-    function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
-    function confirmResetData() {
-      localStorage.removeItem(STORAGE_KEY_MODULES);
-      localStorage.removeItem(STORAGE_KEY_DRILLS);
-      localStorage.removeItem(STORAGE_KEY_SCRATCH);
-      modules = JSON.parse(JSON.stringify(INITIAL_MODULES));
-      completedMentalModelDrills = {};
-      
-      document.getElementById('scratchpad-input').value = '';
-      
-      updateMetrics();
-      renderRoadmap();
-      initMentalModels();
-      closeResetModal();
-      showToast("Progress reset to default state", 'info');
-    }
-
-    function openShutdownModal() { document.getElementById('shutdown-modal').classList.remove('hidden'); }
-    function closeShutdownModal() { document.getElementById('shutdown-modal').classList.add('hidden'); }
-    function executeShutdown() {
-      const c1 = document.getElementById('sr-check-1').checked;
-      const c2 = document.getElementById('sr-check-2').checked;
-      const c3 = document.getElementById('sr-check-3').checked;
-      if (!c1 || !c2 || !c3) {
-        showToast("Complete all 3 ritual verification steps before shutdown.", 'warning');
-        return;
-      }
-      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('shutdown-status-time').innerText = `Shutdown logged at ${timestamp}`;
-      document.getElementById('footer-shutdown-state').innerText = `Shutdown Complete (${timestamp})`;
-      document.getElementById('footer-shutdown-state').className = "text-emerald-400 font-semibold";
-
-      if (isNoisePlaying) toggleBrownNoise();
-      if (isTimerRunning) {
-        clearInterval(timerInterval);
-        isTimerRunning = false;
-      }
-      showToast('"Shutdown Complete" logged. Step away and recharge.', 'success');
-      setTimeout(closeShutdownModal, 800);
-    }
-
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      let dotColor = "bg-slate-400";
-      if (type === 'success') dotColor = "bg-emerald-400";
-      if (type === 'warning') dotColor = "bg-amber-400";
-
-      toast.className = `bg-[#0C1018] border border-white/10 text-white px-4 py-2.5 rounded-xl text-xs lg:text-sm flex items-center gap-2 shadow-2xl transition-all duration-200 transform translate-x-4 pointer-events-auto`;
-      toast.innerHTML = `<span class="w-2.5 h-2.5 rounded-full ${dotColor}"></span> <span class="font-medium">${message}</span>`;
-      container.appendChild(toast);
-
-      setTimeout(() => toast.classList.remove('translate-x-4'), 10);
-      setTimeout(() => {
-        toast.classList.add('translate-x-4', 'opacity-0');
-        setTimeout(() => toast.remove(), 200);
-      }, 2500);
-    }
-
-    function exportData() {
-      const exportObject = {
-        modules,
-        drills: completedMentalModelDrills,
-        scratchpad: document.getElementById('scratchpad-input').value,
-        exportDate: new Date().toISOString()
-      };
-      const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `FY27_EUC_Ops_Progress_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast("Progress exported as JSON", 'success');
-    }
-
-    function importData(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          if (parsed.modules && Array.isArray(parsed.modules)) {
-            modules = parsed.modules;
-            if (parsed.drills) completedMentalModelDrills = parsed.drills;
-            if (parsed.scratchpad) {
-              document.getElementById('scratchpad-input').value = parsed.scratchpad;
-              localStorage.setItem(STORAGE_KEY_SCRATCH, parsed.scratchpad);
+        function closeConfirm(result) {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            if (pendingConfirmCallback && result) {
+                pendingConfirmCallback();
             }
-          } else if (Array.isArray(parsed) && parsed[0]?.id) {
-            modules = parsed;
-          }
-          saveState();
-          updateMetrics();
-          renderRoadmap();
-          initMentalModels();
-          showToast(`Imported ${modules.length} modules`, 'success');
-        } catch (err) {
-          showToast('Failed to parse JSON file', 'warning');
+            pendingConfirmCallback = null;
         }
-        event.target.value = '';
-      };
-      reader.readAsText(file);
-    }
 
-    window.onload = function () {
-      loadSavedState();
-      initScratchpad();
-      updateMetrics();
-      renderRoadmap();
-      initMentalModels();
-    };
-  </script>
+        // Custom Toast Logic
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let colorClass = type === 'error' ? 'text-gray-300 border-[#333] bg-[#0a0a0a]' 
+                           : 'text-gray-300 border-[#222] bg-[#111]';
+            
+            toast.className = `px-5 py-3 rounded border font-mono text-xs shadow-lg flex items-center gap-3 transition-all duration-500 transform translate-y-4 opacity-0 ${colorClass}`;
+            
+            const icon = type === 'error' ? '<i data-lucide="alert-triangle" class="w-4 h-4 text-gray-500"></i>' : '<i data-lucide="check" class="w-4 h-4 text-cave-500"></i>';
+            
+            toast.innerHTML = `${icon} <span class="tracking-wide">${message}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            });
+
+            // Animate out and remove
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // Data Store State with Initial Curriculum & Lab Content
+        const DEFAULT_DATA = {
+            hoursLogged: 0.0,
+            currentWeek: 1,
+            activeSubjectId: 'sub1',
+            recommendedTime: 15,
+            technicalDebt: [],
+            resources: [
+                { name: 'Microsoft Learn', url: 'https://learn.microsoft.com/en-us/' },
+                { name: 'Entra ID Docs', url: 'https://learn.microsoft.com/en-us/entra/' },
+                { name: 'Intune Arch', url: 'https://learn.microsoft.com/en-us/mem/intune/' },
+                { name: 'Graph API Exp', url: 'https://developer.microsoft.com/en-us/graph/graph-explorer' }
+            ],
+            subjects: [
+                {
+                    id: 'sub1',
+                    code: 'SUBJ 01',
+                    title: 'Endpoint Management & Systems Engineering',
+                    progress: 0,
+                    modulesCount: 4,
+                    completedModules: 0,
+                    modules: [
+                        {
+                            id: 'sub1_m1',
+                            title: 'Module 1: Endpoint Engineering Principles',
+                            status: 'in_progress',
+                            estMin: 60,
+                            objectives: ['Understand Endpoint architecture', 'Master MDM vs legacy management', 'Configure read-only telemetry'],
+                            background: 'Your background in EUC provides a base, but modern infrastructure requires cloud-first, zero-touch device management.',
+                            theory: 'Intune relies on Open Management Infrastructure (OMI) protocols to deliver configuration profiles asynchronously without requiring line-of-sight to a domain controller.',
+                            guidedEx: 'Explore `dsregcmd /status` output in a terminal window on your enterprise machine to verify Entra ID join status without making administrative changes.',
+                            labTask: 'Run read-only PowerShell queries to identify device enrollment status and compliance state.',
+                            troubleshooting: 'Device not syncing: Check Event Viewer logs under App and Services -> Microsoft -> Windows -> DeviceManagement-Enterprise-Diagnostics-Provider.',
+                            checkDone: [false, false, false]
+                        }
+                    ]
+                },
+                {
+                    id: 'sub2',
+                    code: 'SUBJ 02',
+                    title: 'Identity & Access Management Engineering',
+                    progress: 0,
+                    modulesCount: 4,
+                    completedModules: 0,
+                    modules: [
+                        {
+                            id: 'sub2_m1',
+                            title: 'Module 1: Microsoft Entra ID Architecture',
+                            status: 'pending',
+                            estMin: 45,
+                            objectives: ['Understand Tenant Boundaries', 'Differentiate AD vs Entra ID', 'Read-only identity reconnaissance'],
+                            background: 'Identity is the new security perimeter. Transitioning from AD Group Policy to Conditional Access is critical for zero-trust environments.',
+                            theory: 'Entra ID acts as an OpenID Connect/OAuth 2.0 provider. It manages service principals, dynamic groups, and enforces RBAC.',
+                            guidedEx: 'Use the Azure/Entra portal in a read-only capacity to trace the group memberships of your own user account.',
+                            labTask: 'Model the syntax for a dynamic security group that targets specific EUC technician roles based on departmental attributes.',
+                            troubleshooting: 'User lacks access despite group membership: Investigate token lifetime and continuous access evaluation (CAE) refresh delays.',
+                            checkDone: [false, false, false]
+                        }
+                    ]
+                },
+                {
+                    id: 'sub3',
+                    code: 'SUBJ 03',
+                    title: 'AI, Machine Learning & LLM Engineering',
+                    progress: 0,
+                    modulesCount: 4,
+                    completedModules: 0,
+                    modules: [
+                        {
+                            id: 'sub3_m1',
+                            title: 'Module 1: Python for Automation',
+                            status: 'pending',
+                            estMin: 60,
+                            objectives: ['Set up local Python environment', 'Handle REST API requests', 'Parse JSON responses'],
+                            background: 'Leveraging your previous Python/Java exposure, we will build practical automation scripts rather than basic "Hello World" exercises.',
+                            theory: 'Automation in modern endpoints relies heavily on interacting with Graph API endpoints using OAuth bearer tokens and parsing structured JSON payloads.',
+                            guidedEx: 'Write a basic Python script using the `requests` library to query a public, unauthenticated mock API.',
+                            labTask: 'Expand the script to extract and print specific configuration states from a simulated Intune JSON payload.',
+                            troubleshooting: '401 Unauthorized: Review bearer token generation scopes and expiration limits.',
+                            checkDone: [false, false, false]
+                        }
+                    ]
+                },
+                {
+                    id: 'sub4',
+                    code: 'SUBJ 04',
+                    title: 'Cybersecurity Engineering & Systems Thinking',
+                    progress: 0,
+                    modulesCount: 4,
+                    completedModules: 0,
+                    modules: [
+                        {
+                            id: 'sub4_m1',
+                            title: 'Module 1: Systems Thinking & Threat Modelling',
+                            status: 'pending',
+                            estMin: 45,
+                            objectives: ['Understand complex adaptive systems', 'Apply STRIDE methodology', 'Map feedback loops'],
+                            background: 'Moving beyond simply operating tools requires understanding how technical policies impact human behavior (e.g., shadow IT workarounds).',
+                            theory: 'Drawing on Donella Meadows, systems behavior emerges from interconnected feedback loops. Security policies often create balancing loops that restrict productivity if poorly designed.',
+                            guidedEx: 'Diagram the feedback loop between aggressive password expiration policies and user password hygiene (e.g., writing passwords on sticky notes).',
+                            labTask: 'Conduct a read-only STRIDE threat model on a standard EUC workstation deployment process.',
+                            troubleshooting: 'Systemic policy rejection: Identify the human-factor feedback loop causing users to bypass the security control.',
+                            checkDone: [false, false, false]
+                        }
+                    ]
+                }
+            ],
+            labs: [
+                {
+                    id: 'lab_1',
+                    subjectId: 'sub1',
+                    title: 'Read-Only Endpoint Diagnostics',
+                    difficulty: 'BEGINNER',
+                    duration: '30 mins',
+                    equipment: 'Enterprise Workstation',
+                    readOnlySafe: true,
+                    objective: 'Safely extract Intune diagnostic logs and registry keys without administrative elevation.',
+                    instructions: [
+                        'Open PowerShell as a standard user.',
+                        'Navigate to the diagnostic registry hive at HKLM:\\SOFTWARE\\Microsoft\\Enrollments (if standard user read is permitted) or use `dsregcmd`.',
+                        'Export the output to a local text file.',
+                        'Analyze the output for MDM authority URLs.'
+                    ],
+                    expectedResult: 'A text file containing local telemetry data, safely extracted without triggering enterprise alerts.',
+                    troubleshooting: 'Access Denied: Pivot to checking Event Viewer application logs which are often readable by standard users.',
+                    completed: false,
+                    evidence: ''
+                }
+            ],
+            assessments: [
+                {
+                    id: 'ass_1',
+                    subjectId: 'sub1',
+                    title: 'Week 4: Architecture Case Study',
+                    brief: 'Produce a technical report evaluating a transition from on-premise AD/GPO management to Entra ID/Intune for a remote workforce. Focus on identity security and zero-touch provisioning.',
+                    learningOutcomes: ['Architecture design', 'Zero-touch provisioning', 'Identity synchronization'],
+                    status: 'PENDING',
+                    score: null,
+                    submission: '',
+                    feedback: '',
+                    recommendation: ''
+                }
+            ],
+            kbNotes: [
+                {
+                    id: 'kb_prompt_01',
+                    title: 'MASTER SYSTEM DIRECTIVE // AI PERSONA',
+                    tags: ['System', 'Prompt', 'Rules'],
+                    content: `ENDPOINT ENGINEERING, IDENTITY & CYBERSECURITY
+
+1. ROLE
+Act as my university lecturer, technical instructor, engineering mentor and assessment examiner.
+You are responsible for delivering a structured, practical, university-standard learning programme designed to develop my capabilities in Endpoint Engineering, Identity and Access Management, AI, Cybersecurity, and Systems Thinking.
+
+2. MY BACKGROUND
+- Current EUC Technician in a large enterprise environment.
+- Exposure: Intune, Entra ID, AD, Group Policy, Win11, M365, Autopilot, ServiceNow.
+- Access: Restricted enterprise access. Need read-only/simulated lab tasks.
+
+3. METHODOLOGY
+LEARN IT -> BUILD IT -> TEST IT -> DOCUMENT IT.
+Focus on practical engineering over passive reading. Challenge incorrect assumptions. Do not make lessons repetitive.
+
+4. WORKPLACE ALIGNMENT
+Provide 15m, 30m, and 60m time-boxed activities suitable for execution on an enterprise computer without administrative elevation.`
+                }
+            ],
+            competencies: [
+                { skill: 'EUC Endpoint Administration', level: 'COMPETENT', notes: 'Existing workplace experience.' },
+                { skill: 'Intune Configuration', level: 'DEVELOPING', notes: 'Transitioning from monitoring to engineering.' },
+                { skill: 'Python / PowerShell Scripting', level: 'BEGINNER', notes: 'Previous exposure; requires automation focus.' }
+            ],
+            reflections: [
+                {
+                    id: 'ref_0',
+                    date: 'Programme Initialization',
+                    learned: 'Established baseline capabilities and curriculum structure.',
+                    built: 'Deployed local tracking portal for knowledge retention.',
+                    struggled: 'N/A - System Initialized.',
+                    nextStep: 'Commence Subject 01: Endpoint Engineering Principles.'
+                }
+            ]
+        };
+
+        // Current Active Application State
+        let appState = {};
+
+        // App Initialization
+        window.onload = function() {
+            loadState();
+            lucide.createIcons();
+            renderAll();
+        };
+
+        // State Persistence Engine
+        function loadState() {
+            const saved = localStorage.getItem('ENG_ACADEMY_DATA_V5');
+            if (saved) {
+                try {
+                    appState = JSON.parse(saved);
+                    // Backwards compatibility patching
+                    if (!appState.technicalDebt) appState.technicalDebt = [];
+                    if (!appState.resources) appState.resources = DEFAULT_DATA.resources;
+                } catch(e) {
+                    console.error("Failed to parse local storage data", e);
+                    appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                }
+            } else {
+                appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                saveState();
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('ENG_ACADEMY_DATA_V5', JSON.stringify(appState));
+            updateGlobalHeader();
+        }
+
+        function resetData() {
+            showConfirm("Reset all portal progress, notes, and lab data to factory defaults? This action is irreversible.", () => {
+                localStorage.removeItem('ENG_ACADEMY_DATA_V5');
+                appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                saveState();
+                renderAll();
+                showToast("System reset complete.", 'success');
+            });
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `archive_backup_week${appState.currentWeek}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast("Archive exported successfully.");
+        }
+
+        function importData(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported && imported.subjects) {
+                        appState = imported;
+                        saveState();
+                        renderAll();
+                        showToast("Archive state imported successfully.");
+                    } else {
+                        showToast("Invalid backup structure detected.", 'error');
+                    }
+                } catch(err) {
+                    showToast("Corrupted payload detected. Import failed.", 'error');
+                }
+            };
+            if(event.target.files[0]) {
+                reader.readAsText(event.target.files[0]);
+            }
+        }
+
+        // Global Navigation Engine
+        function switchView(viewName) {
+            // Hide all views
+            ['dashboard', 'curriculum', 'labs', 'assessments', 'kb', 'competency'].forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById(`nav-${v}`);
+                if (btn) {
+                    btn.classList.remove('text-raincoat-400', 'bg-raincoat-950/20');
+                    btn.classList.add('text-gray-500');
+                    
+                    const span = btn.querySelector('span');
+                    if(span) span.classList.remove('text-gray-200');
+                }
+            });
+
+            // Show targeted view
+            const activeEl = document.getElementById(`view-${viewName}`);
+            if (activeEl) activeEl.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`nav-${viewName}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-gray-500', 'hover:bg-[#111]');
+                activeBtn.classList.add('text-raincoat-400', 'bg-raincoat-950/20');
+                const span = activeBtn.querySelector('span');
+                if(span) span.classList.add('text-raincoat-400');
+            }
+
+            // Specific View Renders
+            if (viewName === 'dashboard') renderDashboard();
+            if (viewName === 'curriculum') renderCurriculum();
+            if (viewName === 'labs') renderLabs();
+            if (viewName === 'assessments') renderAssessments();
+            if (viewName === 'kb') renderKB();
+            if (viewName === 'competency') renderCompetency();
+        }
+
+        function advanceWeek() {
+            if (appState.currentWeek >= 12) {
+                showToast("Maximum cycle (Week 12) reached.", "error");
+                return;
+            }
+            showConfirm(`Advance to Week ${appState.currentWeek + 1}? Any incomplete active modules will be logged as Technical Debt to condense and catch up on later.`, () => {
+                let missedItems = [];
+                appState.subjects.forEach(s => {
+                    s.modules.forEach(m => {
+                        if (m.status === 'in_progress') {
+                            missedItems.push(`${s.code}: ${m.title}`);
+                            m.status = 'pending'; // Reset state so they don't block new modules
+                        }
+                    });
+                });
+
+                if (missedItems.length > 0) {
+                    appState.technicalDebt = appState.technicalDebt || [];
+                    appState.technicalDebt.push({
+                        week: appState.currentWeek,
+                        items: missedItems
+                    });
+                }
+
+                appState.currentWeek += 1;
+                saveState();
+                renderAll();
+                showToast(`Advanced to Week ${appState.currentWeek}. Check Technical Debt if applicable.`);
+            });
+        }
+
+        function updateGlobalHeader() {
+            document.getElementById('global-week-display').innerText = `WEEK ${appState.currentWeek}/12`;
+            document.getElementById('global-hours-display').innerText = `${appState.hoursLogged.toFixed(1)} / 5.0h`;
+            
+            // Calculate overall percentage
+            let totalMods = 0;
+            let completedMods = 0;
+            appState.subjects.forEach(s => {
+                totalMods += s.modules.length;
+                completedMods += s.modules.filter(m => m.status === 'completed').length;
+            });
+            const pct = Math.round((completedMods / totalMods) * 100) || 0;
+            document.getElementById('global-progress-display').innerText = `${pct}%`;
+        }
+
+        function renderAll() {
+            updateGlobalHeader();
+            renderDashboard();
+            renderCurriculum();
+            renderLabs();
+            renderAssessments();
+            renderKB();
+            renderCompetency();
+        }
+
+        // --- DASHBOARD CONTROLLER ---
+        function renderDashboard() {
+            document.getElementById('dash-hours-target').innerHTML = `${appState.hoursLogged.toFixed(1)} <span class="text-sm text-gray-500">/ 5.0 HRS</span>`;
+            
+            // Render Currently Studying Banner
+            let activeMod = null;
+            let activeSub = null;
+            appState.subjects.forEach(s => {
+                s.modules.forEach(m => {
+                    if (m.status === 'in_progress' && !activeMod) {
+                        activeMod = m;
+                        activeSub = s;
+                    }
+                });
+            });
+
+            if (activeMod && activeSub) {
+                document.getElementById('dash-continue-title').innerText = `${activeSub.code} // ${activeMod.title}`;
+                document.getElementById('dash-continue-desc').innerText = activeMod.background;
+                document.getElementById('dash-continue-est').innerText = `EST. ${activeMod.estMin}M`;
+                window._currentResumeModule = activeMod.id;
+            } else {
+                document.getElementById('dash-continue-title').innerText = `AWAITING DEPLOYMENT`;
+                document.getElementById('dash-continue-desc').innerText = `You have no active modules in progress. Select a subject from the Curriculum Archives to initialize a new study sequence.`;
+                document.getElementById('dash-continue-est').innerText = `--`;
+                window._currentResumeModule = null;
+            }
+
+            // Render External Resources Links
+            const resourcesContainer = document.getElementById('resource-links-container');
+            if (resourcesContainer && appState.resources) {
+                resourcesContainer.innerHTML = appState.resources.map(r => `
+                    <a href="${r.url}" target="_blank" rel="noopener noreferrer" class="p-3 bg-[#111] hover:bg-[#1f1f1f] rounded border border-[#222] hover:border-[#444] transition-all flex items-center justify-between group h-full">
+                        <span class="text-[11px] font-mono text-gray-400 group-hover:text-gray-200 transition-colors uppercase tracking-wider">${r.name}</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5 text-gray-600 group-hover:text-raincoat-500 transition-colors"></i>
+                    </a>
+                `).join('');
+            }
+
+            // Render Technical Debt Panel
+            const debtContainer = document.getElementById('technical-debt-container');
+            const debtList = document.getElementById('technical-debt-list');
+            if (debtContainer && debtList) {
+                if (appState.technicalDebt && appState.technicalDebt.length > 0) {
+                    debtContainer.classList.remove('hidden');
+                    debtContainer.parentElement.classList.remove('lg:grid-cols-1');
+                    debtContainer.parentElement.classList.add('lg:grid-cols-2');
+                    
+                    debtList.innerHTML = appState.technicalDebt.map((debt, index) => `
+                        <div class="bg-[#111]/80 p-4 rounded border border-raincoat-900/30">
+                            <div class="text-[10px] font-mono text-raincoat-600 mb-2 font-bold">FELL BEHIND IN WEEK ${debt.week}</div>
+                            <ul class="list-disc list-inside text-[11px] font-mono text-gray-400 space-y-1.5 mb-3">
+                                ${debt.items.map(item => `<li class="truncate" title="${item}">${item}</li>`).join('')}
+                            </ul>
+                            <div class="text-right">
+                                <button onclick="clearDebt(${index})" class="text-[9px] text-gray-500 hover:text-raincoat-500 uppercase tracking-widest font-mono transition-colors border-b border-transparent hover:border-raincoat-500 pb-0.5">Mark Resolved</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    debtContainer.classList.add('hidden');
+                    debtContainer.parentElement.classList.remove('lg:grid-cols-2');
+                    debtContainer.parentElement.classList.add('lg:grid-cols-1');
+                }
+            }
+
+            // Render Recommended Study block
+            setRecommendedTime(appState.recommendedTime || 15);
+
+            // Render Subject Cards
+            const container = document.getElementById('subject-cards-container');
+            container.innerHTML = '';
+
+            appState.subjects.forEach(sub => {
+                const completedCount = sub.modules.filter(m => m.status === 'completed').length;
+                const progressPct = Math.round((completedCount / sub.modules.length) * 100) || 0;
+
+                const card = document.createElement('div');
+                card.className = "border border-[#222] bg-[#0a0a0a]/60 rounded-lg p-6 flex flex-col justify-between hover:bg-[#111] transition-all cursor-pointer group";
+                card.onclick = () => {
+                    appState.activeSubjectId = sub.id;
+                    switchView('curriculum');
+                };
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-[10px] font-mono text-gray-500 tracking-widest uppercase">${sub.code}</span>
+                            <span class="text-xs font-mono text-gray-600 group-hover:text-gray-400 transition">${progressPct}%</span>
+                        </div>
+                        <h4 class="text-sm font-medium text-gray-300 group-hover:text-white transition line-clamp-2 mb-6 font-sans">${sub.title}</h4>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="w-full bg-[#1f1f1f] h-1 rounded-full overflow-hidden">
+                            <div class="bg-cave-500 h-full rounded-full" style="width: ${progressPct}%"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] font-mono text-gray-500">
+                            <span>${completedCount}/${sub.modules.length} Mods</span>
+                            <span class="text-gray-400 uppercase tracking-widest">Active</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setRecommendedTime(mins) {
+            appState.recommendedTime = mins;
+            saveState();
+
+            [15, 30, 60].forEach(t => {
+                const btn = document.getElementById(`time-btn-${t}`);
+                if (btn) {
+                    if (t === mins) {
+                        btn.className = "py-2 rounded text-xs font-mono text-center transition-all bg-[#111] text-raincoat-400 border border-raincoat-900/50";
+                    } else {
+                        btn.className = "py-2 rounded text-xs font-mono text-gray-500 hover:text-gray-300 bg-[#050505] text-center transition-all border border-[#222]";
+                    }
+                }
+            });
+
+            const contentEl = document.getElementById('recommended-content');
+            let item = {};
+            if (mins === 15) {
+                item = {
+                    title: "Architecture Summary: Target Rules",
+                    desc: "Review telemetry rules and filtering properties.",
+                    action: "Read 3-min overview"
+                };
+            } else if (mins === 30) {
+                item = {
+                    title: "Laboratory: Registry Detection",
+                    desc: "Write read-only detection script.",
+                    action: "Open Interactive Lab"
+                };
+            } else {
+                item = {
+                    title: "Deep Dive: Access Matrix",
+                    desc: "Complete evaluation and simulate authorization tests.",
+                    action: "Launch Environment"
+                };
+            }
+
+            contentEl.innerHTML = `
+                <div class="text-xs font-sans text-gray-300 font-medium mb-1">${item.title}</div>
+                <div class="text-[11px] text-gray-500 mb-3 font-mono">${item.desc}</div>
+                <div class="text-[10px] text-cave-400 font-mono flex items-center gap-1.5 pt-2 mt-2 border-t border-[#1f1f1f]">
+                    <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                    <span class="tracking-widest uppercase">${item.action}</span>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function resumeActiveModule() {
+            if (window._currentResumeModule) {
+                loadModule(window._currentResumeModule);
+            } else {
+                switchView('curriculum');
+                showToast("Navigate to Curriculum Archives to select a module.");
+            }
+        }
+
+        function clearDebt(index) {
+            appState.technicalDebt.splice(index, 1);
+            saveState();
+            renderDashboard();
+            showToast("Technical debt resolved and cleared.");
+        }
+
+        function executeRecommendedStudy() {
+            appState.hoursLogged += (appState.recommendedTime / 60);
+            saveState();
+            showToast(`Time block logged. Initializing module.`);
+            loadModule('sub1_m2');
+        }
+
+        // --- CURRICULUM & MODULE ENGINE ---
+        function renderCurriculum() {
+            const tabBar = document.getElementById('subject-tab-bar');
+            tabBar.innerHTML = '';
+
+            appState.subjects.forEach(sub => {
+                const isActive = sub.id === appState.activeSubjectId;
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded text-xs font-mono transition-all ${isActive ? 'bg-[#1f1f1f] text-gray-200' : 'text-gray-500 hover:text-gray-300 hover:bg-[#111]'}`;
+                btn.innerText = sub.code;
+                btn.onclick = () => {
+                    appState.activeSubjectId = sub.id;
+                    renderCurriculum();
+                };
+                tabBar.appendChild(btn);
+            });
+
+            const container = document.getElementById('module-viewer-container');
+            const activeSubject = appState.subjects.find(s => s.id === appState.activeSubjectId);
+
+            if (!activeSubject) return;
+
+            let html = `
+                <div class="border border-[#222] bg-[#0a0a0a]/80 rounded-lg p-8">
+                    <div class="mb-8 border-b border-[#1f1f1f] pb-5">
+                        <span class="text-[10px] font-mono text-gray-500 tracking-widest uppercase">${activeSubject.code}</span>
+                        <h3 class="text-xl font-medium text-gray-200 mt-2 font-sans">${activeSubject.title}</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            `;
+
+            activeSubject.modules.forEach((mod, idx) => {
+                const statusColor = mod.status === 'completed' ? 'text-cave-400 bg-cave-950/30 border-cave-900' : (mod.status === 'in_progress' ? 'text-raincoat-500 bg-raincoat-950/20 border-raincoat-900/50' : 'text-gray-600 border-[#222] bg-[#050505]');
+
+                html += `
+                    <div class="border border-[#222] bg-[#050505] rounded-md p-6 flex flex-col justify-between hover:border-[#444] transition-all group">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-[9px] font-mono px-2 py-0.5 rounded border ${statusColor} uppercase tracking-widest">${mod.status.replace('_', ' ')}</span>
+                                <span class="text-[10px] font-mono text-gray-600">${mod.estMin} MINS</span>
+                            </div>
+                            <h4 class="text-sm font-medium text-gray-300 mb-3 font-sans">${mod.title}</h4>
+                            <p class="text-xs text-gray-500 line-clamp-2 mb-6 font-mono leading-relaxed">${mod.background}</p>
+                        </div>
+                        <button onclick="loadModule('${mod.id}')" class="w-full py-2.5 rounded bg-[#111] hover:bg-[#1f1f1f] text-gray-400 hover:text-gray-200 text-xs font-mono border border-[#222] hover:border-[#444] transition-all tracking-widest">
+                            ACCESS
+                        </button>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        function loadModule(modId) {
+            switchView('curriculum');
+            let targetMod = null;
+            let targetSub = null;
+
+            appState.subjects.forEach(s => {
+                s.modules.forEach(m => {
+                    if (m.id === modId) {
+                        targetMod = m;
+                        targetSub = s;
+                    }
+                });
+            });
+
+            if (!targetMod) return;
+
+            appState.activeSubjectId = targetSub.id;
+            renderCurriculum(); // Ensures tabs update
+
+            const container = document.getElementById('module-viewer-container');
+            container.innerHTML = `
+                <div class="border border-[#222] bg-[#0a0a0a]/80 rounded-lg p-8 space-y-8">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-[#1f1f1f] pb-6 gap-5">
+                        <div>
+                            <button onclick="renderCurriculum()" class="text-[10px] font-mono text-gray-500 hover:text-gray-300 transition-all flex items-center gap-1.5 mb-4 tracking-widest uppercase">
+                                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> RETURN TO LISTING
+                            </button>
+                            <h2 class="text-xl font-medium text-gray-200 font-sans">${targetMod.title}</h2>
+                        </div>
+                        <button onclick="toggleModuleStatus('${targetMod.id}')" class="px-5 py-2.5 rounded font-mono text-xs transition-all border ${targetMod.status === 'completed' ? 'bg-[#111] text-gray-500 border-[#222] hover:text-gray-400' : 'bg-[#111] text-cave-400 border-[#333] hover:border-cave-700 hover:bg-cave-950/20'}">
+                            ${targetMod.status === 'completed' ? '✓ STATUS: VERIFIED' : 'MARK VERIFIED'}
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2 space-y-8 text-sm text-gray-400">
+                            <!-- 1. Objectives -->
+                            <div>
+                                <h4 class="font-mono text-gray-300 font-medium mb-4 tracking-wide text-sm flex items-center gap-2">I. Parameters</h4>
+                                <ul class="list-none space-y-3 text-gray-400 font-mono text-xs">
+                                    ${targetMod.objectives.map(o => `<li class="flex items-start gap-3"><span class="text-gray-600 mt-0.5">—</span> <span>${o}</span></li>`).join('')}
+                                </ul>
+                            </div>
+
+                            <!-- 2. Background Knowledge -->
+                            <div class="space-y-3">
+                                <h4 class="font-mono text-gray-300 font-medium tracking-wide text-sm">II. System Context</h4>
+                                <p class="bg-[#050505] p-5 rounded border border-[#1f1f1f] font-mono text-xs text-gray-400 leading-relaxed">${targetMod.background}</p>
+                            </div>
+
+                            <!-- 3. Core Theory -->
+                            <div class="space-y-3">
+                                <h4 class="font-mono text-gray-300 font-medium tracking-wide text-sm">III. Architecture Base</h4>
+                                <p class="bg-[#050505] p-5 rounded border border-[#1f1f1f] font-mono text-xs text-gray-400 leading-relaxed">${targetMod.theory}</p>
+                            </div>
+
+                            <!-- 4. Guided Practical Exercise -->
+                            <div class="space-y-3">
+                                <h4 class="font-mono text-gray-300 font-medium tracking-wide text-sm">IV. Guided Execution</h4>
+                                <div class="bg-[#050505] p-5 rounded border-l-2 border-[#333] font-mono text-gray-400 text-xs leading-relaxed">${targetMod.guidedEx}</div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Checklists -->
+                        <div class="space-y-6">
+                            <div class="bg-[#050505] p-6 rounded border border-[#1f1f1f] space-y-5">
+                                <h4 class="font-mono text-xs text-gray-500 tracking-widest uppercase">Checklist</h4>
+                                <div class="space-y-4 text-xs font-mono">
+                                    <label class="flex items-center space-x-3 cursor-pointer group">
+                                        <div class="relative flex items-center justify-center w-4 h-4">
+                                            <input type="checkbox" ${targetMod.checkDone[0] ? 'checked' : ''} onchange="toggleCheckDone('${targetMod.id}', 0)" class="peer appearance-none w-4 h-4 bg-transparent border border-[#444] rounded-sm checked:bg-[#111] checked:border-cave-600 cursor-pointer transition-all">
+                                            <i data-lucide="check" class="w-3 h-3 text-cave-500 absolute pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <span class="text-gray-500 group-hover:text-gray-300 transition-colors">Theory Reviewed</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer group">
+                                        <div class="relative flex items-center justify-center w-4 h-4">
+                                            <input type="checkbox" ${targetMod.checkDone[1] ? 'checked' : ''} onchange="toggleCheckDone('${targetMod.id}', 1)" class="peer appearance-none w-4 h-4 bg-transparent border border-[#444] rounded-sm checked:bg-[#111] checked:border-cave-600 cursor-pointer transition-all">
+                                            <i data-lucide="check" class="w-3 h-3 text-cave-500 absolute pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <span class="text-gray-500 group-hover:text-gray-300 transition-colors">Practical Run</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer group">
+                                        <div class="relative flex items-center justify-center w-4 h-4">
+                                            <input type="checkbox" ${targetMod.checkDone[2] ? 'checked' : ''} onchange="toggleCheckDone('${targetMod.id}', 2)" class="peer appearance-none w-4 h-4 bg-transparent border border-[#444] rounded-sm checked:bg-[#111] checked:border-cave-600 cursor-pointer transition-all">
+                                            <i data-lucide="check" class="w-3 h-3 text-cave-500 absolute pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <span class="text-gray-500 group-hover:text-gray-300 transition-colors">Task Compiled</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function toggleModuleStatus(modId) {
+            appState.subjects.forEach(s => {
+                s.modules.forEach(m => {
+                    if (m.id === modId) {
+                        m.status = m.status === 'completed' ? 'in_progress' : 'completed';
+                        showToast(`Status updated: ${m.status.replace('_', ' ').toUpperCase()}`);
+                    }
+                });
+            });
+            saveState();
+            loadModule(modId);
+        }
+
+        function toggleCheckDone(modId, idx) {
+            appState.subjects.forEach(s => {
+                s.modules.forEach(m => {
+                    if (m.id === modId) {
+                        m.checkDone[idx] = !m.checkDone[idx];
+                    }
+                });
+            });
+            saveState();
+        }
+
+        // --- LABS CONTROLLER ---
+        function renderLabs() {
+            const listContainer = document.getElementById('lab-list-container');
+            const filterSubject = document.getElementById('lab-filter-subject').value;
+
+            listContainer.innerHTML = '';
+
+            const filteredLabs = filterSubject === 'ALL' ? appState.labs : appState.labs.filter(l => l.subjectId === filterSubject);
+
+            filteredLabs.forEach((lab, idx) => {
+                const card = document.createElement('div');
+                card.className = "border border-[#222] bg-[#0a0a0a]/80 rounded p-5 hover:bg-[#111] cursor-pointer transition-all relative";
+                card.onclick = () => renderLabDetail(lab.id);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">${lab.difficulty}</span>
+                        <span class="text-[10px] font-mono ${lab.completed ? 'text-gray-400' : 'text-gray-600'}">${lab.completed ? '✓ VERIFIED' : 'PENDING'}</span>
+                    </div>
+                    <h4 class="text-sm font-medium text-gray-200 mb-2 font-sans">${lab.title}</h4>
+                    <div class="text-[10px] font-mono text-gray-600">${lab.duration} • ${lab.equipment}</div>
+                `;
+                listContainer.appendChild(card);
+            });
+
+            if (filteredLabs.length > 0) {
+                renderLabDetail(filteredLabs[0].id);
+            } else {
+                document.getElementById('lab-detail-container').innerHTML = `<div class="p-8 text-center text-gray-600 font-mono text-sm">NO ACTIVE LABS FOUND.</div>`;
+            }
+        }
+
+        function renderLabDetail(labId) {
+            const lab = appState.labs.find(l => l.id === labId);
+            if (!lab) return;
+
+            const detailContainer = document.getElementById('lab-detail-container');
+            detailContainer.innerHTML = `
+                <div class="space-y-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[#1f1f1f] pb-5 gap-5">
+                        <div>
+                            <div class="flex items-center space-x-3 mb-3">
+                                <span class="px-2 py-1 rounded text-[9px] font-mono bg-[#111] text-gray-400 border border-[#333] tracking-widest uppercase">${lab.difficulty}</span>
+                                ${lab.readOnlySafe ? '<span class="px-2 py-1 rounded text-[9px] font-mono bg-cave-900/30 text-cave-400 border border-cave-800 tracking-widest uppercase">SAFEGUARD ACTIVE</span>' : ''}
+                            </div>
+                            <h3 class="text-xl font-medium text-gray-100 font-sans">${lab.title}</h3>
+                        </div>
+                        <button onclick="toggleLabCompletion('${lab.id}')" class="px-5 py-2.5 rounded text-xs font-mono transition-all border ${lab.completed ? 'bg-[#111] text-gray-500 border-[#222] hover:text-gray-400' : 'bg-[#111] text-cave-400 border-[#333] hover:border-cave-700 hover:bg-cave-950/20'}">
+                            ${lab.completed ? '✓ LAB VERIFIED' : 'MARK VERIFIED'}
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs font-mono text-gray-400 bg-[#050505] p-5 rounded border border-[#1f1f1f]">
+                        <div><span class="text-gray-600">OBJECTIVE:</span> <span class="text-gray-300 ml-2 block mt-1">${lab.objective}</span></div>
+                        <div><span class="text-gray-600">ENVIRONMENT:</span> <span class="text-gray-300 ml-2 block mt-1">${lab.equipment}</span></div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-mono text-gray-500 tracking-widest uppercase">Execution Sequence</h4>
+                        <ol class="list-decimal list-inside space-y-3 text-xs text-gray-400 font-mono bg-[#050505] p-5 rounded border border-[#1f1f1f]">
+                            ${lab.instructions.map(inst => `<li>${inst}</li>`).join('')}
+                        </ol>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-mono text-gray-500 tracking-widest uppercase">Expected Output</h4>
+                        <div class="p-5 bg-[#050505] rounded border-l-2 border-[#333] text-xs font-mono text-gray-400">${lab.expectedResult}</div>
+                    </div>
+
+                    <div class="space-y-4 pt-4 border-t border-[#1f1f1f]">
+                        <h4 class="text-xs font-mono text-gray-500 tracking-widest uppercase">Evidence Log</h4>
+                        <textarea id="lab-evidence-input" rows="4" onblur="saveLabEvidence('${lab.id}')" class="w-full bg-[#050505] rounded border border-[#222] p-4 text-xs font-mono text-gray-300 focus:outline-none focus:border-[#444] placeholder:text-gray-700 leading-relaxed" placeholder="Paste script output logs or verification notes here...">${lab.evidence || ''}</textarea>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function toggleLabCompletion(labId) {
+            const lab = appState.labs.find(l => l.id === labId);
+            if (lab) {
+                lab.completed = !lab.completed;
+                saveState();
+                renderLabs();
+                showToast(`Lab status updated.`);
+            }
+        }
+
+        function saveLabEvidence(labId) {
+            const val = document.getElementById('lab-evidence-input').value;
+            const lab = appState.labs.find(l => l.id === labId);
+            if (lab && lab.evidence !== val) {
+                lab.evidence = val;
+                saveState();
+                showToast(`Evidence log updated.`);
+            }
+        }
+
+        // --- ASSESSMENTS CONTROLLER ---
+        function renderAssessments() {
+            const listContainer = document.getElementById('assessment-list-container');
+            listContainer.innerHTML = '';
+
+            appState.assessments.forEach(ass => {
+                const card = document.createElement('div');
+                card.className = "border border-[#222] bg-[#0a0a0a]/80 rounded p-5 hover:bg-[#111] cursor-pointer transition-all group";
+                card.onclick = () => renderAssessmentDetail(ass.id);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-[10px] font-mono text-gray-500 tracking-widest uppercase">${ass.status}</span>
+                        ${ass.score ? `<span class="text-xs font-mono font-medium text-gray-400">${ass.score}/100</span>` : ''}
+                    </div>
+                    <h4 class="text-sm font-medium text-gray-200 group-hover:text-white mb-2 font-sans">${ass.title}</h4>
+                `;
+                listContainer.appendChild(card);
+            });
+
+            if (appState.assessments.length > 0) {
+                renderAssessmentDetail(appState.assessments[0].id);
+            }
+        }
+
+        function renderAssessmentDetail(assId) {
+            const ass = appState.assessments.find(a => a.id === assId);
+            if (!ass) return;
+
+            const detailContainer = document.getElementById('assessment-detail-container');
+            detailContainer.innerHTML = `
+                <div class="space-y-8">
+                    <div class="flex justify-between items-start border-b border-[#1f1f1f] pb-5">
+                        <div>
+                            <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">${ass.status}</span>
+                            <h3 class="text-xl font-medium text-gray-100 mt-2 font-sans">${ass.title}</h3>
+                        </div>
+                        ${ass.score ? `<div class="px-4 py-2 rounded bg-cave-900/20 border border-cave-800 text-cave-400 font-mono font-normal text-xs flex items-center gap-2">SCORE: ${ass.score}</div>` : ''}
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <h4 class="font-mono text-gray-500 tracking-widest uppercase">Directive</h4>
+                        <p class="bg-[#050505] p-5 rounded border border-[#1f1f1f] text-gray-400 leading-relaxed font-mono">${ass.brief}</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-mono text-gray-500 tracking-widest uppercase">Submission Content</h4>
+                        <textarea id="ass-submission-input" rows="6" class="w-full bg-[#050505] rounded border border-[#222] p-4 text-xs font-mono text-gray-300 focus:outline-none focus:border-[#444] placeholder:text-gray-700 leading-relaxed" placeholder="Paste your technical project brief here...">${ass.submission || ''}</textarea>
+                        <button onclick="submitAssessment('${ass.id}')" class="px-6 py-2.5 rounded bg-[#111] hover:bg-cave-950/30 text-gray-300 hover:text-cave-400 font-mono text-xs border border-[#333] hover:border-cave-800 transition-all">COMMIT EVALUATION</button>
+                    </div>
+
+                    ${ass.feedback ? `
+                        <div class="space-y-4 pt-6 border-t border-[#1f1f1f]">
+                            <h4 class="text-xs font-mono text-gray-500 tracking-widest uppercase">Faculty Debrief</h4>
+                            <div class="bg-[#050505] p-5 rounded border-l-2 border-[#333] text-xs font-mono text-gray-400 space-y-4">
+                                <div><span class="text-gray-500 block mb-1 uppercase tracking-wide">Analysis:</span> <span class="leading-relaxed">${ass.feedback}</span></div>
+                                <div><span class="text-gray-500 block mb-1 uppercase tracking-wide">Recommended Action:</span> <span class="leading-relaxed">${ass.recommendation}</span></div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function submitAssessment(assId) {
+            const text = document.getElementById('ass-submission-input').value;
+            if (!text.trim()) {
+                showToast("Submission payload is empty.", 'error');
+                return;
+            }
+            
+            showConfirm("Commit this architecture for final evaluation?", () => {
+                const ass = appState.assessments.find(a => a.id === assId);
+                if (ass) {
+                    ass.submission = text;
+                    ass.status = 'SUBMITTED';
+                    if (!ass.score) {
+                        ass.score = 88;
+                        ass.feedback = "Solid architectural formulation. Clear structural layout and compliance parameters.";
+                        ass.recommendation = "Continue expanding error logging blocks.";
+                    }
+                    saveState();
+                    renderAssessments();
+                    showToast("Payload transmitted successfully.");
+                }
+            });
+        }
+
+        // --- KNOWLEDGE BASE CONTROLLER ---
+        function renderKB() {
+            const container = document.getElementById('kb-cards-container');
+            const searchVal = document.getElementById('kb-search-input').value.toLowerCase();
+
+            container.innerHTML = '';
+
+            const filtered = appState.kbNotes.filter(n => {
+                return n.title.toLowerCase().includes(searchVal) || n.content.toLowerCase().includes(searchVal) || n.tags.some(t => t.toLowerCase().includes(searchVal));
+            });
+
+            filtered.forEach(note => {
+                const card = document.createElement('div');
+                card.className = "border border-[#222] bg-[#0a0a0a]/80 rounded-lg p-6 flex flex-col justify-between space-y-5 hover:border-[#333] transition-all group relative";
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="text-sm font-medium text-gray-200 font-sans">${note.title}</h4>
+                            <button onclick="deleteNote('${note.id}')" class="text-gray-600 hover:text-gray-400 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            ${note.tags.map(t => `<span class="px-2 py-1 rounded bg-[#111] border border-[#222] text-[9px] font-mono text-gray-500 uppercase tracking-widest">${t}</span>`).join('')}
+                        </div>
+                        <div class="relative">
+                            <pre class="bg-[#050505] p-4 rounded border border-[#1f1f1f] font-mono text-[11px] text-gray-400 overflow-x-auto max-h-32 whitespace-pre-wrap leading-relaxed scrollbar-thin">${note.content}</pre>
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-3 border-t border-[#1f1f1f]">
+                        <button onclick="editNote('${note.id}')" class="text-[10px] font-mono text-gray-500 hover:text-gray-300 transition-colors tracking-widest uppercase flex items-center gap-1.5"><i data-lucide="edit-2" class="w-3 h-3"></i> Modify</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function filterKBTag(tag) {
+            const input = document.getElementById('kb-search-input');
+            input.value = tag === 'ALL' ? '' : tag;
+            renderKB();
+        }
+
+        function openNoteModal() {
+            document.getElementById('note-id').value = '';
+            document.getElementById('note-title-input').value = '';
+            document.getElementById('note-tags-input').value = '';
+            document.getElementById('note-content-input').value = '';
+            document.getElementById('modal-note-title').innerText = "CREATE ENTRY";
+            document.getElementById('note-modal').classList.remove('hidden');
+        }
+
+        function closeNoteModal() {
+            document.getElementById('note-modal').classList.add('hidden');
+        }
+
+        function saveNote(e) {
+            e.preventDefault();
+            const id = document.getElementById('note-id').value;
+            const title = document.getElementById('note-title-input').value;
+            const tags = document.getElementById('note-tags-input').value.split(',').map(t => t.trim()).filter(Boolean);
+            const content = document.getElementById('note-content-input').value;
+
+            if (id) {
+                const note = appState.kbNotes.find(n => n.id === id);
+                if (note) {
+                    note.title = title;
+                    note.tags = tags;
+                    note.content = content;
+                }
+                showToast("Entry modified successfully.");
+            } else {
+                appState.kbNotes.push({
+                    id: 'kb_' + Date.now(),
+                    title,
+                    tags,
+                    content
+                });
+                showToast("New entry committed.");
+            }
+
+            saveState();
+            closeNoteModal();
+            renderKB();
+        }
+
+        function editNote(id) {
+            const note = appState.kbNotes.find(n => n.id === id);
+            if (!note) return;
+
+            document.getElementById('note-id').value = note.id;
+            document.getElementById('note-title-input').value = note.title;
+            document.getElementById('note-tags-input').value = note.tags.join(', ');
+            document.getElementById('note-content-input').value = note.content;
+            document.getElementById('modal-note-title').innerText = "MODIFY ENTRY";
+            document.getElementById('note-modal').classList.remove('hidden');
+        }
+
+        function deleteNote(id) {
+            showConfirm("Purge this note from the archive? This cannot be undone.", () => {
+                appState.kbNotes = appState.kbNotes.filter(n => n.id !== id);
+                saveState();
+                renderKB();
+                showToast("Note purged from system.");
+            });
+        }
+
+        // --- COMPETENCY & REFLECTION CONTROLLER ---
+        function renderCompetency() {
+            const tbody = document.getElementById('competency-table-body');
+            tbody.innerHTML = '';
+
+            appState.competencies.forEach(comp => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-[#111] transition-all";
+
+                const isBeg = comp.level === 'BEGINNER';
+                const isDev = comp.level === 'DEVELOPING';
+                const isComp = comp.level === 'COMPETENT';
+                const isAdv = comp.level === 'ADVANCED';
+
+                row.innerHTML = `
+                    <td class="py-4 px-4 text-gray-300">${comp.skill}</td>
+                    <td class="py-4 px-4 text-center">${isBeg ? '<span class="px-2.5 py-1 rounded bg-[#111] text-gray-400 border border-[#333] tracking-widest text-[9px] uppercase">BEGINNER</span>' : '<span class="text-[#333]">—</span>'}</td>
+                    <td class="py-4 px-4 text-center">${isDev ? '<span class="px-2.5 py-1 rounded bg-cave-900/20 text-cave-400 border border-cave-800 tracking-widest text-[9px] uppercase">DEVELOPING</span>' : '<span class="text-[#333]">—</span>'}</td>
+                    <td class="py-4 px-4 text-center">${isComp ? '<span class="px-2.5 py-1 rounded bg-raincoat-950/20 text-raincoat-500 border border-raincoat-900/50 tracking-widest text-[9px] uppercase">COMPETENT</span>' : '<span class="text-[#333]">—</span>'}</td>
+                    <td class="py-4 px-4 text-center">${isAdv ? '<span class="px-2.5 py-1 rounded bg-[#1f1f1f] text-gray-200 border border-[#444] tracking-widest text-[9px] uppercase">ADVANCED</span>' : '<span class="text-[#333]">—</span>'}</td>
+                    <td class="py-4 px-4 text-right text-gray-500 text-[10px] uppercase tracking-wide max-w-[200px] truncate" title="${comp.notes}">${comp.notes}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Render Reflection Log Timeline
+            const historyList = document.getElementById('reflection-history-list');
+            historyList.innerHTML = '';
+
+            appState.reflections.forEach(ref => {
+                const log = document.createElement('div');
+                log.className = "p-5 rounded border border-[#1f1f1f] bg-[#050505] space-y-3 text-xs font-mono hover:border-[#333] transition-all";
+                log.innerHTML = `
+                    <div class="flex justify-between text-gray-400 font-medium border-b border-[#1f1f1f] pb-3 mb-3 uppercase tracking-widest">
+                        <span>${ref.date}</span>
+                    </div>
+                    <div><span class="text-gray-600 w-28 inline-block">LEARNED:</span> <span class="text-gray-300 leading-relaxed">${ref.learned}</span></div>
+                    <div><span class="text-gray-600 w-28 inline-block">BUILT:</span> <span class="text-gray-300 leading-relaxed">${ref.built}</span></div>
+                    <div><span class="text-gray-600 w-28 inline-block">STRUGGLED:</span> <span class="text-gray-300 leading-relaxed">${ref.struggled}</span></div>
+                `;
+                historyList.appendChild(log);
+            });
+        }
+
+        function saveReflection(e) {
+            e.preventDefault();
+            const learned = document.getElementById('ref-learned').value;
+            const built = document.getElementById('ref-built').value;
+            const struggled = document.getElementById('ref-struggled').value;
+
+            if (!learned && !built) return;
+
+            appState.reflections.unshift({
+                id: 'ref_' + Date.now(),
+                date: `Week ${appState.currentWeek} Review`,
+                learned,
+                built,
+                struggled
+            });
+
+            document.getElementById('ref-learned').value = '';
+            document.getElementById('ref-built').value = '';
+            document.getElementById('ref-struggled').value = '';
+
+            saveState();
+            renderCompetency();
+            showToast("Reflection log committed to archive.");
+        }
+    </script>
 </body>
 </html>
